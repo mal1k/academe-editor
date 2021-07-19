@@ -1,0 +1,74 @@
+/* theme color */
+$--color-primary:#51ACFD;
+$--color-white:#232323;
+$--color-text-primary:#51ACFD;
+$--color-text-regular:#FFFFFF;
+$--color-text-secondary:#FFFFFF;
+$--color-text-placeholder:#F5F5F5;
+$--color-black:#232323;
+$--border-color-base:#FFFFFF;
+$--border-color-light:#FFFFFF;
+$--border-color-lighter:#FFFFFF;
+$--border-color-extra-light:#FFFFFF;
+$--border-color-blue:#51ACFD;
+$--background-color-base:#414141;
+$--color-success: #67c23a !default;
+$--color-warning: #e6a23c !default;
+$--color-danger: #f56c6c !default;
+$--color-info: #bfbfbf !default;
+
+$--border-radius-base: 0px !default;
+$--border-radius-4px: 4px !default;
+
+$--tag-info-color: $--color-info !default;
+$--icon-close-color: black;
+
+$--checkbox-icon-color: $--color-text-regular !default;
+$--checkbox-checked-text-color: $--color-text-regular !default;
+$--checkbox-checked-input-border-color: $--color-primary !default;
+$--checkbox-checked-input-fill: $--color-primary !default;
+$--checkbox-checked-icon-color: $--color-text-regular !default;
+
+$--button-default-color: $--color-text-regular !default;
+$--button-default-fill: transparent !default;
+$--button-default-border: $--border-color-blue !default;
+
+$--button-primary-color: $--color-text-regular !default;
+$--button-primary-fill: $--color-primary !default;
+$--button-primary-border: $--border-color-base !default;
+
+$--button-medium-border-radius: $--border-radius-4px !default;
+
+
+/* Dialog
+-------------------------- */
+$--dialog-background-color: #272424 !default;
+$--dialog-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !default;
+$--dialog-title-font-size: 20px !default;
+$--dialog-font-size: 16px !default;
+$--dialog-line-height: 18px !default;
+$--dialog-padding-primary: 20px !default;
+
+/* Dropdown
+-------------------------- */
+$--dropdown-menuItem-hover-fill: transparent !default;
+$--dropdown-menuItem-hover-color: $--color-primary !default;
+
+/* Tab
+-------------------------- */
+
+$--tab-border-line: 0px silid black !default;
+$--tab-header-color-active: $--color-text-secondary !default;
+$--tab-header-color-hover: $--color-text-regular !default;
+$--tab-header-color: #979797 !default;
+$--tab-header-fill-active: rgba($--color-black, 0.06) !default;
+$--tab-header-fill-hover: rgba($--color-black, 0.06) !default;
+$--tab-vertical-header-width: 90px !default;
+$--tab-vertical-header-count-color: $--color-white !default;
+$--tab-vertical-header-count-fill: $--color-text-secondary !default;
+
+
+/* icon font path, required */
+$--font-path: '/wp-content/themes/academe/node_modules/element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";

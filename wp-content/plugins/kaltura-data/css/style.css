@@ -1,0 +1,105 @@
+	.toggle-box {
+  display: none !important;
+}
+.toggle-box + label {
+  display: block;
+}
+.toggle-box + label + div {
+  display: none;
+}
+.toggle-box:checked + label + div {
+  display: block;
+  background: #efefef;
+  padding:5px;    
+}
+.sector{
+	    border: 1px solid grey;
+    padding: 13px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+/* demo position */
+.demo-my-plug {
+    margin: 5% 10%;
+}
+.my-col-45{
+	    width: 40%;
+    max-height: 35px;
+    float: left;
+    overflow: hidden;
+}
+.my-col-15{
+	width: 10%;
+	float: left;
+}
+.my-col-25{
+	width: 20%;
+	float: left;
+}
+.sector label{
+	    height: 25px;
+}
+.sector:nth-child(odd) {
+       background: beige;
+}
+.sector:nth-child(even) {
+       background: aliceblue;
+}
+.fname{
+	font-weight: bold; 
+}
+.n-title{
+	    font-weight: 700;
+    background-color: #EAF2FA;
+    border-bottom: 1px solid #FFF;
+    line-height: 1.5;
+    padding: 7px;
+}
+.n-desc{
+	    border-bottom: 1px solid #DFDFDF;
+    padding: 7px 7px 7px 40px;
+    line-height: 1.8;
+    background-color: #fff;
+}
+.fgroup label{
+	    min-width: 120px;
+    display: block;
+    font-weight: bold;
+    padding-top: 5px;
+    float: left;
+}
+.fgroup input{
+	   width: 100%;      
+    border-radius: 4px;
+    height: 40px;
+    float: right;
+}
+
+.fgroup{
+	           height: 50px;
+    width: 20%;
+    float: left;
+    display: table;
+}
+
+#selectdate{
+	    height: 65px;
+    margin-left: 20px;
+}
+
+.submits{
+	background-color: #1d8821;
+    color: #fff;
+}
+
+.search-form #selectdate .smmselect{
+width: 100%;
+    border-radius: 4px;
+    height: 40px;
+    float: right;	
+}
+.form-group
+{
+	display: inline-block;
+	margin-right: 20px;
+}
