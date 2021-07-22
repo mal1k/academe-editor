@@ -3,6 +3,7 @@
 const state = () => ({
     active_page: 'slides', //meta
     active_slide: null,
+    active_video: null,
     active_block_meta: null,
     meta: {
         title: 'Some title',
@@ -18,6 +19,7 @@ const state = () => ({
 
     ],
     slide_templates: null,
+    movie: null,
 });
 
 // getters

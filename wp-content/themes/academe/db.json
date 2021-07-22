@@ -1,0 +1,541 @@
+{
+  "movies": [
+    {
+      "kalturaID": "1_mazdqaq0",
+      "image": "https:\/\/cdnapisec.kaltura.com\/p\/2538842\/thumbnail\/entry_id\/1_mazdqaq0\/width\/280\/height\/175\/type\/1\/quality\/45",
+      "title": "In Your Hands",
+      "link": "https:\/\/academe.webmind28.com\/movies\/in-your-hands\/",
+      "time": "1h 41m",
+      "tags": [
+        {
+          "tag": "2018"
+        },
+        {
+          "tag": "Drama"
+        },
+        {
+          "tag": "Education"
+        },
+        {
+          "tag": "Education and Teachers"
+        },
+        {
+          "tag": "Educational Sciences"
+        },
+        {
+          "tag": "Jules Benchetrit"
+        },
+        {
+          "tag": "Kristin Scott Thomas"
+        },
+        {
+          "tag": "Lambert Wilson"
+        },
+        {
+          "tag": "Ludovic Bernard"
+        },
+        {
+          "tag": "Music"
+        },
+        {
+          "tag": "Nachshon"
+        },
+        {
+          "tag": "PG-13"
+        },
+        {
+          "tag": "piano"
+        },
+        {
+          "tag": "romance"
+        },
+        {
+          "tag": "Second Chance"
+        },
+        {
+          "tag": "Social Sciences"
+        },
+        {
+          "tag": "Sociology"
+        }
+      ],
+      "year": "2018",
+      "views": 1,
+      "genres": [
+        {
+          "genre": "Drama"
+        },
+        {
+          "genre": "Romance"
+        }
+      ],
+      "director": "Ludovic Bernard",
+      "description": [
+        "The music is the secret of Mathieu Malinski (Jules Benchetrit), a subject about which he dare not speak in his neighborhood, where it lags behind with his friends. While a small burglary that he committed with the latter leads to prison, Pierre Geithner (Lambert Wilson), Director of the National Conservatory of Music in fate in exchange for hours of general",
+        " interest. But Pierre has another idea in mind."
+      ]
+    },
+    {
+      "kalturaID": "1_849ywo8g",
+      "image": "https:\/\/cdnapisec.kaltura.com\/p\/2538842\/thumbnail\/entry_id\/1_849ywo8g\/width\/280\/height\/175\/type\/1\/quality\/45",
+      "title": "Lawrence Of Arabia",
+      "link": "https:\/\/academe.webmind28.com\/movies\/lawrence-of-arabia\/",
+      "time": "3h 27m",
+      "tags": [
+        {
+          "tag": "1962"
+        },
+        {
+          "tag": "Adventure"
+        },
+        {
+          "tag": "Alec Guinness"
+        },
+        {
+          "tag": "Anthony Quinn"
+        },
+        {
+          "tag": "arab"
+        },
+        {
+          "tag": "arabian"
+        },
+        {
+          "tag": "Arts and Humanity"
+        },
+        {
+          "tag": "based on a true story"
+        },
+        {
+          "tag": "Biography"
+        },
+        {
+          "tag": "british army"
+        },
+        {
+          "tag": "british empire"
+        },
+        {
+          "tag": "cairo"
+        },
+        {
+          "tag": "camel"
+        },
+        {
+          "tag": "damascus"
+        },
+        {
+          "tag": "David Lean"
+        },
+        {
+          "tag": "desert"
+        },
+        {
+          "tag": "Drama"
+        },
+        {
+          "tag": "historical fiction"
+        },
+        {
+          "tag": "History"
+        },
+        {
+          "tag": "horse"
+        },
+        {
+          "tag": "Israel"
+        },
+        {
+          "tag": "jerusalem"
+        },
+        {
+          "tag": "ottoman empire"
+        },
+        {
+          "tag": "Peter O'Toole"
+        },
+        {
+          "tag": "PG-13"
+        },
+        {
+          "tag": "quicksand"
+        },
+        {
+          "tag": "Sony"
+        },
+        {
+          "tag": "The Ottoman Empire"
+        },
+        {
+          "tag": "Turkey"
+        },
+        {
+          "tag": "world war i"
+        }
+      ],
+      "year": "1962",
+      "views": 3,
+      "genres": [
+        {
+          "genre": "Adventure"
+        },
+        {
+          "genre": "Biography"
+        },
+        {
+          "genre": "Drama"
+        }
+      ],
+      "director": "David Lean",
+      "description": [
+        "The story of T.E. Lawrence, the English officer who successfully united and led the diverse, often warring, Arab tribes during World War I in order to fight the Turks.",
+        ""
+      ]
+    },
+    {
+      "kalturaID": "1_6id5o696",
+      "image": "https:\/\/cdnapisec.kaltura.com\/p\/2538842\/thumbnail\/entry_id\/1_6id5o696\/width\/280\/height\/175\/type\/1\/quality\/45",
+      "title": "Dead Poets Society",
+      "link": "https:\/\/academe.webmind28.com\/movies\/dead-poets-society\/",
+      "time": "2h 3m",
+      "tags": [
+        {
+          "tag": "1950s"
+        },
+        {
+          "tag": "1989"
+        },
+        {
+          "tag": "a midsummer night's dream"
+        },
+        {
+          "tag": "Adolescence"
+        },
+        {
+          "tag": "Arts and Humanity"
+        },
+        {
+          "tag": "Comedy"
+        },
+        {
+          "tag": "coming of age"
+        },
+        {
+          "tag": "disney"
+        },
+        {
+          "tag": "Drama"
+        },
+        {
+          "tag": "Education"
+        },
+        {
+          "tag": "Education and Teachers"
+        },
+        {
+          "tag": "Educational Sciences"
+        },
+        {
+          "tag": "Ethan Hawke"
+        },
+        {
+          "tag": "friendship"
+        },
+        {
+          "tag": "individual"
+        },
+        {
+          "tag": "literature"
+        },
+        {
+          "tag": "Peter Weir"
+        },
+        {
+          "tag": "PG"
+        },
+        {
+          "tag": "philosophy"
+        },
+        {
+          "tag": "poetry"
+        },
+        {
+          "tag": "preparatory school"
+        },
+        {
+          "tag": "professor"
+        },
+        {
+          "tag": "Robert Sean Leonard"
+        },
+        {
+          "tag": "Robin Williams"
+        },
+        {
+          "tag": "school play"
+        },
+        {
+          "tag": "schoolteacher"
+        },
+        {
+          "tag": "teacher"
+        },
+        {
+          "tag": "vermont"
+        }
+      ],
+      "year": "1989",
+      "views": 2,
+      "genres": [
+        {
+          "genre": "Comedy"
+        },
+        {
+          "genre": "Drama"
+        }
+      ],
+      "director": "Peter Weir",
+      "description": [
+        "Maverick teacher John Keating uses poetry to embolden his boarding school students to new heights of self-expression.",
+        ""
+      ]
+    },
+    {
+      "kalturaID": "1_ps8ylx0z",
+      "image": "https:\/\/cdnapisec.kaltura.com\/p\/2538842\/thumbnail\/entry_id\/1_ps8ylx0z\/width\/280\/height\/175\/type\/1\/quality\/45",
+      "title": "Awakenings",
+      "link": "https:\/\/academe.webmind28.com\/movies\/awakenings\/",
+      "time": "1h 55m",
+      "tags": [
+        {
+          "tag": "1990"
+        },
+        {
+          "tag": "based on a true story"
+        },
+        {
+          "tag": "based on novel or book"
+        },
+        {
+          "tag": "Biography"
+        },
+        {
+          "tag": "coma"
+        },
+        {
+          "tag": "comatose"
+        },
+        {
+          "tag": "Drama"
+        },
+        {
+          "tag": "Ethics"
+        },
+        {
+          "tag": "experiment"
+        },
+        {
+          "tag": "hope"
+        },
+        {
+          "tag": "hospital"
+        },
+        {
+          "tag": "illness"
+        },
+        {
+          "tag": "Julie Kavner"
+        },
+        {
+          "tag": "Medicine"
+        },
+        {
+          "tag": "miracle"
+        },
+        {
+          "tag": "Moral Code"
+        },
+        {
+          "tag": "Penny Marshall"
+        },
+        {
+          "tag": "PG-13"
+        },
+        {
+          "tag": "psychology"
+        },
+        {
+          "tag": "Robert De Niro"
+        },
+        {
+          "tag": "Robin Williams"
+        },
+        {
+          "tag": "Social Sciences"
+        },
+        {
+          "tag": "Sociology"
+        },
+        {
+          "tag": "Sony"
+        },
+        {
+          "tag": "woman director"
+        }
+      ],
+      "year": "1990",
+      "views": 7,
+      "genres": [
+        {
+          "genre": "Biography"
+        },
+        {
+          "genre": "Drama"
+        }
+      ],
+      "director": "Penny Marshall",
+      "description": [
+        "The victims of an encephalitis epidemic many years ago have been catatonic ever since, but now a new drug offers the prospect of reviving them.",
+        ""
+      ]
+    },
+    {
+      "kalturaID": "1_rhksq1w1",
+      "image": "https:\/\/cdnapisec.kaltura.com\/p\/2538842\/thumbnail\/entry_id\/1_rhksq1w1\/width\/280\/height\/175\/type\/1\/quality\/45",
+      "title": "Gandhi",
+      "link": "https:\/\/academe.webmind28.com\/movies\/gandhi\/",
+      "time": "3h 3m",
+      "tags": [
+        {
+          "tag": "1982"
+        },
+        {
+          "tag": "apartheid"
+        },
+        {
+          "tag": "based on a true story"
+        },
+        {
+          "tag": "Ben Kingsley"
+        },
+        {
+          "tag": "Biography"
+        },
+        {
+          "tag": "british army"
+        },
+        {
+          "tag": "british empire"
+        },
+        {
+          "tag": "colony"
+        },
+        {
+          "tag": "conference"
+        },
+        {
+          "tag": "demonstration"
+        },
+        {
+          "tag": "Drama"
+        },
+        {
+          "tag": "freedom"
+        },
+        {
+          "tag": "Gandhi"
+        },
+        {
+          "tag": "hindu"
+        },
+        {
+          "tag": "History"
+        },
+        {
+          "tag": "Human Rights"
+        },
+        {
+          "tag": "hunger strike"
+        },
+        {
+          "tag": "imprisonment"
+        },
+        {
+          "tag": "independence"
+        },
+        {
+          "tag": "independence movement"
+        },
+        {
+          "tag": "John Gielgud"
+        },
+        {
+          "tag": "mandate"
+        },
+        {
+          "tag": "muslim"
+        },
+        {
+          "tag": "nonviolent resistance"
+        },
+        {
+          "tag": "PG"
+        },
+        {
+          "tag": "philosophy"
+        },
+        {
+          "tag": "political negotiations"
+        },
+        {
+          "tag": "prayer"
+        },
+        {
+          "tag": "protest"
+        },
+        {
+          "tag": "release from prison"
+        },
+        {
+          "tag": "Richard Attenborough"
+        },
+        {
+          "tag": "Rohini Hattangadi"
+        },
+        {
+          "tag": "Social Sciences"
+        },
+        {
+          "tag": "Sony"
+        },
+        {
+          "tag": "Strike"
+        },
+        {
+          "tag": "the british mandate"
+        },
+        {
+          "tag": "world war ii"
+        }
+      ],
+      "year": "1982",
+      "views": 2,
+      "genres": [
+        {
+          "genre": "Biography"
+        },
+        {
+          "genre": "Drama"
+        },
+        {
+          "genre": "History"
+        }
+      ],
+      "director": "Richard Attenborough",
+      "description": [
+        "The life of the lawyer who became the famed leader of the Indian revolts against the British rule through his philosophy of nonviolent protest.",
+        ""
+      ]
+    }
+  ]
+}
