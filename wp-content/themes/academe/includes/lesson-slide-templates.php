@@ -165,6 +165,18 @@ function get_lesson_slide_templates() {
 //                    ],
                 ]
             ],
+        ],
+        'template4' => [
+            'template4_media1' => [
+                'type' => 'media',
+                'label' => 'Media',
+                'fields' => [
+                    'template4_media1_video' => [
+                       'type' => 'text',
+                       'label' => 'Video',
+                   ],
+                ]
+            ],
         ]
     ];
 
