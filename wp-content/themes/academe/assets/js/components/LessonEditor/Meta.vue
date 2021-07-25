@@ -175,6 +175,7 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import { debounce } from "debounce";
 
     export default {
@@ -205,24 +206,24 @@
         },
         methods: {
             loadSubjects() {
-                axios.get('/wp-json/wp/v2/subject?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                axios.get('/wp/v2/subject?_wpnonce=' + wpApiSettings.nonce ).then(res => {
                     this.subjects = this.mapTerms(res.data);
                 });
             },
             loadTopics() {
-                axios.get('/wp-json/wp/v2/topic?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                axios.get('/wp/v2/topic?_wpnonce=' + wpApiSettings.nonce ).then(res => {
                     this.topics = this.mapTerms(res.data);
                 });
             },
             loadFaculties() {
-                axios.get('/wp-json/wp/v2/faculty?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                axios.get('/wp/v2/faculty?_wpnonce=' + wpApiSettings.nonce ).then(res => {
                     this.faculties = this.mapTerms(res.data);
                 });
             },
             loadTags(query) {
                 if (query !== '') {
                     this.loading = true;
-                    axios.get('wp-json/wp/v2/ld_course_tag?per_page=20&orderby=count&order=desc&search=' + query + '&_wpnonce=' + wpApiSettings.nonce).then(res => {
+                    axios.get('wp/v2/ld_course_tag?per_page=20&orderby=count&order=desc&search=' + query + '&_wpnonce=' + wpApiSettings.nonce).then(res => {
                         this.tags = this.mapTerms(res.data);
                         this.loading = false;
                     });

@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import store from './vuex-store'
+import axios from 'axios';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en'
 import '../../element-variables.scss';
 
-window.axios = require('axios');
+axios.defaults.baseURL = window.wpApiSettings.root;
+axios.defaults.headers.common['X-WP-Nonce'] = window.wpApiSettings.nonce;
 
 Vue.use(Vuex);
 Vue.use(ElementUI, { locale });
