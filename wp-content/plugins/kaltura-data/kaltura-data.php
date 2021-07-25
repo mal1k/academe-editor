@@ -363,6 +363,24 @@ function get_kaltura_session() {
     return $client;
 }
 
+function get_kaltura_ks() {
+    require_once dirname(__FILE__) . '/KalturaClient.php';
+
+    $partner_id = get_field('partner_id', 'option');
+    $config = new KalturaConfiguration();
+    $config->setServiceUrl('https://www.kaltura.com');
+    $client = new KalturaClient($config);
+    $ks = $client->session->start(
+        "e0ea1beaae9d9aa8407f9e34331ed690",
+        "MovielandAcademy",
+        KalturaSessionType::ADMIN,
+        $partner_id
+    );
+    $client->setKS($ks);
+
+    return $ks;
+}
+
 function format_time_to_seconds($time_string) {
     return strtotime("1970-01-01 $time_string UTC");
 }
