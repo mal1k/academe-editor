@@ -35,3 +35,11 @@ add_action( 'rest_api_init', function(){
     ] );
 
 } );
+
+add_action( 'rest_api_init', function () {
+    require_once ACADEME_THEME_DIR . 'includes/get-movies-list.php';
+	register_rest_route( 'movies/v1', '/list/(?P<id>\d+)', array(
+		'methods'  => 'GET',
+        'callback' => 'my_rest_api_movies_list',
+	) );
+} );
