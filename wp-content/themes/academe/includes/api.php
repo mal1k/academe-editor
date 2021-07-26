@@ -54,22 +54,15 @@ add_action( 'rest_api_init', function() {
         'methods'  => 'GET',
         'callback' => function($data) {
             $kaltura_id = $data->get_param( 'id' );
-            return $kaltura_id;
 
-            $posts = get_posts(array(
-                 'post_type' => 'movie',
-                 //'meta_key'		=> 'kaltura_id',
-	             //'meta_value'	=> $kaltura_id,
-                 'meta_query'	=> array(
-                      array(
-                          'fields'          => 'ids',
-                          'key'	  	=> 'kaltura_id',
-                          'value'	  	=> $kaltura_id,
-                          'compare' 	=> '=',
-                      ),
-                  ),
-             ));
-             return getMovieDataFromPost(get_fields($movie_post->ID));
+            $args = array(
+                'post_type' => 'movie',
+                'meta_key' => 'kaltura_id',
+                'meta_value' => $kaltura_id
+            );
+
+            $post = get_posts($args);
+            return getMovieDataFromPost($post[0]);
         }
     ]);
 
