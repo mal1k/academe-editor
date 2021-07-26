@@ -1,8 +1,10 @@
-<?php /* Template Name: Lesson Editor */ ?>
+<?php /* Template Name: Lesson Editor */ 
+//echo 'test'
+?>
 
 <?php get_template_part( 'templates/partials/document-open' ); ?>
     <div id="app" class="main">
-        <?php $wpnonce = wp_create_nonce(); ?>
+        <?php //$wpnonce = wp_create_nonce(); ?>
         <lesson-editor-layout>
             <template v-slot:header>
                 <header-component :post="123"></header-component>

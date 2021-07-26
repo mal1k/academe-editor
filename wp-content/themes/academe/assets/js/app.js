@@ -5,8 +5,6 @@ import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en'
 import '../../element-variables.scss';
 
-window.axios = require('axios');
-
 Vue.use(Vuex);
 Vue.use(ElementUI, { locale });
 
