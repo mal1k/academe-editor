@@ -1,5 +1,39 @@
 jQuery(document).ready(function($) {
 
+    var query_string = new URLSearchParams(window.location.search);
+
+    if (query_string.has("session_id")) {
+        window.conn = new WebSocket('ws://localhost:8080');
+
+        window.conn.onopen = function(e) {
+            console.log("Connection established!");
+
+            let session_id = query_string.get("session_id");
+
+            subscribe(session_id);
+        };
+
+        window.conn.onmessage = function(e) {
+            console.log(e.data);
+
+            var data = JSON.parse(e.data);
+
+            alert(data.message);
+        };
+
+        function subscribe(channel) {
+            window.conn.send(JSON.stringify({command: "subscribe", channel: channel}));
+        }
+
+        function sendMessage(msg) {
+            window.conn.send(JSON.stringify({command: "message", message: msg}));
+        }
+
+        $('header').click(function(){
+            sendMessage('test session: ' + query_string.get("session_id"));
+        });
+    }
+
     initDropdown($('.ui.dropdown'));
     if ($('#bigSlider').length) {
         $('.swiper-large-home').each(function () {
@@ -588,7 +622,36 @@ jQuery(document).ready(function($) {
         });
     });
 
+    $('.menu-btn').on('click', function () {
+        $('.ui.modal.mobile-menu').modal('show');
+    });
 
+    $('#enterSessionForm').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: ajaxurl,
+            type: 'GET',
+            dataType : 'json',
+            data: {
+                action: 'get_session_link',
+                code: $('input[name="session_code"]').val(),
+            },
+            beforeSend: function() {
+                $('.btn-blue-animated').attr('disabled', true);
+                $('.session-code-error').html('');
+            },
+            complete: function() {
+                $('.btn-blue-animated').removeAttr('disabled');
+            },
+            success: function (response) {
+                if (!response.error) {
+                    window.location.href = response.success;
+                } else {
+                    $('.session-code-error').html(response.error);
+                }
+            }
+        });
+    });
 
 });
 

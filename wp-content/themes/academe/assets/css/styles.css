@@ -83,6 +83,48 @@ header .left-part nav {
     color: #51ACFD;
     white-space: nowrap;
 }
+header .menu-btn {
+    display: none;
+    padding: 5px;
+    cursor: pointer;
+}
+.modal.mobile-menu {
+    height: 100%;
+    width: 100%;
+    background: rgba(19, 18, 18, .9);
+    border-radius: 0;
+}
+.modal.mobile-menu nav {
+    flex-direction: column;
+    margin-top: 60px;
+}
+.modal.mobile-menu nav .menu-item {
+    text-align: center;
+    opacity: 1;
+    font-size: 20px;
+}
+.modal.mobile-menu .separator {
+    height: 1px;
+    background: #979797;
+    display: block;
+    width: 50%;
+    opacity: .3;
+    margin: 20px auto;
+}
+.modal.mobile-menu .account-actions {
+    text-align: center;
+}
+.modal.mobile-menu .account-actions .user-info {
+    color: #FFFFFF;
+    opacity: .5;
+}
+.modal.mobile-menu .account-actions .item {
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-top: 10px;
+    display: block;
+}
 header .create-lesson-btn {
     border: 1px solid #51ACFD;
     border-radius: 3px;
@@ -2027,6 +2069,267 @@ h2.section-heading {
 .two-strips .slider-strip .strip-top {
     padding-right: 0;
 }
+
+/* Enter the lesson (session) */
+
+.session-restrict-message {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    text-align: center;
+}
+.session-restrict-message span {
+    font-size: 30px;
+    line-height: 34px;
+    color: #51acfd;
+    display: block;
+    margin-top: 40px;
+}
+
+.main-title {
+    margin-top: 20px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 48px;
+    letter-spacing: 0.175px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.main-subtitle {
+    margin-bottom: 5px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 21px;
+    line-height: normal;
+    letter-spacing: 0.175px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.m-login {
+    color: #ffffff;
+    max-width: 500px;
+    margin: 0 auto;
+    padding-bottom: 280px;
+    position: relative;
+    min-height: calc(100vh - 160px);
+}
+
+.m-login .container {
+    padding: 0 28px;
+}
+
+.m-login__top {
+    margin-top: 30px;
+    min-height: 120px;
+    text-align: center;
+}
+
+.m-login__top span {
+    font-size: 12px;
+    line-height: 15px;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.m-login__btn {
+    padding: 40px;
+    min-height: 140px;
+    margin-bottom: 37px;
+    background: #3d3d3d;
+    border: 1px solid #ffffff;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 25px;
+    line-height: 30px;
+    text-align: center;
+    color: #51acfd;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.m-login__btn:hover {
+    border: 1px solid #51acfd;
+    background-color: #51acfd;
+    color: #ffffff;
+}
+
+.m-login__img {
+    margin-top: 54px;
+    margin-bottom: 20px;
+    max-width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.m-login__img img {
+    max-height: 160px;
+}
+
+.m-login__bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.m-login__bottom span {
+    font-weight: 600;
+    font-size: 9px;
+    line-height: 11px;
+    text-align: center;
+}
+
+.footer-nav__list {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.footer-nav__item {
+    padding: 5px;
+}
+
+.footer-nav__link {
+    font-size: 9px;
+    line-height: 11px;
+    color: #51acfd;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.footer-nav__link:hover {
+    color: #fff;
+}
+
+.input-group {
+    display: block;
+    margin-bottom: 24px;
+}
+
+.input-group label {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    color: #51acfd;
+}
+
+.form-control {
+    width: 100%;
+    padding: 15px 18px;
+    border: 1px solid #ffffff;
+    background-color: transparent;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 18px;
+    letter-spacing: 0.175px;
+    color: #ffffff;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border: 1px solid #51acfd;
+}
+
+.btn-blue-animated {
+    width: 100%;
+    padding: 15px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    background: #51acfd;
+    border: 1px solid #ffffff;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 18px;
+    letter-spacing: 0.175px;
+    color: #ffffff;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-blue-animated:disabled {
+    opacity: 0.5;
+    cursor: inherit;
+}
+
+.btn-blue-animated:hover:not(:disabled) {
+    color: #51acfd;
+    background-color: transparent;
+    border: 1px solid #51acfd;
+}
+.session-code-error {
+    display: block;
+    margin-top: 5px;
+    color: #d3447f;
+}
+/* Enter the lesson (session) end */
+
 /* Icons */
 .with-rotate {
     transition: .2s;
@@ -2126,6 +2429,31 @@ img.aligncenter { display: block; margin-left: auto; margin-right: auto; }
     }
     #guidesFilters .free-search > input {
         min-width: 220px;
+    }
+}
+@media screen and (max-width: 767px) {
+    header .left-part nav,
+    header .right-part {
+        display: none;
+    }
+    header .left-part {
+        justify-content: center;
+        width: 100%;
+    }
+    header {
+        height: 44px;
+    }
+    header .left-part .logo-img {
+        height: 22px;
+    }
+    header .menu-btn {
+        display: flex;
+        position: absolute;
+        right: 20px;
+    }
+    .session-restrict-message span {
+        font-size: 24px;
+        line-height: 28px;
     }
 }
 .notification-btn.ui.dropdown .menu {

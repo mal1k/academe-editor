@@ -5,9 +5,9 @@
     <div class="left-part">
 
         <?php if(is_front_page()) { ?>
-            <img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" class="h-6" />
+            <img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" class="h-6 logo-img" />
         <?php } else { ?>
-            <a href="/"><img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" class="h-6" /></a>
+            <a href="/"><img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" class="h-6 logo-img" /></a>
         <?php } ?>
 
         <nav class="top-menu">
@@ -91,9 +91,30 @@
 
     </div>
 
+    <div class="menu-btn"><?php icon('burger-menu'); ?></div>
+
+    <div class="ui modal mobile-menu">
+        <?php icon('cross', 'close'); ?>
+        <nav class="top-menu">
+            <a href="/enter-lesson" class="menu-item link text-blue"><?php _e('Enter the lesson', 'academe-theme'); ?></a>
+        </nav>
+        <div class="separator"></div>
+        <div class="account-actions">
+            <?php if ($user->exists()) { ?>
+                <div class="user-info">
+                    <div class="user-name"><?php echo $user->display_name; ?></div>
+                    <div class="user-email"><?php echo $user->user_email; ?></div>
+                </div>
+                <a href="<?php echo wp_logout_url(); ?>" class="item">Logout</a>
+            <?php } else { ?>
+                <a href="<?php echo wp_login_url(); ?>" class="item">Login</a>
+            <?php } ?>
+        </div>
+    </div>
+
 </header>
 
-<?php if ( !is_search() ) { ?>
+<?php if ( !is_search() && !is_singular('session') && !is_page_template( 'page-enter-lesson.php' ) ) { ?>
 <section id="search">
     <form class="search-form" action="/">
         <div class="search-btn"><img src="<?php echo get_template_directory_uri() . '/assets/img/search.svg'; ?>" /></div>

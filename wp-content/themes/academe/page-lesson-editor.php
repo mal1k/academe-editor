@@ -1,8 +1,11 @@
 <?php /* Template Name: Lesson Editor */ ?>
 
+<?php if (!is_user_logged_in() || is_user_in_role('student')) {
+    wp_redirect(home_url());
+} ?>
+
 <?php get_template_part( 'templates/partials/document-open' ); ?>
     <div id="app" class="main">
-        <?php $wpnonce = wp_create_nonce(); ?>
         <lesson-editor-layout>
             <template v-slot:header>
                 <header-component :post="123"></header-component>

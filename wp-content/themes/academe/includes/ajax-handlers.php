@@ -573,3 +573,49 @@ function fetch_search_results(){
 }
 add_action('wp_ajax_nopriv_fetch_search_results','fetch_search_results');
 add_action('wp_ajax_fetch_search_results','fetch_search_results');
+
+
+add_action("wp_ajax_render_quiz_content" , "render_quiz_content");
+add_action('wp_ajax_nopriv_render_quiz_content', 'render_quiz_content');
+function render_quiz_content() {
+    if ($_GET['quiz_id']) {
+        new WpProQuiz_Controller_Front();
+        //echo do_shortcode('[ld_quiz quiz_id="'.$_GET['quiz_id'].'"]');
+        $sc = learndash_quiz_shortcode(
+            array(
+                'quiz_id'     => $_GET['quiz_id'],
+                'course_id'   => absint($_GET['course_id']),
+                'quiz_pro_id' => '',
+            ),
+            '',
+            true
+        );
+        print_r($sc);
+    }
+
+    wp_die();
+}
+
+add_action("wp_ajax_update_session_current_slide" , "update_session_current_slide");
+add_action('wp_ajax_nopriv_update_session_current_slide', 'update_session_current_slide');
+function update_session_current_slide() {
+    if ($_GET['session_id'] && $_GET['slide_id']) {
+        update_field('current_slide', $_GET['slide_id'], $_GET['session_id']);
+    }
+    print_r(json_encode(['success' => 'Current slide updated!']));
+
+    wp_die();
+}
+add_action("wp_ajax_get_session_link" , "get_session_link");
+add_action('wp_ajax_nopriv_get_session_link', 'get_session_link');
+function get_session_link() {
+    if (!$_GET['code']) {
+        echo json_encode(['error' => __('You have not entered the lesson code', 'academe-theme')]);
+        wp_die();
+    }
+
+    $session = get_page_by_path( $_GET['code'], 'OBJECT', 'session' );
+    echo $session ? json_encode(['success' => get_permalink($session)]) : json_encode(['error' => __('Lesson not found.', 'academe-theme')]);
+
+    wp_die();
+}

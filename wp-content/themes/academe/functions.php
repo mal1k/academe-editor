@@ -347,3 +347,45 @@ function highlight($text_highlight, $text_search) {
     $str = preg_replace('#'. preg_quote($text_highlight) .'#i', '<span class=\'highlighted\'>\\0</span>', $text_search);
     return $str;
 }
+
+add_action( 'wp_enqueue_scripts', 'load_wp_api_settings_for_student', 99 );
+function load_wp_api_settings_for_student(){
+    if (is_user_in_role('student')) {
+        wp_localize_script( 'jquery', 'wpApiSettings', array(
+            'root'          => esc_url_raw( get_rest_url() ),
+            'nonce'         => ( wp_installing() && ! is_multisite() ) ? '' : wp_create_nonce( 'wp_rest' ),
+            'versionString' => 'wp/v2/',
+        ) );
+    }
+}
+
+add_action( 'template_redirect', function() {
+    if ( wp_is_mobile() && !is_admin() && !is_singular('session') && !is_page_template( 'page-enter-lesson.php' ) ) {
+        wp_redirect('/enter-lesson', 302);
+        exit;
+    }
+} );
+
+
+/**
+ * Login page restyle
+ */
+function my_login_stylesheet() {
+    wp_enqueue_style( 'custom-login', get_stylesheet_directory_uri() . '/assets/css/login.css' );
+    //wp_enqueue_script( 'custom-login', get_stylesheet_directory_uri() . '/style-login.js' );
+}
+add_action( 'login_enqueue_scripts', 'my_login_stylesheet' );
+
+function my_login_logo() { ?>
+    <style type="text/css">
+        #login h1 a, .login h1 a {
+            background-image: url(<?php echo get_stylesheet_directory_uri(); ?>/assets/img/logo.svg);
+            height:40px;
+            width:260px;
+            background-size: 260px 40px;
+            background-repeat: no-repeat;
+            padding-bottom: 20px;
+        }
+    </style>
+<?php }
+add_action( 'login_enqueue_scripts', 'my_login_logo' );

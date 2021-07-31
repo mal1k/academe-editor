@@ -19,7 +19,7 @@
             }
         },
         mounted() {
-            // axios.get('/wp-json/wp/v2/faculty?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+            // axios.get('/wp/v2/faculty?_wpnonce=' + wpApiSettings.nonce ).then(res => {
             //     console.log(res.data);
             //     // if (!res.data.error) {
             //     //
@@ -68,4 +68,4 @@
     .dark-wrap {
         color: #FFFFFF;
     }
-</style>
+</style> 

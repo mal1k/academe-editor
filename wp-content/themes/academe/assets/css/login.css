@@ -1,0 +1,47 @@
+/* Login page */
+
+body.login {
+    background: #131212;
+}
+body.login div#login * {
+    color: #FFFFFF;
+}
+body.login div#login {}
+body.login div#login h1 {}
+body.login div#login #login_error {
+    background: #212121;
+}
+body.login div#login h1 a {}
+body.login div#login .message {
+    background: #212121;
+}
+body.login div#login form#loginform {
+    background: #212121;
+    border-radius: 5px;
+}
+body.login div#login form#loginform p {}
+body.login div#login form#loginform p label {}
+body.login div#login form#loginform input {
+    background: #212121;
+}
+body.login div#login form#loginform input:focus {
+    border-color: #51ACFD;
+    box-shadow: 0 0 0 1px #51ACFD;
+}
+body.login div#login form#loginform input#user_login {}
+body.login div#login form#loginform input#user_pass {}
+body.login div#login form#loginform p.forgetmenot {}
+body.login div#login form#loginform p.forgetmenot input#rememberme {}
+body.login div#login form#loginform p.submit {}
+body.login div#login form#loginform p.submit input#wp-submit {
+    background: #51ACFD;
+}
+body.login div#login p#nav {}
+body.login div#login p#nav a:hover,
+body.login div#login p#backtoblog a:hover {
+    color: #51ACFD;
+}
+body.login div#login p#backtoblog {}
+body.login div#login p#backtoblog a {}
+
+/* Login page end */
