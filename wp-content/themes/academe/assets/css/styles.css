@@ -2557,3 +2557,6 @@ span.highlighted {
     color: #828282;
     cursor: pointer;
 }
+.hidden {
+    display: none;
+}
