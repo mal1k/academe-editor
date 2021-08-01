@@ -9,6 +9,15 @@
                 <input type="hidden" name="related_item" value="<?php echo $post->ID; ?>" />
 
                 <h3><?php the_title(); ?></h3>
+                <div class="">
+                    <div class="session-code">
+                        Lesson code: <span class="code" style="font-size: 52px; padding: 20px;">xxx-xxxx-xxx</span>
+                    </div>
+                    <div class="session-url" style="display: none">
+                        <span class="url"></span>
+                    </div>
+                    <div class="horisontal-line" style="margin-top: 15px;"></div>
+                </div>
                 <div class="flex-row items-center">
                     <div class="row-title"><?php _e('Type:', 'academe-theme'); ?></div>
                     <div class="row-data">
@@ -56,21 +65,47 @@
                         <textarea name="notes"></textarea>
                     </div>
                 </div>
-                <div class="flex-row items-center">
-                    <div class="row-title"><?php _e('Session URL:', 'academe-theme'); ?></div>
-                    <div class="row-data">
-                        <div class="session-url">
-                            <span class="url"><?php echo site_url() . '/sessions/' ?>xxx-xxxx-xxx</span>
-                            <?php icon('copy', 'copy hidden'); ?>
-                        </div>
+                <div class="flex-row items-center space-between">
+                    <div class="cancel secondary-btn">Cancel</div>
+
+                    <div class="buttons">
+                        <div class="start-now secondary-btn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></div>
+                        <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
-                <div class="horisontal-line"></div>
-                <div class="flex-row items-center space-between">
-                    <div class="start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced">Preview</div>
-                    <div class="buttons">
-                        <div class="cancel secondary-btn"><?php _e('Cancel', 'academe-theme'); ?></div>
-                        <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
+                <div class="sessionShare" id="sessionShare">
+                    <div class="shareList hidden">
+                    <div class="horisontal-line"></div>
+                        <div>
+                            <span style="font-size: 14px; margin: -10px 0 20px;">Sharing options</span>
+                        </div>
+                        <div class="flex-row">
+                            <div style="margin-left: 25px;">
+                                <span class="shareLink" ss="shareModalLink" id="shareModalLink" href=""><?php icon('copy-modal', 'copy'); ?><br>
+                                Copy link
+                                </span>
+                            </div>
+                            <div style="margin-left: 25px;">
+                                <span class="shareLink" id="whatsAppModalLink" href=""><?php icon('whatsapp-modal'); ?><br>
+                                WhatsApp
+                                </span>
+                            </div>
+                            <div style="margin-left: 25px;">
+                                <span class="shareLink" id="emailModalLink" href=""><?php icon('email-modal'); ?><br>
+                                Email
+                                </span>
+                            </div>
+                            <div style="margin-left: 25px;">
+                                <span class="shareLink" id="puzzleModalLink" href=""><?php icon('puzzle-modal'); ?><br>
+                                LTI
+                                </span>
+                            </div>
+                            <div style="margin-left: 25px;">
+                                <span class="shareLink" id="shareButtonLink" href=""><?php icon('share-modal'); ?><br>
+                                Share
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
