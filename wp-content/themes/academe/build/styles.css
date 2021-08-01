@@ -5838,3 +5838,7 @@ cursor: pointer;
 .hidden {
     display: none;
 }
+
+.shareLink {
+    cursor: pointer;
+}

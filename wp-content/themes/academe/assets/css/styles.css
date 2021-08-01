@@ -2560,3 +2560,7 @@ span.highlighted {
 .hidden {
     display: none;
 }
+
+.shareLink {
+    cursor: pointer;
+}
