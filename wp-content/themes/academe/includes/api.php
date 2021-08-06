@@ -85,6 +85,12 @@ add_action( 'rest_api_init', function() {
             return $array;
         }
     ] );
+
+    register_rest_route( 'academe/v1', '/get-movie-images/(?P<id>[a-zA-Z0-9-_]+)', array(
+		'methods'  => 'GET',
+		'callback' => 'movieImagesFromKaltura',
+	) );
+
 });
 
 function getMovieDataFromPost($movie_post) {
@@ -136,4 +142,17 @@ function getMovieDataFromPost($movie_post) {
             $array['description'] = $content;
             
         return $array;
+}
+
+function movieImagesFromKaltura( WP_REST_Request $request ) {
+    $kaltura_id = $request->get_param( 'id' );
+    $count = 3; // images amount
+    $time_step = 120; // in seconds
+
+    for ( $i = 1; $i <= $count; $i++ ) {
+        $images[] = get_movie_thumbnail($kaltura_id, 1920, 1080, 50, $time_step);
+        $time_step += $time_step;
+    }
+
+    return $images;
 }
