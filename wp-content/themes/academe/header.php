@@ -49,6 +49,9 @@
         <?php } ?>
         <?php if(is_user_logged_in() && function_exists('get_learndash_notifications_modal_template')) { ?>
             <div class="notification-btn ui dropdown">
+            <?php if ( $unread = learndash_notifications_unread_count_by_user() ) : ?>
+            <div style="width:24px; height: 24px; background: red; border-radius: 100px; color: white; text-align: center;"><?php echo $unread; ?></div>
+            <?php endif;?>
                 <img src="<?php echo get_template_directory_uri() . '/assets/img/notification.svg'; ?>" />
                 <div class="menu">
                     <div style="display: none" class="item"></div>
