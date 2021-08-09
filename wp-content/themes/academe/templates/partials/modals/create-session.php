@@ -1,4 +1,7 @@
 <?php if (is_user_logged_in()) { ?>
+    <?php
+    update_post_meta(get_the_ID(), 'lti-code-ncf-ddlo-drx', get_the_ID());
+    ?>
     <?php if (!is_user_in_role('student')) { ?>
         <div id="<?php echo $args['id']; ?>" class="modal ui start-session">
             <?php icon('cross', 'close'); ?>
@@ -11,7 +14,7 @@
                 <h3><?php the_title(); ?></h3>
                 <div class="">
                     <div class="session-code">
-                        Lesson code: <span class="code" style="font-size: 52px; padding: 20px;">xxx-xxxx-xxx</span>
+                        Lesson code: <span class="code" id="lessonCode" style="font-size: 52px; padding: 20px;">xxx-xxxx-xxx</span>
                     </div>
                     <div class="session-url" style="display: none">
                         <span class="url"></span>
@@ -52,7 +55,7 @@
                                 <div class="ui calendar datetime-selector">
                                     <div class="ui input right icon">
                                         <?php icon('calendar'); ?>
-                                        <input type="text" placeholder="Date/Time" name="schedule" />
+                                        <input type="text" placeholder="Date/Time" name="schedule" id="schedule"/>
                                     </div>
                                 </div>
                             </div>
@@ -100,6 +103,27 @@
                                 LTI
                                 </span>
                             </div>
+
+                            <script>
+                            jQuery('#puzzleModalLink').click(function(){
+                                event.preventDefault();
+                                jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + jQuery('#lessonCode').text() + '&id=<?php echo get_the_ID(); ?>&time=' + jQuery('#schedule').val(),{
+                                type: 'POST',
+                                processData: false,
+                                contentType: false,
+                                dataType: 'json',
+                                    success: (data)=>{
+                                        var copyText = "<?php echo get_home_url(); ?>/lti-movies?code=" + jQuery('#lessonCode').text();
+
+                                        navigator.clipboard.writeText(copyText).then(function() {
+                                            alert('Copied');
+                                        });
+                                        // showToast('Copied!', 'The LTI link was successfully copied to your clipboard.'); doesnt work
+                                    }
+                                })  
+                            })
+                            </script>
+
                             <div style="margin-left: 25px;">
                                 <span class="shareLink" id="shareButtonLink" href=""><?php icon('share-modal'); ?><br>
                                 Share
