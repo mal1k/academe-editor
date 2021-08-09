@@ -21,6 +21,7 @@
 <script src="/wp-includes/js/jquery/ui/mouse.min.js?ver=1.12.1"></script>
 <script src="/wp-includes/js/jquery/ui/sortable.min.js?ver=1.12.1"></script>
 <script src="/wp-content/plugins/sfwd-lms/includes/lib/wp-pro-quiz/js/jquery.ui.touch-punch.min.js?ver=0.2.2"></script>
+<script src="https://app.annoto.net/annoto-bootstrap.js"></script>
 
 <?php 
 $code = $_GET['code']; 
@@ -51,7 +52,7 @@ if ( $time < current_time('d/m/Y H:i') ) { ?>
     </div>
     <?php $client = get_kaltura_session(); ?>
     <script>
-        kWidget.embed({
+            kWidget.embed({
             targetId: "kaltura_player",
             wid: "_<?php print $partner_id; ?>",
             uiconf_id: "<?php echo $kalturaPlayerID; ?>",
@@ -76,5 +77,29 @@ if ( $time < current_time('d/m/Y H:i') ) { ?>
 else
     echo '<span style="color:white;">Wait for this date: ' . $time . "</span>";
 ?>
+
+<script>
+  // Application configuration
+  var config = {
+
+    /* Below are the only Mandatory configuration options */
+    clientId: '', /* set to your client id after registration. */
+    widgets: [
+      {
+        player: {
+          type:    'kaltura', /* type of the player */
+          element: 'kaltura_player' /* DOM element or id of the player */
+        },
+        timeline: {
+            overlayVideo: true
+        }
+      }
+    ],
+    demoMode: true, /* set to false when you have your clientId */
+
+  };
+
+  window.Annoto.boot(config);
+</script>
 
 <?php get_footer(); ?>
