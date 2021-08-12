@@ -33,10 +33,10 @@
                 </div>
                 <?php if(is_user_logged_in() && !is_user_in_role('student')) { ?>
                     <div class="movie-actions">
-                        <div class="create-lesson-btn">
+                        <a href="/lesson-editor?movie_id=<?php echo $post->ID; ?>" class="create-lesson-btn">
                             <?php icon('blue-plus', 'icon-white'); ?>
                             <span><?php _e('Create a Lesson', 'academe-theme'); ?></span>
-                        </div>
+                        </a>
                         <div class="actions-more ui dropdown link item dark">
                             <div class="icon-three-dots">
                                 <div></div><div></div><div></div>

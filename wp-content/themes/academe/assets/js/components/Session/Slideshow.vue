@@ -37,7 +37,7 @@
                 <template v-if="user_role === 'teacher'">
                     <div class="aspect-ratio-box">
                         <div class="aspect-ratio-box-inside">
-                            <template v-if="predefined_template.acf_fc_layout === 'template1'">
+                            <template v-if="this.store.slide_content.acf.pre_defined_template === 'template1'">
                                 <div class="slide-template-preview flex-builder">
                                     <div class="row h-30">
                                         <div class="col w-100 text-title"
@@ -79,7 +79,7 @@
                                     </div>
                                 </div>
                             </template>
-                            <template v-if="predefined_template.acf_fc_layout === 'template2'">
+                            <template v-if="this.store.slide_content.acf.pre_defined_template === 'template2'">
                                 <div class="slide-template-preview flex-builder">
                                     <div class="row h-30">
                                         <div class="col max-w-50"></div>
@@ -89,7 +89,7 @@
                                     </div>
                                 </div>
                             </template>
-                            <template v-if="predefined_template.acf_fc_layout === 'template3'">
+                            <template v-if="this.store.slide_content.acf.pre_defined_template === 'template3'">
                                 <div class="slide-template-preview flex-builder">
 
                                 </div>
@@ -140,7 +140,7 @@
                 return this.$store.state.LessonSlideshow;
             },
             predefined_template() {
-              return this.store.slide_content.acf.pre_defined_template[0];
+              return this.store.slide_content.acf[this.store.slide_content.acf.pre_defined_template];
             },
         },
         data() {

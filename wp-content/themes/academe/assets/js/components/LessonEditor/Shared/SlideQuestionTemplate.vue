@@ -1,5 +1,5 @@
 <template>
-   <div class="question-view" v-if="question_data.type != ''">
+   <div class="question-view" v-if="question_data && question_data.type != ''">
     <div class="question-view__body" v-if="question_data.type ==='Open' || question_data.type ==='Discussion'">
      <div class="question-view__text">
       {{question_data.description}}
@@ -40,10 +40,10 @@
       </ul>
      </div>
     </div>
-    <div class="question-view__footer">
+    <!--<div class="question-view__footer">
      <button class="question-view__link">Skip >></button>
      <button class="question-view__btn">Submit</button>
-    </div>
+    </div>-->
    </div>
 </template>
 
@@ -91,6 +91,7 @@
   line-height: 37px;
   position: relative;
   overflow-y: auto;
+  word-break: break-all;
  }
  .question-view__answer {
   padding: 30px 0 30px 30px;

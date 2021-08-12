@@ -77,6 +77,9 @@
                 </template>
                 <img v-else class="image-preview" :src="store.slides[$parent.activeSlideIndex].fields[property_name]">
             </el-upload>
+            <div v-if="store.slides[$parent.activeSlideIndex].fields[property_name] != null">
+                <button class="btn" @click="removeMedia()">Remove image</button>
+            </div>
         </div>
     </div>
 </template>
@@ -99,6 +102,11 @@
             },
         },
         methods: {
+
+            removeMedia() {
+                this.store.slides[this.$parent.activeSlideIndex].fields[this.property_name] = null;
+            },
+
             handleImageLoadSuccess(res, file) {
                 this.store.slides[this.$parent.activeSlideIndex].fields[this.property_name] = URL.createObjectURL(file.raw);
             },
@@ -218,5 +226,25 @@
     }
     .range-box .el-slider__button-wrapper {
         top: -17px;
+    }
+
+
+    .btn {
+        margin-top: 20px;
+        border: 1px solid #51acfd;
+        border-radius: 3px;
+        padding: 6px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        color: #51acfd;
+        font-weight: 600;
+        background-color: transparent;
+    }
+    .btn:hover {
+        background-color: #51acfd;
+        color: #fff;
     }
 </style>

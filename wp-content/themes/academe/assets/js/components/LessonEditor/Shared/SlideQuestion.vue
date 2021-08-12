@@ -191,13 +191,13 @@
            let firstAnswer = {text: '', value: ''};
            let falseTrueAnswer = [{text: 'True', value: ''},{text: 'False', value: ''}]
 
-            if(  this.store.active_question.type === 'Single Choice') {
+            /*if(  this.store.active_question.type === 'Single Choice') {
                   this.store.active_question.answers.push(singleAnswer);
-                }
-            if(  this.store.active_question.type === 'Multiple Choice' ||
+                }*/
+            /*if(  this.store.active_question.type === 'Multiple Choice' ||
                   this.store.active_question.type === 'Poll') {
                   this.store.active_question.answers.push(firstAnswer);
-                }
+                }*/
             if( this.store.active_question.type === 'True / False'){
               this.store.active_question.answers = falseTrueAnswer;
             } 

@@ -440,7 +440,7 @@ function fetch_search_results(){
     $searchResults = $elasticsearchPlugin->eSearch->searchEntry($searchParams, null);
 
     $filters_and = [];
-    $filters = ['faculty', 'subject', 'topic', 'genre'];
+    $filters = ['faculty', 'subject', 'topic', 'genre', 'grade'];
     foreach ($filters as $filter)
     {
         if ($_GET[$filter]) {

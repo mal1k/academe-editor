@@ -54,33 +54,33 @@ function continue_watching_list($filter = true) {
 /* Continue editing lesson list start */
 function continue_editing_lesson_list() {
     $lessons = ld_lesson_list(['post_status' => ['draft'], 'author__in' => [get_current_user_id()], 'array' => true]); ?>
-    <section class="slider-strip">
+   <!-- <section class="slider-strip">
         <div class="strip-top">
-            <h2 class="strip-heading"><?php _e('Continue editing', 'academe-theme'); ?></h2>
+            <h2 class="strip-heading"><?php //_e('Continue editing', 'academe-theme'); ?></h2>
         </div>
         <div class="swiper-container swiper-strip">
             <div class="swiper-wrapper">
                 <?php
-                if ($lessons) {
+               /* if ($lessons) {
                     global $post;
                     foreach ($lessons as $post) {
                         setup_postdata($post);
                         get_template_part('templates/partials/movie-block', 'null');
                     }
                     wp_reset_postdata(); ?>
-                <?php } ?>
+                <?php }*/ ?>
                 <a href="/wp-admin/post-new.php?post_type=sfwd-lessons" class="swiper-slide movie-block create-new-lesson">
                     <div class="slide-info">
-                        <div class="icon-wrap"><?php icon('blue-plus', 'icon-white'); ?></div>
-                        <span class="action-text"><?php _e('Create new', 'academe-theme'); ?></span>
+                        <div class="icon-wrap"><?php //icon('blue-plus', 'icon-white'); ?></div>
+                        <span class="action-text"><?php //_e('Create new', 'academe-theme'); ?></span>
                     </div>
                 </a>
             </div>
-            <!-- Add Arrows -->
-            <div class="swiper-button-next"></div>
+            Add Arrows -->
+           <!-- <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
-    </section>
+    </section>-->
 <?php
 }
 /* Continue editing lesson list end */
@@ -88,33 +88,33 @@ function continue_editing_lesson_list() {
 /* Continue editing course list start */
 function continue_editing_course_list() {
     $courses = ld_course_list(['post_status' => ['draft'], 'author__in' => [get_current_user_id()], 'array' => true]); ?>
-    <section class="slider-strip">
+    <!--<section class="slider-strip">
         <div class="strip-top">
-            <h2 class="strip-heading"><?php _e('Continue editing', 'academe-theme'); ?></h2>
+            <h2 class="strip-heading"><?php //_e('Continue editing2', 'academe-theme'); ?></h2>
         </div>
         <div class="swiper-container swiper-strip">
             <div class="swiper-wrapper">
                 <?php
-                if ($courses) {
+                /*if ($courses) {
                     global $post;
                     foreach ($courses as $post) {
                         setup_postdata($post);
                         get_template_part('templates/partials/movie-block', 'null');
                     }
                     wp_reset_postdata(); ?>
-                <?php } ?>
+                <?php }*/ ?>
                 <a href="/wp-admin/post-new.php?post_type=sfwd-courses" class="swiper-slide movie-block create-new-lesson">
                     <div class="slide-info">
-                        <div class="icon-wrap"><?php icon('blue-plus', 'icon-white'); ?></div>
-                        <span class="action-text"><?php _e('Create new', 'academe-theme'); ?></span>
+                        <div class="icon-wrap"><?php //icon('blue-plus', 'icon-white'); ?></div>
+                        <span class="action-text"><?php //_e('Create new', 'academe-theme'); ?></span>
                     </div>
                 </a>
             </div>
-            <!-- Add Arrows -->
-            <div class="swiper-button-next"></div>
+            Add Arrows -->
+            <!--<div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
-    </section>
+    </section>-->
     <?php
 }
 /* Continue editing lesson list end */

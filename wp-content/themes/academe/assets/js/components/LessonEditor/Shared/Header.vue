@@ -10,7 +10,7 @@
         </div>
         <div class="right-part">
 
-            <el-button type="default" size="medium">Save</el-button>
+            <el-button type="default" size="medium" @click="saveLesson()">Save</el-button>
 
             <el-button type="primary" size="medium"
                 :disabled="!store.meta.accept"
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+    import saveLessonService from "../../../save-lesson-service";
+
     export default {
         name: "Header",
         computed: {
@@ -40,6 +42,14 @@
                 return this.$store.state.LessonEditor;
             }
         },
+        mounded() {
+
+        },
+        methods: {
+            saveLesson() {
+                saveLessonService.initSave();
+            }
+        }
     }
 </script>
 

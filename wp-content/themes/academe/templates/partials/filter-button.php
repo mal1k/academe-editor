@@ -34,6 +34,28 @@
                     </div>
                 </div>
             <?php } ?>
+
+            <?php if (in_array('grade', $args['filters'])) { ?>
+                <div class="filter-row-block">
+                    <div>Grades</div>
+                    <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="grade">
+                        <input name="grade" type="hidden" value="<?php echo (isset($_GET['grade'])) ? $_GET['grade'] : ''; ?>" >
+                        <span class="default text">All</span>
+                        <?php icon('chevron-bold', 'with-rotate'); ?>
+                        <div class="menu">
+                            <div class="menu-body">
+                                <?php $terms = get_terms( 'grade', [
+                                    'hide_empty' => true,
+                                ] );
+                                foreach ($terms as $term) { ?>
+                                    <div class="item" data-value="<?php echo $term->slug; ?>"><?php echo $term->name; ?></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+
             <?php if (in_array('subject', $args['filters'])) { ?>
                 <div class="filter-row-block">
                     <div>Subject</div>

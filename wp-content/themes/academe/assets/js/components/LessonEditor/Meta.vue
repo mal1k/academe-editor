@@ -49,7 +49,7 @@
                                     v-for="tag in tags"
                                     :key="tag.id"
                                     :label="tag.name"
-                                    :value="tag.slug">
+                                    :value="tag.id">
                             </el-option>
                         </el-select>
                     </td>
@@ -72,7 +72,7 @@
                                     v-for="subject in subjects"
                                     :key="subject.id"
                                     :label="subject.name"
-                                    :value="subject.slug">
+                                    :value="subject.id">
                             </el-option>
                         </el-select>
                     </td>
@@ -94,16 +94,16 @@
                                     v-for="topic in topics"
                                     :key="topic.id"
                                     :label="topic.name"
-                                    :value="topic.slug">
+                                    :value="topic.id">
                             </el-option>
                         </el-select>
                     </td>
                 </tr>
                 <tr>
-                    <th>Faculty</th>
+                    <th>Grade</th>
                     <td>
                         <el-select
-                                v-model="store.meta.faculties"
+                                v-model="store.meta.grades"
                                 filterable
                                 clearable
                                 multiple
@@ -113,10 +113,10 @@
                                 placeholder="All"
                                 no-data-text="No data">
                             <el-option
-                                    v-for="faculty in faculties"
-                                    :key="faculty.id"
-                                    :label="faculty.name"
-                                    :value="faculty.slug">
+                                    v-for="grade in grades"
+                                    :key="grade.id"
+                                    :label="grade.name"
+                                    :value="grade.id">
                             </el-option>
                         </el-select>
                     </td>
@@ -136,8 +136,28 @@
                 </div>
                 <img v-else :src="store.meta.thumbnail" class="cover-image" />
             </div>
-            <template v-if="pixabay_suggestions.length">
+
+            
+
+                        
+            <template v-if="store.kaltura_slice.length">
                 <h2 class="cover-subtitle">Suggestions</h2>
+                <div class="suggestions-list three-per-line">
+                    <img v-for="(image, index) in store.kaltura_slice.slice(0,3)"
+                         :key="index"
+                         :src="image"
+                         @click="store.meta.thumbnail = image"
+                         :class="{'selected' : store.meta.thumbnail === image}"
+                    />
+                </div>
+            </template>
+
+
+            
+                
+
+            <template v-if="pixabay_suggestions.length">
+                <h2 class="cover-subtitle">From Library</h2>
                 <div class="suggestions-list three-per-line">
                     <img v-for="image in pixabay_suggestions.slice(0,3)"
                          :key="image.id"
@@ -190,7 +210,10 @@
             this.loadSubjects();
             this.loadTopics();
             this.loadFaculties();
+            this.loadGrades();
             this.getPixabaySuggestions(this.store.meta.title);
+            this.loadMovieMeta();
+            this.getKalturaSuggestions();
         },
         data() {
             return {
@@ -198,8 +221,10 @@
                 subjects: [],
                 topics: [],
                 faculties: [],
+                grades: [],
                 tags: [],
                 pixabay_suggestions: [],
+                kaltura_suggestions: [],
                 extended_search_pixabay_modal: false,
                 suggestions_search: '',
             }
@@ -220,10 +245,15 @@
                     this.faculties = this.mapTerms(res.data);
                 });
             },
+            loadGrades() {
+                axios.get('/wp/v2/gradys?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                    this.grades = this.mapTerms(res.data);
+                });
+            },
             loadTags(query) {
                 if (query !== '') {
                     this.loading = true;
-                    axios.get('wp/v2/ld_course_tag?per_page=20&orderby=count&order=desc&search=' + query + '&_wpnonce=' + wpApiSettings.nonce).then(res => {
+                    axios.get('/wp/v2/ptag?per_page=20&orderby=count&order=desc&search=' + query + '&_wpnonce=' + wpApiSettings.nonce).then(res => {
                         this.tags = this.mapTerms(res.data);
                         this.loading = false;
                     });
@@ -231,26 +261,63 @@
                     this.tags = [];
                 }
             },
+            loadMovieMeta() {
+                var _this = this;
+                setTimeout(function(){
+                    if (_this.store.movie_id) {
+                        axios.get('/wp/v2/movie/'+_this.store.movie_id+'?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                            _this.store.meta.title = res.data.title.rendered;
+                            _this.store.meta.description = res.data.content.rendered;
+
+                            // This image is hardcoded. Please change it:
+                            _this.store.meta.thumbnail = 'https://cdnapisec.kaltura.com/p/2538842/thumbnail/entry_id/'+res.data.acf.kaltura_id+'/width/280/height/175/type/1/quality/45';
+                            // Add here tags, subjects, topics, faculties, grades
+                        });
+                    }
+                }, 500);
+            },
             debounceSuggestions:
                 debounce(function (e) {
                     this.getPixabaySuggestions(this.store.meta.title)
+                    //this.getKalturaSuggestions(this.store.meta.title)
                 }, 500),
             debounceSuggestionsModal:
                 debounce(function (e) {
                     this.getPixabaySuggestions(this.suggestions_search)
+                    //this.getKalturaSuggestions(this.suggestions_search)
                 }, 500),
             getPixabaySuggestions(query) {
                 query = encodeURI(query + ' | (' + query.replaceAll(' ', '|') + ')');
-                axios.get('https://pixabay.com/api/?key=22034857-21d1cd8a83ad53f9ef50181a1&q='+query+'&image_type=photo,illustration&safesearch=true').then(res => {
-                   if (res.data.hits) {
-                       this.pixabay_suggestions = res.data.hits.map(image => ({
-                           id: image.id,
-                           preview: image.previewURL,
-                           full: image.largeImageURL,
-                       }));
-                   }
+                fetch('https://pixabay.com/api/?key=22034857-21d1cd8a83ad53f9ef50181a1&q='+query+'&image_type=photo,illustration&safesearch=true')
+                .then( response => {
+                   return response.json();
+                }).then((data) => {
+                    if (data.hits) {
+                        this.pixabay_suggestions = data.hits.map(image => ({
+                            id: image.id,
+                            preview: image.previewURL,
+                            full: image.largeImageURL,
+                        }));
+                    }
                 });
             },
+
+            getKalturaSuggestions() {
+                var _this = this;
+                setTimeout(function(){
+                    if (_this.store.movie_id) {
+                        axios.get('/wp/v2/movie/'+_this.store.movie_id+'?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                           _this.kaltura_id = res.data.acf.kaltura_id;
+                           axios.get('/academe/v1/get-movie-images/'+_this.kaltura_id+'').then(res =>  
+                            { _this.store.kaltura_slice = res.data;
+                            console.log (_this.store.kaltura_slice);
+                            console.log ('+');
+                            });
+                        });
+                    }
+                }, 300);
+            },
+
             mapTerms(terms) {
                 return terms.map(term => ({
                     id: term.id,
