@@ -6,6 +6,9 @@ axios.defaults.headers.common["X-WP-Nonce"] = window.wpApiSettings.nonce;
 
 export default {
     initSave() {
+
+        alert('abc');
+
         let storage = store.state.LessonEditor;
 
         console.log('lesson save initialized');

@@ -2,6 +2,9 @@
 /*
 !wp-content/
 
+# ignore webpack build files
+wp-content/themes/academe/build/
+
 # ignore everything in the "wp-content" directory, except:
 # mu-plugins, plugins, and themes directories
 wp-content/*
