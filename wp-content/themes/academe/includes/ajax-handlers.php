@@ -315,6 +315,44 @@ function update_my_list() {
     wp_die();
 }
 
+add_action("wp_ajax_create_lesson_session" , "create_lesson_session");
+add_action('wp_ajax_nopriv_create_lesson_session', 'create_lesson_session');
+function create_lesson_session() {
+    if (is_user_logged_in()) {
+
+        $post = json_decode(file_get_contents('php://input'), true);
+        $lesson_id = $post['lesson_id'];
+
+        $session_data = array(
+            'post_title'    => sanitize_text_field( $_POST['session_title'] ),
+            'post_type'     => 'session',
+            'post_status'   => 'publish',
+            'post_content'  => '',
+            'post_author'   => get_current_user_id(),
+            'post_name'     => generateSessionId(),
+            'comment_status' => 'closed',
+        );
+        $post_id = wp_insert_post( $session_data );
+
+        if ($post_id) {
+            update_field( "based_on", $lesson_id, $post_id );
+            update_field( "session_type", 'lesson-editor', $post_id );
+
+            $session_starts = current_time('Y-m-d H:i:s');
+            update_field( "session_starts", $session_starts, $post_id );
+
+            $session_ends = date( 'Y-m-d H:i:s', strtotime( $session_starts ) + 3600 ); // 3600 seconds = 1 hours
+            update_field( "session_ends", $session_ends, $post_id ); //1 hour after session start
+
+            echo json_encode(['success' => get_post_permalink($post_id)]);
+        } else {
+            echo json_encode(['error' => __('Something went wrong', 'academe-theme')]);
+        }
+
+    }
+    wp_die();
+}
+
 add_action("wp_ajax_create_session" , "create_session");
 add_action('wp_ajax_nopriv_create_session', 'create_session');
 function create_session() {

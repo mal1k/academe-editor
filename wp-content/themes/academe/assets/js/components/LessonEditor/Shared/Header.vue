@@ -25,7 +25,7 @@
                     <a href="/"><el-dropdown-item>Back To Academe</el-dropdown-item></a>
                     <el-dropdown-item v-if="store.active_page == 'slides'" @click.native="store.active_page='meta'">Edit Metadata</el-dropdown-item>
                     <el-dropdown-item v-if="store.active_page == 'meta'" @click.native="store.active_page='slides'">Edit Slides</el-dropdown-item>
-                    <el-dropdown-item>Preview</el-dropdown-item>
+                    <a href="#" target="_blank" id="previewButton"><el-dropdown-item>Preview</el-dropdown-item></a>
                 </el-dropdown-menu>
             </el-dropdown>
         </div>

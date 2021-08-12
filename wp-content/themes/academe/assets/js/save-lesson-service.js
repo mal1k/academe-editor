@@ -5,14 +5,30 @@ axios.defaults.baseURL = window.wpApiSettings.root;
 axios.defaults.headers.common["X-WP-Nonce"] = window.wpApiSettings.nonce;
 
 export default {
-    initSave() {
-
-        alert('abc');
+    async initSave () {
 
         let storage = store.state.LessonEditor;
-
         console.log('lesson save initialized');
+
         console.log(store.state.LessonEditor);
+
+        console.log(ajaxurl + "?action=create_lesson_session");
+
+        const result = await fetch(ajaxurl + "?action=create_lesson_session", {
+            method: "POST",
+            body: JSON.stringify({lesson_id: store.state.LessonEditor.lesson_id})
+        });
+
+        const serverResp = await result.json();
+        if (!serverResp.error) {
+            const element = jQuery("#previewButton");
+            element.attr(
+                "href",
+                serverResp.success
+            );
+        } else {
+            alert(serverResp.error);
+        };
 
         const saveCourse = this.saveCourseMeta();
         // Update ACF fields:
