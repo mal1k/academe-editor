@@ -3,12 +3,12 @@
         <section id="movieFilters" class="filters-section">
             <h1>
                 <?php post_type_archive_title( '', true ); ?>
-                <?php if (isset($_GET['faculty']) || isset($_GET['subject']) || isset($_GET['topic']) || isset($_GET['genre'])) { ?>
+                <?php if (isset($_GET['faculty']) || isset($_GET['grade']) || isset($_GET['subject']) || isset($_GET['topic']) || isset($_GET['genre'])) { ?>
                     <?php echo ': '; _e("Filtered results", "academe-theme"); ?>
                 <?php } ?>
             </h1>
             <?php get_template_part('templates/partials/filter-button', 'null', [
-                'filters' => ['faculty', 'subject', 'topic', 'genre']
+                'filters' => ['faculty', 'grade', 'subject', 'topic', 'genre']
             ]); ?>
         </section>
         <?php $slides = get_field('movie_slides', 'option');

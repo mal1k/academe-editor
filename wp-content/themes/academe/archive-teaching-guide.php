@@ -5,7 +5,7 @@
                 <?php post_type_archive_title( '', true ); ?>
             </h1>
             <?php get_template_part('templates/partials/filter-button', 'null', [
-                'filters' => ['faculty', 'subject', 'topic']
+                'filters' => ['faculty', 'grade', 'subject', 'topic']
             ]); ?>
             <?php if (0) { //works incorrect after adding search.php template ?>
             <div class="free-search-wrap">

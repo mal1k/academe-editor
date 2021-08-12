@@ -2557,10 +2557,6 @@ span.highlighted {
     color: #828282;
     cursor: pointer;
 }
-.hidden {
+.author-teacher #search {
     display: none;
-}
-
-.shareLink {
-    cursor: pointer;
 }

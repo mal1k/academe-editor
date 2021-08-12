@@ -12,6 +12,11 @@
         name: "LessonEditor",
         props: {
             post: Number,
+            movie: {
+                type: Number,
+                required: false,
+                default: null
+            }
         },
         data() {
             return {
@@ -19,14 +24,8 @@
             }
         },
         mounted() {
-            // axios.get('/wp/v2/faculty?_wpnonce=' + wpApiSettings.nonce ).then(res => {
-            //     console.log(res.data);
-            //     // if (!res.data.error) {
-            //     //
-            //     // } else {
-            //     //
-            //     // }
-            // });
+            this.store.lesson_id = this.post;
+            this.store.movie_id = this.movie;
         },
         computed: {
             store() {

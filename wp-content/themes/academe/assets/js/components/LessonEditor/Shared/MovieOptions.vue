@@ -21,6 +21,11 @@
             <button class="movie-item__link" @click="$emit('replace-click')">
               Replace
             </button>
+
+            <button class="movie-item__link" @click="$emit('remove-click')">
+              Remove
+            </button>
+
           </div>
         </div>
       </div>
@@ -148,5 +153,8 @@ export default {
   text-decoration-line: underline;
   color: #51acfd;
   cursor: pointer;
+  margin-right: 10px;
 }
+
+
 </style> 

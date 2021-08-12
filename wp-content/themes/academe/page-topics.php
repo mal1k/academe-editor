@@ -3,14 +3,14 @@
         <section id="bySubjectFilters" class="filters-section">
             <h1><?php the_title(); ?></h1>
             <?php get_template_part('templates/partials/filter-button', 'null', [
-                'filters' => ['faculty', 'subject', 'topic']
+                'filters' => ['faculty', 'grade', 'subject', 'topic']
             ]); ?>
         </section>
 
         <?php if (is_user_logged_in() && !is_user_in_role('student')) { ?>
-            <?php if (isset($_GET['faculty']) || isset($_GET['subject']) || isset($_GET['topic'])) {
+            <?php if (isset($_GET['faculty']) || isset($_GET['grade']) || isset($_GET['subject']) || isset($_GET['topic'])) {
 
-                $filter_by = ['faculty', 'subject', 'topic'];
+                $filter_by = ['faculty', 'grade', 'subject', 'topic'];
                 $tax_query = [
                     'relation' => 'OR',
                 ];

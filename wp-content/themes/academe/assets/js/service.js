@@ -12,6 +12,14 @@ export default {
       console.error("Failed to fetch my movies", err);
     }
   },
+  /*async getKatluraSuggestion() {
+    try {
+      const response = await axios.get(`/academe/v1/get-movie-images/${kaltura_id}`);
+      return response.data;
+    } catch (err) {
+      console.error("Failed to fetch my movies by kaltura ID", err);
+    }
+  },*/
   async getMovieMeta(id) {
     try {
       const response = await axios.get(`/academe/v1/movies/${id}`);

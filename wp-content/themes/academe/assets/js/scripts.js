@@ -211,11 +211,12 @@ jQuery(document).ready(function($) {
                     str = response.success
                     newstr = str.split('/')
                     sessionCode = newstr[4]
+                    //$('#'+modal+'.start-session.modal .session-url .copy').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
                     $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');
-
                     _this.attr('href', response.success).text('Go to session');
                     copySessionLink(modal);
+                    //$('.modal.ui.start-session').modal('hide');
                 } else {
                     _this.addClass('start-now');
                     showToast('Error', response.error);
@@ -223,6 +224,7 @@ jQuery(document).ready(function($) {
 
             }
         });
+
     });
 
     $("input[name=session_type]").on('change', function () {

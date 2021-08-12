@@ -85,6 +85,136 @@ add_action( 'rest_api_init', function() {
             return $array;
         }
     ] );
+
+    register_rest_route( 'academe/v1', '/create_new_step', [
+        'methods'  => 'POST',
+        'callback' => function($data) {
+
+            /**
+             * <This is how LearnDash save entities from admin side>
+             * The code partially from: wp-content/plugins/sfwd-lms/includes/admin/classes-builders/class-learndash-admin-course-builder-metabox.php
+             * Method name: learndash_builder_selector_step_new()
+             */
+
+            $parameters = $data->get_params();
+
+            if ($parameters['course_id']) {
+                $title = 'Course ' . $parameters['course_id'];
+                if ($parameters['post_type'] === 'sfwd-lessons') {
+                    $title .= ' / Lesson ' . time();
+                } else if ($parameters['post_type'] === 'sfwd-quiz') {
+                    $title .= ' / Lesson ' . $parameters['lesson_id'] . ' / Quiz ' . time();
+                } else if ($parameters['post_type'] === 'sfwd-question') {
+                    $title .= ' / Lesson ' . $parameters['lesson_id'] . ' / Quiz ' . $parameters['quiz_id'] . ' / Question ' . time();
+                }
+                $post_args = array(
+                    'post_type'    => esc_attr( $parameters['post_type'] ),
+                    'post_status'  => 'publish',
+                    'post_title'   => $title,
+                    'post_content' => '',
+                );
+                if ( 'sfwd-question' === $parameters['post_type'] ) {
+                    $post_args['action'] = 'new_step';
+                }
+
+                $new_post_id = wp_insert_post( $post_args );
+
+                if ( $new_post_id ) {
+                    global $wpdb;
+                    /**
+                     * We have to set the guid manually because the one assigned within wp_insert_post is non-unique.
+                     * See LEARNDASH-3853
+                     */
+                    $wpdb->update(
+                        $wpdb->posts,
+                        array(
+                            'guid' => add_query_arg(
+                                array(
+                                    'post_type' => $parameters['post_type'],
+                                    'p'         => $new_post_id,
+                                ),
+                                home_url()
+                            ),
+                        ),
+                        array( 'ID' => $new_post_id )
+                    );
+
+                    if ( 'sfwd-quiz' === $parameters['post_type'] ) {
+
+                        $quiz_mapper = new WpProQuiz_Model_QuizMapper();
+                        $quiz_pro    = new WpProQuiz_Model_Quiz();
+                        $quiz_pro->setName( $post_args['post_title'] );
+                        $quiz_pro->setText( 'AAZZAAZZ' );
+                        $quiz_pro    = $quiz_mapper->save( $quiz_pro );
+                        $quiz_pro_id = $quiz_pro->getId();
+                        $quiz_pro_id = absint( $quiz_pro_id );
+                        learndash_update_setting( $new_post_id, 'quiz_pro', $quiz_pro_id );
+
+                        // Set the 'View Statistics on Profile' for the new quiz.
+                        update_post_meta( $new_post_id, '_viewProfileStatistics', 1 );
+
+                        // Associate quiz with lesson
+                        learndash_update_setting( $new_post_id, 'lesson', absint( $parameters['lesson_id'] ) );
+                    }
+
+                    if ( 'sfwd-question' === $parameters['post_type'] ) {
+
+                        $question_pro_id = learndash_update_pro_question( 0, $post_args );
+                        if ( ! empty( $question_pro_id ) ) {
+                            update_post_meta( $new_post_id, 'question_pro_id', absint( $question_pro_id ) );
+                            learndash_proquiz_sync_question_fields( $new_post_id, $question_pro_id );
+                        }
+
+                        // Associate question with quiz
+                        learndash_update_setting( $new_post_id, 'quiz', absint( $parameters['quiz_id'] ) );
+                        update_post_meta( $new_post_id, 'quiz_id', absint( $parameters['quiz_id'] ) );
+
+                        update_post_meta( $parameters['quiz_id'], 'ld_quiz_questions', [$new_post_id => $question_pro_id] );
+                    }
+
+                    // Associate current post type with course
+                    learndash_update_setting( $new_post_id, 'course', absint( $parameters['course_id'] ) );
+                }
+
+            }
+
+            return $new_post_id ?? null;
+        }
+    ]);
+
+    register_rest_route( 'academe/v1', '/default-quiz-settings', [
+        'methods'  => 'POST',
+        'callback' => function($data) {
+            $parameters = $data->get_params();
+
+            if ($parameters['quiz_id']) {
+                global $wpdb;
+
+                $pro_quiz_id = get_post_meta( $parameters['quiz_id'], 'quiz_pro_id', true );
+
+                $wpdb->update( 'wp_learndash_pro_quiz_master',
+                    [
+                        'btn_restart_quiz_hidden'       => true,
+                        'btn_view_question_hidden'      => true,
+                        'autostart'                     => true,
+                        'quiz_run_once'                 => true,
+                        'quiz_run_once_type'            => 1,
+                    ],
+                    [ 'ID' => $pro_quiz_id ],
+                    [ '%d', '%d',  '%d', '%d', '%d' ],
+                    [ '%d' ]
+                );
+
+            }
+
+            return json_encode(['status' => 'success']);
+        }
+    ] );
+
+    register_rest_route( 'academe/v1', '/get-movie-images/(?P<id>[a-zA-Z0-9-_]+)', array(
+		'methods'  => 'GET',
+		'callback' => 'movieImagesFromKaltura',
+	) );
 });
 
 function getMovieDataFromPost($movie_post) {
@@ -137,3 +267,16 @@ function getMovieDataFromPost($movie_post) {
             
         return $array;
 }
+
+        function movieImagesFromKaltura( WP_REST_Request $request ) {
+            $kaltura_id = $request->get_param( 'id' );
+            $count = 3; // images amount
+            $time_step = 120; // in seconds
+
+            for ( $i = 1; $i <= $count; $i++ ) {
+                $images[] = get_movie_thumbnail($kaltura_id, 1920, 1080, 50, $time_step);
+                $time_step += $time_step;
+            }
+
+            return $images;
+        }

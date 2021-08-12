@@ -5,12 +5,13 @@
 import service from '../../service';
 
 const state = () => ({
-    active_page: 'slides', //meta
+    lesson_id: null,
+    active_page: 'meta', //meta or slides
     active_slide: null,
     active_video: null,
     active_block_meta: null,
     meta: {
-        title: 'Some title',
+        title: 'Summer vibes',
         description: 'Some description',
         tags: null,
         subjects: null,
@@ -28,6 +29,7 @@ const state = () => ({
     kaltura_config: null,
     active_question: null,
     view_question: null,
+    kaltura_slice: [], 
     questions: [],
 });
 

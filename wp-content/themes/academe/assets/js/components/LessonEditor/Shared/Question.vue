@@ -1,10 +1,10 @@
 <template>
     <div>
      <div class="row-view">
-       <div v-if="store.active_question.addQuestion != false" class="btn" @click="saveQuestion()">
+       <div v-if="store.active_question.addQuestion != false" class="btn" @click="saveQuestion('create')">
          <span>Save question</span>
        </div>
-       <div v-else class="btn" @click="store.active_question = null">
+       <div v-else class="btn" @click="saveQuestion('update')">
          <span>Change question</span>
        </div>
      </div>
@@ -59,8 +59,8 @@
             <input  type="radio" 
                     class="answer-check" 
                     name="answer"
-                    value="false"
-                    v-model="store.active_question.checkedItems[index]">
+                    :value="index"
+                    v-model="store.active_question.correctAnswerIndex">
             <el-dropdown trigger="click" class="more-actions">
                 <img
                   src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwKSI+CjxwYXRoIGQ9Ik0xMC4wMDAxIDQuNDQ0NDhDMTEuMjI3NCA0LjQ0NDQ4IDEyLjIyMjMgMy40NDk1NSAxMi4yMjIzIDIuMjIyMjRDMTIuMjIyMyAwLjk5NDkzMSAxMS4yMjc0IDAgMTAuMDAwMSAwQzguNzcyNzYgMCA3Ljc3NzgzIDAuOTk0OTMxIDcuNzc3ODMgMi4yMjIyNEM3Ljc3NzgzIDMuNDQ5NTUgOC43NzI3NiA0LjQ0NDQ4IDEwLjAwMDEgNC40NDQ0OFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMC4wMDAxIDEyLjIyMjhDMTEuMjI3NCAxMi4yMjI4IDEyLjIyMjMgMTEuMjI3OSAxMi4yMjIzIDEwLjAwMDZDMTIuMjIyMyA4Ljc3MzI1IDExLjIyNzQgNy43NzgzMiAxMC4wMDAxIDcuNzc4MzJDOC43NzI3NiA3Ljc3ODMyIDcuNzc3ODMgOC43NzMyNSA3Ljc3NzgzIDEwLjAwMDZDNy43Nzc4MyAxMS4yMjc5IDguNzcyNzYgMTIuMjIyOCAxMC4wMDAxIDEyLjIyMjhaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTAuMDAwMSAyMC4wMDAxQzExLjIyNzQgMjAuMDAwMSAxMi4yMjIzIDE5LjAwNTIgMTIuMjIyMyAxNy43Nzc5QzEyLjIyMjMgMTYuNTUwNiAxMS4yMjc0IDE1LjU1NTcgMTAuMDAwMSAxNS41NTU3QzguNzcyNzYgMTUuNTU1NyA3Ljc3NzgzIDE2LjU1MDYgNy43Nzc4MyAxNy43Nzc5QzcuNzc3ODMgMTkuMDA1MiA4Ljc3Mjc2IDIwLjAwMDEgMTAuMDAwMSAyMC4wMDAxWiIgZmlsbD0id2hpdGUiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K"
@@ -227,6 +227,8 @@
 </template>
 
 <script>
+    import axios from "axios";
+
     export default {
         name: "Question",
         props: {
@@ -264,11 +266,68 @@
          toggleAdvanced(){
           this.showAdvanced = !this.showAdvanced
          },
-         saveQuestion(){
-          let newQuestion = this.store.active_question;
-          this.store.questions.push(newQuestion);
-          this.store.active_question = null;
-          console.log(this.store.questions)
+         saveQuestion(action){ // action: create/update
+            let newQuestion = this.store.active_question;
+
+            // Prepare question data to save:
+            var answer_data = [];
+            var answer_type = "";
+            switch (newQuestion.type) {
+                case "Single Choice":
+                    answer_type = 'single';
+                    newQuestion.answers.forEach((answer, index) => {
+                        let answer_params = {
+                            _answer: answer.text,
+                            _correct: index === newQuestion.correctAnswerIndex,
+                            _graded: "1",
+                            _gradedType: "text",
+                            _gradingProgression: "not-graded-none",
+                            _html: false,
+                            _points: (index === newQuestion.correctAnswerIndex) ? parseInt(newQuestion.score) : 0,
+                            _sortString: "",
+                            _sortStringHtml: false,
+                            _type: "answer",
+                        };
+                        answer_data.push(answer_params);
+                    });
+                    break;
+                case "Open":
+                    answer_type = 'essay';
+                    let answer_params = {
+                        _answer: "",
+                        _correct: false,
+                        _graded: "1",
+                        _gradedType: "text",
+                        _gradingProgression: "not-graded-none",
+                        _html: false,
+                        _points: parseInt(newQuestion.score),
+                        _sortString: "",
+                        _sortStringHtml: false,
+                        _type: "answer",
+                    };
+                    answer_data.push(answer_params);
+                    break;
+            }
+
+            // Save question data (and answers)
+            axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
+                _quizId: newQuestion.quiz_id,
+                _question: newQuestion.description,
+                _answerData: answer_data,
+                _answerType: answer_type,
+                _points: parseInt(newQuestion.score),
+            });
+
+             // Update ACF fields (show at):
+             axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
+                 fields: {
+                     show_at: newQuestion.start_time,
+                 }
+             });
+            if(action === 'create') {
+                this.store.questions.push(newQuestion);
+            }
+            this.store.active_question = null;
          },
          changeAnswers() {
            this.store.active_question.answers = [];

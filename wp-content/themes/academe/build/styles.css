@@ -5835,10 +5835,3 @@ cursor: pointer;
     background-color: transparent;
     border: 2px solid #fff;
 }
-.hidden {
-    display: none;
-}
-
-.shareLink {
-    cursor: pointer;
-}

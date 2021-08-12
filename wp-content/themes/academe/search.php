@@ -13,7 +13,7 @@
                 </form>
             </div>
             <?php get_template_part('templates/partials/filter-button', 'null', [
-                'filters' => ['faculty', 'subject', 'topic'],
+                'filters' => ['faculty', 'grade', 'subject', 'topic'],
                 'button_text' => __('Advanced<br> Search', 'academe-theme'),
                 'apply_async' => true,
             ]); ?>

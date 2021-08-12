@@ -319,6 +319,41 @@ function create_taxonomy()
     ];
     register_taxonomy( "subject", [ "sfwd-lessons", "sfwd-courses", "movie", "teaching-guide" ], $args );
 
+
+
+    /**
+     * Taxonomy: Post Tag.
+     */
+
+    $labels = [
+        "name" => __( "Tags", "academe-theme" ),
+        "singular_name" => __( "Tag", "academe-theme" ),
+        "choose_from_most_used" => __( "Choose from the most used tags", "academe-theme" ),
+        "separate_items_with_commas" => __( "Separate tags with commas", "academe-theme" ),
+    ];
+
+    $args = [
+        "label" => __( "Tags", "academe-theme" ),
+        "labels" => $labels,
+        "public" => true,
+        "publicly_queryable" => true,
+        "hierarchical" => true,
+        "show_ui" => true,
+        "show_in_menu" => true,
+        "show_in_nav_menus" => true,
+        "query_var" => true,
+        "rewrite" => [ 'slug' => 'post_tag', 'with_front' => true, ],
+        "show_admin_column" => false,
+        "show_in_rest" => true,
+        "rest_base" => "ptag",
+        "rest_controller_class" => "WP_REST_Terms_Controller",
+        "show_in_quick_edit" => false,
+    ];
+    register_taxonomy( "post_tag", [ "sfwd-lessons", "sfwd-courses", "movie", "teaching-guide" ], $args );
+
+
+
+
     /**
      * Taxonomy: Topics.
      */
@@ -348,6 +383,38 @@ function create_taxonomy()
         "show_in_quick_edit" => false,
     ];
     register_taxonomy( "topic", [ "sfwd-lessons", "sfwd-courses", "movie", "teaching-guide", "clip" ], $args );
+
+
+
+    /**
+     * Taxonomy: Grades.
+     */
+
+    $labels = [
+        "name" => __( "Grades", "academe-theme" ),
+        "singular_name" => __( "Grades", "academe-theme" ),
+        "choose_from_most_used" => __( "Choose from the most used grades", "academe-theme" ),
+        "separate_items_with_commas" => __( "Separate grades with commas", "academe-theme" ),
+    ];
+
+    $args = [
+        "label" => __( "Grades", "academe-theme" ),
+        "labels" => $labels,
+        "public" => true,
+        "publicly_queryable" => true,
+        "hierarchical" => true,
+        "show_ui" => true,
+        "show_in_menu" => true,
+        "show_in_nav_menus" => true,
+        "query_var" => true,
+        "rewrite" => [ 'slug' => 'grade', 'with_front' => true, ],
+        "show_admin_column" => false,
+        "show_in_rest" => true,
+        "rest_base" => "gradys",
+        "rest_controller_class" => "WP_REST_Terms_Controller",
+        "show_in_quick_edit" => false,
+    ];
+    register_taxonomy( "grade", [ "sfwd-lessons", "sfwd-courses", "movie", "teaching-guide" ], $args );
 
 }
 

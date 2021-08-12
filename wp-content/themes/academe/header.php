@@ -1,5 +1,6 @@
-<?php get_template_part( 'templates/partials/document-open' ); ?>
-
+<?php get_template_part( 'templates/partials/document-open' ); 
+$unread = learndash_notifications_unread_count_by_user();
+?>
 <!-- Site header markup goes here -->
 <header>
     <div class="left-part">
@@ -42,14 +43,19 @@
     </div>
     <div class="right-part">
         <?php if(is_user_logged_in() && !is_user_in_role('student')) { ?>
-            <a href="/wp-admin/post-new.php?post_type=sfwd-courses" class="create-lesson-btn">
+            <a href="/lesson-editor" class="create-lesson-btn">
                 <?php icon('blue-plus'); ?>
                 <span>Create a Lesson</span>
             </a>
         <?php } ?>
         <?php if(is_user_logged_in() && function_exists('get_learndash_notifications_modal_template')) { ?>
+            
             <div class="notification-btn ui dropdown">
-                <img src="<?php echo get_template_directory_uri() . '/assets/img/notification.svg'; ?>" />
+            <?php if ( $unread = learndash_notifications_unread_count_by_user() ) : ?>
+            <div class="notify" ><?php //echo $unread; ?></div>
+            <?php endif;?>
+            <img src="<?php echo get_template_directory_uri() . '/assets/img/notification.svg'; ?>" class="notification-item unread"/>
+            
                 <div class="menu">
                     <div style="display: none" class="item"></div>
                     <?php get_learndash_notifications_modal_template(); ?>
@@ -138,3 +144,15 @@
 </section>
 <?php } ?>
 
+<style>
+    .notify{
+        width: 8px;
+        height: 8px;
+        background: red;
+        border-radius: 100px;
+        color: white;
+        text-align: center;
+        position: absolute;
+        right: 0;
+    }
+</style>    
