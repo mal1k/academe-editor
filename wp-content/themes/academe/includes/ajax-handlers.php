@@ -336,6 +336,7 @@ function create_lesson_session() {
 
         if ($post_id) {
             update_field( "based_on", $lesson_id, $post_id );
+            update_field( "related_lesson", $lesson_id, $post_id );
             update_field( "session_type", 'lesson-editor', $post_id );
 
             $session_starts = current_time('Y-m-d H:i:s');
