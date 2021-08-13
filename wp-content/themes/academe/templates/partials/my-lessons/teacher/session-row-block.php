@@ -39,6 +39,8 @@
         <?php
         $wp_query = new WP_Query([
             'post_type' => 'session',
+            'orderby'   => 'id',
+            'order' => 'DESC',
             'meta_query' => [
                 array(
                     'key' => 'related_lesson',
@@ -47,11 +49,15 @@
                 )
             ]
         ]);
+        $last_session = get_posts($wp_query);
+        $last_session = $wp_query;
         printf( _nx( '%s session', '%s sessions', $wp_query->found_posts, 'session count', 'academe-theme' ), number_format_i18n( $wp_query->found_posts ) );
         ?>
     </div>
     <?php $cs_modal_id = uniqid(); ?>
     <div class="movie-actions">
+    <pre>
+    </pre>
         <div class="actions-more ui dropdown link item dark">
             <div class="icon-three-dots">
                 <div></div><div></div><div></div>
@@ -62,7 +68,7 @@
                         <?php icon('blue-plus'); ?>
                         <span class="text-blue"><?php _e('Create New Session', 'academe-theme'); ?></span>
                     </div>
-                    <a href="<?php the_permalink(); ?>" class="item">View Lesson</a>
+                    <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="item">View Lesson</a>
                 </div>
             </div>
         </div>
