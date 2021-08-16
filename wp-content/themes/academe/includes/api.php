@@ -214,7 +214,23 @@ add_action( 'rest_api_init', function() {
     register_rest_route( 'academe/v1', '/get-movie-images/(?P<id>[a-zA-Z0-9-_]+)', array(
 		'methods'  => 'GET',
 		'callback' => 'movieImagesFromKaltura',
-	) );
+    ) );
+
+    register_rest_route( 'academe/v1', '/get-movie-list', array(
+		'methods'  => 'GET',
+		'callback' => function() {
+            $array = [];
+                $query = new WP_Query(['post_type' => 'movie', 'posts_per_page' => -1, 'orderby' => 'id', 'suppress_filters' => true]);
+                $query_posts = $query->posts;
+
+            foreach ($query_posts as $post) {
+                array_push($array, getMovieDataFromPost($post));
+            }
+            
+            return $array;
+        }
+    ) );
+
 });
 
 function getMovieDataFromPost($movie_post) {
