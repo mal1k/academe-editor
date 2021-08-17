@@ -220,11 +220,23 @@ add_action( 'rest_api_init', function() {
 		'methods'  => 'GET',
 		'callback' => function() {
             $array = [];
+            $taxonomyInfo = [];
             $query = new WP_Query(['post_type' => 'movie', 'posts_per_page' => -1, 'orderby' => 'id', 'suppress_filters' => true]);
             $query_posts = $query->posts;
+            $i = 0;
 
             foreach ($query_posts as $post) {
-                array_push($array, getMovieDataFromPost($post));
+                $info = [];
+                $info[$i] = getMovieDataFromPost($post);
+
+                $info[$i]['faculty'] = wp_get_post_terms( $post->ID, 'faculty', array('fields' => 'all'));
+                $info[$i]['grade'] = wp_get_post_terms( $post->ID, 'grade', array('fields' => 'all'));
+                $info[$i]['subject'] = wp_get_post_terms( $post->ID, 'subject', array('fields' => 'all'));
+                $info[$i]['topic'] = wp_get_post_terms( $post->ID, 'topic', array('fields' => 'all'));
+                    
+                array_push($array, $info[$i]);
+
+                $i += 1;
             }
             
             return $array;
