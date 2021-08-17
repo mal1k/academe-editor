@@ -54,7 +54,7 @@ $unread = learndash_notifications_unread_count_by_user();
             <?php if ( $unread = learndash_notifications_unread_count_by_user() ) : ?>
             <div class="notify" ><?php //echo $unread; ?></div>
             <?php endif;?>
-            <img src="<?php echo get_template_directory_uri() . '/assets/img/notification.svg'; ?>" class="notification-item unread"/>
+            <img src="<?php echo get_template_directory_uri() . '/assets/img/notification.svg'; ?>" class="unread"/>
             
                 <div class="menu">
                     <div style="display: none" class="item"></div>
