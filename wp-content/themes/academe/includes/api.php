@@ -229,10 +229,37 @@ add_action( 'rest_api_init', function() {
                 $info = [];
                 $info[$i] = getMovieDataFromPost($post);
 
-                $info[$i]['faculty'] = wp_get_post_terms( $post->ID, 'faculty', array('fields' => 'all'));
-                $info[$i]['grade'] = wp_get_post_terms( $post->ID, 'grade', array('fields' => 'all'));
-                $info[$i]['subject'] = wp_get_post_terms( $post->ID, 'subject', array('fields' => 'all'));
-                $info[$i]['topic'] = wp_get_post_terms( $post->ID, 'topic', array('fields' => 'all'));
+                $faculty = wp_get_post_terms($post->ID, 'faculty');
+                $n = 0;
+                foreach ($faculty as $term) {
+                    $info[$i]['faculty'][$n]['id'] = $term->term_id;
+                    $info[$i]['faculty'][$n]['name'] = $term->name;
+                    $n += 1;
+                }
+
+                $grade = wp_get_post_terms($post->ID, 'grade');
+                $n = 0;
+                foreach ($grade as $term) {
+                    $info[$i]['grade'][$n]['id'] = $term->term_id;
+                    $info[$i]['grade'][$n]['name'] = $term->name;
+                    $n += 1;
+                }
+
+                $subject = wp_get_post_terms($post->ID, 'subject');
+                $n = 0;
+                foreach ($subject as $term) {
+                    $info[$i]['subject'][$n]['id'] = $term->term_id;
+                    $info[$i]['subject'][$n]['name'] = $term->name;
+                    $n += 1;
+                }
+
+                $topic = wp_get_post_terms($post->ID, 'topic');
+                $n = 0;
+                foreach ($topic as $term) {
+                    $info[$i]['topic'][$n]['id'] = $term->term_id;
+                    $info[$i]['topic'][$n]['name'] = $term->name;
+                    $n += 1;
+                }
                     
                 array_push($array, $info[$i]);
 
