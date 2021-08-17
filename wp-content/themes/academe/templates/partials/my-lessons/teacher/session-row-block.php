@@ -1,5 +1,5 @@
 <div class="lesson-row">
-    <a class="wrap-link" href="<?php the_permalink(); ?>" target="_blank"></a>
+    <!-- <a class="wrap-link" href="<?php the_permalink(); ?>" target="_blank"></a> -->
     <div class="thumbnail">
         <img src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
     </div>
