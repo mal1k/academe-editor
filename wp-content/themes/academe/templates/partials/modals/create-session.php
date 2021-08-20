@@ -24,11 +24,60 @@
                 <div class="flex-row items-center">
                     <div class="row-title"><?php _e('Type:', 'academe-theme'); ?></div>
                     <div class="row-data">
-                        <input class="primary-radio" type="radio" name="session_type" id="sessionSync_<?php echo $args['id']; ?>" value="sync" /><label for="sessionSync_<?php echo $args['id']; ?>"><?php _e('Synchronous', 'academe-theme'); ?></label>
-                        <input class="primary-radio" type="radio" name="session_type" id="sessionAsync_<?php echo $args['id']; ?>" value="async" checked /><label class="session-type-label" for="sessionAsync_<?php echo $args['id']; ?>"><?php _e('A-synchronous', 'academe-theme'); ?></label>
+                        <input 
+                            class="primary-radio" 
+                            type="radio" name="session_type" 
+                            id="sessionSync_<?php echo $args['id']; ?>" 
+                            value="sync" checked
+                        />
+                        <label for="sessionSync_<?php echo $args['id']; ?>">
+                            <?php _e('Synchronous', 'academe-theme'); ?>
+                        </label>
+                        <input 
+                            class="primary-radio" 
+                            type="radio" 
+                            name="session_type" 
+                            id="sessionAsync_<?php echo $args['id']; ?>" 
+                            value="async" 
+                        />
+                        <label 
+                            class="session-type-label" 
+                            for="sessionAsync_<?php echo $args['id']; ?>">
+                            <?php _e('A-synchronous', 'academe-theme'); ?>
+                        </label>
                     </div>
                 </div>
-                <div class="flex-row items-center">
+
+                <script type="text/javascript">
+                    jQuery(document).ready((jQuery) => {
+                        const formatDate = (input) => {
+                            const day = input.getDate();
+                            const month = input.getMonth() + 1;
+                            const year = input.getFullYear();
+                            const minutes = input.getMinutes();
+                            const hours = input.getHours();
+                            return `${day}/${month.toString().length === 1 ? "0" + month : month}/${year} ${minutes}:${hours}`
+                        };
+                        const asyncSessionHook = jQuery("#sessionAsync_<?php echo $args['id']; ?>");
+                        const syncSessionHook = jQuery("#sessionSync_<?php echo $args['id']; ?>");
+                        const scheduleHook = jQuery("#scheduleDate");
+                        const scheduleInput = jQuery("#schedule");
+                        asyncSessionHook.change(() => {
+                            if (asyncSessionHook.is(":checked")) {
+                                scheduleInput.val(formatDate(new Date()));
+                                scheduleHook.hide();
+                            };
+                        });
+                        syncSessionHook.change(() => {
+                            if (syncSessionHook.is(":checked")) {
+                                scheduleInput.val("");
+                                scheduleHook.show();
+                            };
+                        });
+                    });
+                </script>
+
+                <div class="flex-row items-center" id="scheduleDate">
                     <div class="row-title condition async"><?php _e('Limit access to:', 'academe-theme'); ?></div>
                     <div class="row-title condition sync"><?php _e('Schedule:', 'academe-theme'); ?></div>
                     <div class="row-data flex-row space-between">
@@ -73,7 +122,7 @@
 
                     <div class="buttons">
                         <div class="start-now secondary-btn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></div>
-                        <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <a class="primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
                 <div class="sessionShare" id="sessionShare">
@@ -167,6 +216,12 @@
                 cursor: pointer;
             }
         </style>
+
+        <script>
+        $('input[name="session_type"]').onChange(function(){
+            alert('test')
+        })
+        </script>
 
     <?php } ?>
 <?php } ?>
