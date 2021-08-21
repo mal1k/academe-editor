@@ -217,11 +217,5 @@
             }
         </style>
 
-        <script>
-        $('input[name="session_type"]').onChange(function(){
-            alert('test')
-        })
-        </script>
-
     <?php } ?>
 <?php } ?>
