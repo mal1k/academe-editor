@@ -56,7 +56,7 @@
                             const year = input.getFullYear();
                             const minutes = input.getMinutes();
                             const hours = input.getHours();
-                            return `${day}/${month.toString().length === 1 ? "0" + month : month}/${year} ${minutes}:${hours}`
+                            return `${day}/${month.toString().length === 1 ? "0" + month : month}/${year} ${hours}:${minutes}`
                         };
                         const asyncSessionHook = jQuery("#sessionAsync_<?php echo $args['id']; ?>");
                         const syncSessionHook = jQuery("#sessionSync_<?php echo $args['id']; ?>");
@@ -64,12 +64,14 @@
                         const scheduleInput = jQuery("#schedule");
                         asyncSessionHook.change(() => {
                             if (asyncSessionHook.is(":checked")) {
+                                jQuery('#scheduleBtn').hide();
                                 scheduleInput.val(formatDate(new Date()));
                                 scheduleHook.hide();
                             };
                         });
                         syncSessionHook.change(() => {
                             if (syncSessionHook.is(":checked")) {
+                                jQuery('#scheduleBtn').show();
                                 scheduleInput.val("");
                                 scheduleHook.show();
                             };
@@ -121,8 +123,8 @@
                     <div class="cancel secondary-btn">Cancel</div>
 
                     <div class="buttons">
-                        <div class="start-now secondary-btn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></div>
-                        <a class="primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <div class="schedule-now secondary-btn" id="scheduleBtn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></div>
+                        <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
                 <div class="sessionShare" id="sessionShare">

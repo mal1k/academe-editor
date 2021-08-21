@@ -195,10 +195,10 @@ jQuery(document).ready(function($) {
     $('.start-session .cancel').on('click', function () {
         $('.modal.ui.start-session').modal('hide');
     });
-    $('.start-session .start-now').on('click', function () {
+    $('.start-session .schedule-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
-        _this.removeClass('start-now');
+        _this.removeClass('schedule-now');
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -218,14 +218,44 @@ jQuery(document).ready(function($) {
                     copySessionLink(modal);
                     //$('.modal.ui.start-session').modal('hide');
                 } else {
+                    _this.addClass('schedule-now');
+                    showToast('Error', response.error);
+                }
+
+            }
+        });
+    });
+    $('.start-session .start-now').on('click', function () {
+        let _this = $(this);
+        let modal = getCreateSessionModalId(_this);
+        $("#scheduleDate").hide();
+        $("#schedule").val(formatDate(new Date()));
+        _this.removeClass('start-now');
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            dataType : 'json',
+            data: $('#'+modal+' #sessionForm').serialize() + "&action=create_session",
+            success: function (response) {
+                if (!response.error) {
+                    window.location.href = response.success
+                } else {
                     _this.addClass('start-now');
                     showToast('Error', response.error);
                 }
 
             }
         });
-
     });
+
+    const formatDate = (input) => {
+        const day = input.getDate();
+        const month = input.getMonth() + 1;
+        const year = input.getFullYear();
+        const minutes = input.getMinutes();
+        const hours = input.getHours();
+        return `${day}/${month.toString().length === 1 ? "0" + month : month}/${year} ${hours}:${minutes}`
+    };
 
     $("input[name=session_type]").on('change', function () {
         let modal = getCreateSessionModalId($(this));
