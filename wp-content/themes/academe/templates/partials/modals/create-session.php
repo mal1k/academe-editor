@@ -123,7 +123,7 @@
                     <div class="cancel secondary-btn">Cancel</div>
 
                     <div class="buttons">
-                        <div class="schedule-now secondary-btn" id="scheduleBtn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></div>
+                        <a class="schedule-now secondary-btn" id="scheduleBtn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></a>
                         <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>

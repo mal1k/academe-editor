@@ -11,7 +11,8 @@
                     </div>
                 <?php } else { ?>
                     <?php $cs_modal_id = uniqid(); ?>
-                    <div class="start-watch create-session-btn" data-modal-id="<?php echo $cs_modal_id; ?>">
+                    <!-- create-session-btn -->
+                    <div class="start-watch start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced">
                         <?php icon('play-rounded'); ?>
                         <span><?php _e('Present Now', 'academe-theme'); ?></span>
                     </div>
@@ -115,7 +116,12 @@
     <?php if (is_user_logged_in()) { ?>
         <div class="modal ui overlay fullscreen movie-player" style="<?php echo (is_admin_bar_showing()) ? 'margin-top: 32px; height: calc(100% - 32px);' : ''; ?>">
             <?php icon('cross', 'close'); ?>
-            <?php $partner_id = get_field('partner_id', 'option'); ?>
+            <?php 
+            if ( empty(get_field('partner_id', 'option')) )
+                $partner_id = get_field('partner_id', 'option'); 
+            else
+                $partner_id = '2538842';
+            ?>
             <script src="https://cdnapisec.kaltura.com/p/<?php echo $partner_id; ?>/sp/253884200/embedIframeJs/uiconf_id/46602743/partner_id/<?php echo $partner_id; ?>"></script>
             <div id="kalturaPlayer">
 
