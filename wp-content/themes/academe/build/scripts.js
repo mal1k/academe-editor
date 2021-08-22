@@ -327,7 +327,7 @@ jQuery(document).ready(function($) {
             }
         });
     });
-    $('.start-session .start-now').on('click', function () {
+    $('.start-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
         $("#scheduleDate").hide();
@@ -337,7 +337,7 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             dataType : 'json',
-            data: $('#'+modal+' #sessionForm').serialize() + "&action=create_session",
+            data: $('#sessionForm').serialize() + "&action=create_session",
             success: function (response) {
                 if (!response.error) {
                     window.location.href = response.success
@@ -415,9 +415,11 @@ jQuery(document).ready(function($) {
     });
 
     $('.start-movie-preview').on('click', function () {
-        if ($(this).data('mode') !== 'advanced') {
+
+        if ($('.modal.movie-player').data('mode') !== 'advanced') {
             $('#kalturaPlayer').empty(); //clear if we are not on movie page with time tracker
         }
+
         $('.modal.movie-player').modal({
             className : { scrolling : '' },
             onHide() {
@@ -427,10 +429,13 @@ jQuery(document).ready(function($) {
                 }
             }
         });
+
         $('.modal.movie-player').modal('show');
-        if (!$('#kalturaPlayer').data('loaded') || $(this).data('mode') !== 'advanced') {
-            requestPlayerWithMovieModal($(this));
+
+        if (!$('#kalturaPlayer').data('loaded') || $('.modal.movie-player').data('mode') !== 'advanced') {
+            requestPlayerWithMovieModal($('.modal.movie-player'));
         }
+
     });
 
     function requestPlayerWithMovieModal(data_obj) {
