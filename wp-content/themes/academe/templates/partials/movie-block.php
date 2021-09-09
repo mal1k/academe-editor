@@ -89,9 +89,11 @@
                     <div class="start-watch"><?php icon('play-rounded'); ?></div>
                 </a>
             <?php } else { ?>
-                <a href="<?php the_permalink(); ?>" class="watch">
-                    <div class="start-watch"><?php icon('play-rounded'); ?></div>
-                </a>
+            <a href="<?php the_permalink(); ?>" class="watch">
+                <div class="watch">
+                    <div class="start-watch start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" onclick="return false;" data-mode="advanced" style="position: relative; z-index: 1;"><?php icon('play-rounded'); ?></div>
+                </div>
+            </a>
             <?php } ?>
 
         </div>
