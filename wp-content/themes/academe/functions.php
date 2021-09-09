@@ -225,12 +225,8 @@ function generateSessionId() {
     $characters = 'abcdefghijklmnopqrstuvwxyz';
     $characters_length = strlen($characters);
     $random_string = '';
-    for ($i = 0; $i < 10; $i++) {
+    for ($i = 0; $i < 5; $i++)
         $random_string .= $characters[rand(0, $characters_length - 1)];
-        if(in_array($i, [2,6])) {
-            $random_string .= '-';
-        }
-    }
     return $random_string;
 }
 
@@ -359,12 +355,13 @@ function load_wp_api_settings_for_student(){
     }
 }
 
-add_action( 'template_redirect', function() {
-    if ( wp_is_mobile() && !is_admin() && !is_singular('session') && !is_page_template( 'page-enter-lesson.php' ) ) {
-        wp_redirect('/enter-lesson', 302);
-        exit;
-    }
-} );
+
+// add_action( 'template_redirect', function() {
+//     if ( wp_is_mobile() && !is_admin() && !is_singular('session') && !is_page_template( 'page-enter-lesson.php' ) ) {
+//         wp_redirect('/enter-lesson', 302);
+//         exit;
+//     }
+// } );
 
 
 /**
