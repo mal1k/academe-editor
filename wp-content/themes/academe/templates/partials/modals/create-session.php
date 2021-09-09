@@ -5,7 +5,7 @@
     <?php if (!is_user_in_role('student')) { ?>
         <div id="<?php echo $args['id']; ?>" class="modal ui start-session">
             <?php icon('cross', 'close'); ?>
-            <form id="sessionForm" onsubmit="event.prevent.default">
+            <form id="sessionForm" class="sessionForm" onsubmit="event.prevent.default">
 
                 <input type="hidden" name="session_title" value="<?php the_title(); ?>" />
                 <input type="hidden" name="based_on" value="<?php echo str_replace('sfwd-courses', 'lesson', $post->post_type); ?>" />
@@ -14,7 +14,7 @@
                 <h3><?php the_title(); ?></h3>
                 <div class="">
                     <div class="session-code">
-                        Lesson code: <span class="code" id="lessonCode" style="font-size: 52px; padding: 20px;">xxxxx</span>
+                        Lesson code: <span class="code lessonCode" id="lessonCode" style="font-size: 52px; padding: 20px;">xxxxx</span>
                     </div>
                     <div class="session-url" style="display: none">
                         <span class="url"></span>
@@ -50,26 +50,20 @@
 
                 <script type="text/javascript">
                     jQuery(document).ready((jQuery) => {
-                        
-                        const asyncSessionHook = jQuery("#sessionAsync_<?php echo $args['id']; ?>");
-                        const syncSessionHook = jQuery("#sessionSync_<?php echo $args['id']; ?>");
-                        const scheduleHook = jQuery("#scheduleDate");
-                        const scheduleInput = jQuery("#schedule");
-
-                        asyncSessionHook.change(() => {
-                            if (asyncSessionHook.is(":checked")) {
-                                jQuery('#scheduleBtn').hide();
-                                scheduleInput.val(formatDate(new Date()));
-                                scheduleHook.hide();
-                            };
-                        });
-
-                        syncSessionHook.change(() => {
-                            if (syncSessionHook.is(":checked")) {
-                                jQuery('#scheduleBtn').show();
-                                scheduleInput.val("");
-                                scheduleHook.show();
-                            };
+                        const asyncSessionHook = jQuery(".sessionAsync");
+                        const syncSessionHook = jQuery(".sessionSync");
+                        jQuery('input[type=radio][name=session_type]').change(function() {
+                            const form = jQuery(this).closest('.sessionForm');
+                            if (this.value == 'sync') {
+                                form.find('.scheduleDate').show();
+                                form.find('.scheduleBtn').show();
+                                form.find('.schedule').val("");
+                            }
+                            else if (this.value == 'async') {
+                                form.find('.scheduleDate').hide();
+                                form.find('.scheduleBtn').hide();
+                                form.find('.schedule').val(formatDate(new Date()));
+                            }
                         });
 
                         const formatDate = (input) => {
@@ -83,7 +77,7 @@
                     });
                 </script>
 
-                <div class="flex-row items-center" id="scheduleDate">
+                <div class="flex-row items-center scheduleDate" id="scheduleDate">
                     <div class="row-title condition async"><?php _e('Limit access to:', 'academe-theme'); ?></div>
                     <div class="row-title condition sync"><?php _e('Schedule:', 'academe-theme'); ?></div>
                     <div class="row-data flex-row space-between">
@@ -110,7 +104,7 @@
                                 <div class="ui calendar datetime-selector">
                                     <div class="ui input right icon">
                                         <?php icon('calendar'); ?>
-                                        <input type="text" placeholder="Date/Time" name="schedule" id="schedule"/>
+                                        <input type="text" placeholder="Date/Time" name="schedule" id="schedule" class="schedule"/>
                                     </div>
                                 </div>
                             </div>
@@ -127,7 +121,7 @@
                     <div class="cancel secondary-btn">Cancel</div>
 
                     <div class="buttons">
-                        <a class="schedule-now secondary-btn" id="scheduleBtn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></a>
+                        <a class="schedule-now secondary-btn scheduleBtn" id="scheduleBtn" style="margin-right: 10px!important;"><?php _e('Schedule', 'academe-theme'); ?></a>
                         <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
@@ -154,26 +148,29 @@
                                 </span>
                             </div>
                             <div style="margin-left: 25px;">
-                                <span class="shareLink" id="puzzleModalLink" href=""><?php icon('puzzle-modal'); ?><br>
+                                <span class="shareLink puzzleModalLink" id="puzzleModalLink" class="puzzleModalLink" href=""><?php icon('puzzle-modal'); ?><br>
                                 LTI
                                 </span>
                             </div>
 
                             <script>
-                            jQuery('#puzzleModalLink').click(function(){
+                            jQuery('.puzzleModalLink').click(function(){
                                 event.preventDefault();
-                                jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + jQuery('#lessonCode').text() + '&id=<?php echo get_the_ID(); ?>&time=' + jQuery('#schedule').val(),{
+                                const form = jQuery(this).closest('.sessionForm');
+                                const code = form.find('.lessonCode').text();
+                                const time = form.find('.schedule').val();
+                                jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=<?php echo get_the_ID(); ?>&time=' + time,{
                                 type: 'POST',
                                 processData: false,
                                 contentType: false,
                                 dataType: 'json',
                                     success: (data)=>{
-                                        var copyText = "<?php echo get_home_url(); ?>/lti-movies?code=" + jQuery('#lessonCode').text();
+                                        var copyText = "<?php echo get_home_url(); ?>/lti-movies?code=" + code;
 
                                         navigator.clipboard.writeText(copyText).then(function() {
                                             alert('Copied');
                                         });
-                                        // showToast('Copied!', 'The LTI link was successfully copied to your clipboard.'); doesnt work
+                                        
                                     }
                                 })  
                             })
