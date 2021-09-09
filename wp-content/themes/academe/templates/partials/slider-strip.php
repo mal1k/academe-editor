@@ -18,7 +18,21 @@
                 <i class="show-all-icon"><?php icon('chevron-bold', 'icon-rotated-270'); ?></i>
             </a>
         <?php } ?>
-        
+        <?php if($filter) { ?>
+            <div class="dropdown ui search strip-filter dark" data-action="<?php echo $filter_action; ?>" data-post-type="<?php echo $args['filter']['post_type']; ?>" data-taxonomy="<?php echo $args['filter']['taxonomy']; ?>">
+                <input name="genre" type="hidden" value="<?php echo ($args['filter']['term']) ?? ''; ?>" >
+                <span class="default text"><?php echo isset($tax) ? $tax->labels->name : ''; ?></span>
+                <?php icon('chevron-bold', 'with-rotate'); ?>
+                <div class="menu">
+                    <div class="menu-body">
+                        <div class="item" data-value=""><?php echo isset($tax) ? $tax->labels->name : ''; ?></div>
+                        <?php foreach ($terms as $term) { ?>
+                            <div class="item" data-value="<?php echo $term->term_id; ?>"><?php echo $term->name; ?></div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
     </div>
     <div class="swiper-container swiper-strip">
         <div class="swiper-wrapper">
