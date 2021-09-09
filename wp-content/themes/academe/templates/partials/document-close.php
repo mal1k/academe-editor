@@ -14,6 +14,16 @@ if (empty($partner_id)) {
     <?php if (is_user_logged_in()) { ?>
         <div class="modal ui overlay fullscreen movie-player" style="<?php echo (is_admin_bar_showing()) ? 'margin-top: 32px; height: calc(100% - 32px);' : ''; ?>">
             <?php icon('cross', 'close'); ?>
+            <script>
+                function destroyKalturaPlayer() {
+                    kWidget.destroy("kalturaPlayer");
+                }
+
+                jQuery('.icon.close').click(function(){
+                    setTimeout(destroyKalturaPlayer, 5);
+                });
+            </script>
+
             <div id="kalturaPlayer">
 
             </div>
