@@ -12,7 +12,7 @@
                              style="background: linear-gradient(90deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 60%) no-repeat center / cover;">
                             <div class="slide-info">
                                 <div class="title-wrap">
-                                    <div class="title"><?php the_title(); ?></div>
+                                    <a href="<?php echo get_permalink(); ?>"><div class="title"><?php the_title(); ?></div></a>
                                 </div>
                                 <div class="created-by">
                                     <?php _e('Created By:', 'academe-theme'); ?>
@@ -71,10 +71,10 @@
                                 </div>
                                 <div class="watch">
                                     <?php if ($post->post_type == 'movie') { ?>
-                                        <a href="<?php the_permalink(); ?>" class="start-watch">
+                                        <div class="start-watch start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced">
                                             <?php icon('play-rounded'); ?>
-                                            <span><?php _e('Present Now', 'academe-theme'); ?></span>
-                                        </a>
+                                            <span>Present Now</span>
+                                        </div>
                                     <?php } ?>
                                     <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses'])) { ?>
                                         <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) {
