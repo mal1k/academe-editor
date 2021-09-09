@@ -7,7 +7,12 @@
 
                 <input type="hidden" name="session_title" value="<?php the_title(); ?>" />
                 <input type="hidden" name="based_on" class="based_on" value="<?php echo str_replace('sfwd-courses', 'lesson', $post->post_type); ?>" />
-                <input type="hidden" name="related_item" class="related_item" value="<?php echo $post->post_parent; ?>" />
+                <?php 
+                $meta_key = $post->post_name; 
+                global $wpdb;
+                $post_ID = $wpdb->get_var( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = 'movie' LIMIT 1" , $meta_key) );
+                ?>
+                <input type="hidden" name="related_item" class="related_item" value="<?php echo $post_ID; ?>" />
 
                 <h3><?php the_title(); ?></h3>
                 <div class="">
