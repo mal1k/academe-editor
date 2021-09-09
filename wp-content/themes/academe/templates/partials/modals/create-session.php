@@ -1,15 +1,13 @@
 <?php if (is_user_logged_in()) { ?>
-    <?php
-    update_post_meta(get_the_ID(), 'lti-code-ncf-ddlo-drx', get_the_ID());
-    ?>
+
     <?php if (!is_user_in_role('student')) { ?>
         <div id="<?php echo $args['id']; ?>" class="modal ui start-session">
             <?php icon('cross', 'close'); ?>
             <form id="sessionForm" class="sessionForm" onsubmit="event.prevent.default">
 
                 <input type="hidden" name="session_title" value="<?php the_title(); ?>" />
-                <input type="hidden" name="based_on" value="<?php echo str_replace('sfwd-courses', 'lesson', $post->post_type); ?>" />
-                <input type="hidden" name="related_item" value="<?php echo $post->ID; ?>" />
+                <input type="hidden" name="based_on" class="based_on" value="<?php echo str_replace('sfwd-courses', 'lesson', $post->post_type); ?>" />
+                <input type="hidden" name="related_item" class="related_item" value="<?php echo $post->post_parent; ?>" />
 
                 <h3><?php the_title(); ?></h3>
                 <div class="">
@@ -159,7 +157,8 @@
                                 const form = jQuery(this).closest('.sessionForm');
                                 const code = form.find('.lessonCode').text();
                                 const time = form.find('.schedule').val();
-                                jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=<?php echo get_the_ID(); ?>&time=' + time,{
+                                const postID = form.find('.related_item').val();
+                                jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=' + postID + '&time=' + time,{
                                 type: 'POST',
                                 processData: false,
                                 contentType: false,
@@ -170,7 +169,7 @@
                                         navigator.clipboard.writeText(copyText).then(function() {
                                             alert('Copied');
                                         });
-                                        
+
                                     }
                                 })  
                             })
