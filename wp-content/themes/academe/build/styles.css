@@ -2491,6 +2491,7 @@ h2.section-heading {
 }
 .icon-blue-stroke * {
     stroke: #51ACFD;
+    fill: #51ACFD;
 }
 .icon-32 {
     width: 32px;
