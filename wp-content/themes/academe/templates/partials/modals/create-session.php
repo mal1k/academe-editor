@@ -14,7 +14,7 @@
                 <h3><?php the_title(); ?></h3>
                 <div class="">
                     <div class="session-code">
-                        Lesson code: <span class="code" id="lessonCode" style="font-size: 52px; padding: 20px;">xxx-xxxx-xxx</span>
+                        Lesson code: <span class="code" id="lessonCode" style="font-size: 52px; padding: 20px;">xxxxx</span>
                     </div>
                     <div class="session-url" style="display: none">
                         <span class="url"></span>
