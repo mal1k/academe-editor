@@ -14,12 +14,10 @@
                                 <div class="title-wrap">
                                     <div class="title"><?php the_title(); ?></div>
                                 </div>
-                                <?php if ($post->post_type == 'movie') { ?>
-                                    <div class="created-by">
-                                        <?php _e('Created By:', 'academe-theme'); ?>
-                                        <span class="name"><?php the_author(); ?></span>
-                                    </div>
-                                <?php } ?>
+                                <div class="created-by">
+                                    <?php _e('Created By:', 'academe-theme'); ?>
+                                    <span class="name"><?php the_author(); ?></span>
+                                </div>
                                 <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide'])) { ?>
 
                                     <div class="description">
