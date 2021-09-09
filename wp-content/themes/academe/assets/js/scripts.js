@@ -312,9 +312,9 @@ jQuery(document).ready(function($) {
         $(this).closest('.movie-questions').find('.question-content .answer').slideToggle(300);
     });
 
-    $('.start-movie-preview').on('click', function () {
+    $('body').on('click', '.start-movie-preview', function () {
 
-        if ($('.modal.movie-player').data('mode') !== 'advanced') {
+        if ($(this).data('mode') !== 'advanced') {
             $('#kalturaPlayer').empty(); //clear if we are not on movie page with time tracker
         }
 
@@ -330,8 +330,8 @@ jQuery(document).ready(function($) {
 
         $('.modal.movie-player').modal('show');
 
-        if (!$('#kalturaPlayer').data('loaded') || $('.modal.movie-player').data('mode') !== 'advanced') {
-            requestPlayerWithMovieModal($('.modal.movie-player'));
+        if (!$('#kalturaPlayer').data('loaded') || $(this).data('mode') !== 'advanced') {
+            requestPlayerWithMovieModal($(this));
         }
 
     });
@@ -693,5 +693,25 @@ jQuery(document).ready(function($) {
         });
     });
 
-});
+    $('#lessonsList .sessions-count').on('click', function () {
+        $('.modal.ui.sessions-list').modal('show');
+        $('.modal.ui.sessions-list .lesson-title').text($(this).siblings('.session-info').children('.name').text().trim());
+        $.ajax({
+            url: ajaxurl,
+            type: 'GET',
+            dataType : 'html',
+            data: {
+                action: 'get_sessions_list',
+                lesson: $(this).attr('data-lesson-id'),
+            },
+            beforeSend: function() {
 
+            },
+            success: function (response) {
+                console.log(response);
+                $('.sessions-list.modal .sessions-list-wrap').html(response);
+            }
+        });
+    });
+
+});

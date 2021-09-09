@@ -7,11 +7,14 @@
     } ?>
 
     <div class="thumbnail">
-        <?php if ($custom_fields['based_on'] == 'movie') { ?>
-            <img src="<?php echo get_movie_thumbnail($related_custom_fields['kaltura_id'], 200, 120, 45 ); ?>" />
-        <?php } else if ($custom_fields['based_on'] == 'lesson') { ?>
-            <img src="<?php echo get_the_post_thumbnail_url($custom_fields['related_lesson']->ID, 'medium'); ?>" />
+        <?php if (0) { // no need, because we want to select image inside lesson editor and then use it here ?>
+            <?php if ($custom_fields['based_on'] == 'movie') { ?>
+                <img src="<?php echo get_movie_thumbnail($related_custom_fields['kaltura_id'], 200, 120, 45 ); ?>" />
+            <?php } else if ($custom_fields['based_on'] == 'lesson') { ?>
+                <img src="<?php echo $custom_fields['cover_image_url']; ?>" />
+            <?php } ?>
         <?php } ?>
+        <img src="<?php echo $custom_fields['cover_image_url']; ?>" />
     </div>
     <div class="session-info">
         <div class="name">

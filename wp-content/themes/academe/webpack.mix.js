@@ -7,7 +7,7 @@ mix.options({
             mangle: true,
             output: {
                 comments: false,
-                beautify: true,
+                beautify: false,
             }
         },
     }

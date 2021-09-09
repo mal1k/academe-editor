@@ -63,7 +63,7 @@
         </div>
         <div v-else-if="field.type === 'image'" class="col-view">
             <label>{{field.label}}</label>
-            <el-upload
+            <!--<el-upload
                     class="upload-image"
                     drag
                     action=""
@@ -79,12 +79,46 @@
             </el-upload>
             <div v-if="store.slides[$parent.activeSlideIndex].fields[property_name] != null">
                 <button class="btn" @click="removeMedia()">Remove image</button>
+            </div>-->
+
+            <div class="cover-image-preview">
+                <div v-if="store.slides[$parent.activeSlideIndex].fields[property_name] == null"
+                    class="select-from-pixabay"
+                    @click="extended_search_pixabay_modal = true">
+                    Select From Pixabay
+                </div>
+                <img v-else :src="store.slides[$parent.activeSlideIndex].fields[property_name]" class="cover-image" />
             </div>
+            <div v-if="store.slides[$parent.activeSlideIndex].fields[property_name] != null">
+                <button class="btn" @click="removeMedia()">Remove image</button>
+            </div>
+
+            <el-dialog title="Select image" :visible.sync="extended_search_pixabay_modal">
+            <el-input
+                    placeholder=""
+                    clearable
+                    v-model="suggestions_search"
+                    @input="debounceSuggestionsModal"
+                    style="width:100%; margin-bottom: 40px;">
+                    <i class="el-icon-search el-input__icon" slot="prefix"></i>
+            </el-input>
+            <div class="suggestions-list five-per-line">
+                <img v-for="image in pixabay_suggestions"
+                     :key="image.id"
+                     :src="image.preview"
+                     @click="store.slides[$parent.activeSlideIndex].fields[property_name] = image.full"
+                     :class="{'selected' : store.slides[$parent.activeSlideIndex].fields[property_name] === image.full}"
+                />
+            </div>
+        </el-dialog>
+
         </div>
     </div>
 </template>
 
 <script>
+    import { debounce } from "debounce";
+
     export default {
         name: "SlideBlockInput",
         props: {
@@ -93,7 +127,9 @@
         },
         data() {
             return {
-
+                pixabay_suggestions: [],
+                extended_search_pixabay_modal: false,
+                suggestions_search: '',
             };
         },
         computed: {
@@ -107,10 +143,10 @@
                 this.store.slides[this.$parent.activeSlideIndex].fields[this.property_name] = null;
             },
 
-            handleImageLoadSuccess(res, file) {
+            /*handleImageLoadSuccess(res, file) {
                 this.store.slides[this.$parent.activeSlideIndex].fields[this.property_name] = URL.createObjectURL(file.raw);
-            },
-            beforeImageUpload(file) {
+            },*/
+            /*beforeImageUpload(file) {
                 const isJPG = file.type === 'image/jpeg';
                 const isPNG = file.type === 'image/png';
                 const isLt500k = file.size / 1024 / 1024 < 0.5;
@@ -122,7 +158,29 @@
                     this.$message.error('Uploaded image size can not exceed 500Kb!');
                 }
                 return (isJPG || isPNG) && isLt500k;
-            }
+            }*/
+
+            debounceSuggestionsModal:
+                debounce(function (e) {
+                    this.getPixabaySuggestions(this.suggestions_search)
+                }, 500),
+
+            getPixabaySuggestions(query) {
+                query = encodeURI(query + ' | (' + query.replaceAll(' ', '|') + ')');
+                fetch('https://pixabay.com/api/?key=22034857-21d1cd8a83ad53f9ef50181a1&q='+query+'&image_type=photo,illustration&safesearch=true&per_page=100')
+                .then( response => {
+                   return response.json();
+                }).then((data) => {
+                    if (data.hits) {
+                        this.pixabay_suggestions = data.hits.map(image => ({
+                            id: image.id,
+                            preview: image.previewURL,
+                            full: image.largeImageURL,
+                        }));
+                    }
+                });
+            },
+
         }
     }
 </script>
@@ -246,5 +304,51 @@
     .btn:hover {
         background-color: #51acfd;
         color: #fff;
+    }
+
+    .cover-image-preview {
+        border: 1px solid #FFFFFF;
+        display: flex;
+        width: 100%;
+        height: 250px;
+        justify-content: center;
+        align-items:center;
+        margin-bottom: 30px;
+    }
+    .select-from-pixabay {
+        color: #51ACFD;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 20px;
+        cursor: pointer;
+    }
+    img.cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .suggestions-list {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        /**/
+        max-height: 420px;
+        overflow: auto;
+        /**/
+    }
+    .suggestions-list img {
+        height: 95px;
+        object-fit: cover;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+    .suggestions-list img.selected {
+        border: 2px solid #51ACFD;
+    }
+ .suggestions-list.three-per-line img {
+        width: calc(100% / 3 - 7px);
+    }
+    .suggestions-list.five-per-line img {
+        width: calc(100% / 5 - 7px);
     }
 </style>

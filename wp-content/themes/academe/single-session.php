@@ -35,7 +35,7 @@ $show_session_content = true; ?>
         </div>
     <?php } ?>
 
-    <?php if (!wp_is_mobile() && is_user_in_role('student')) { ?>
+    <?php if (!wp_is_mobile() && is_user_in_role('student') && 0 ) { // now student can view lesson from desktop ?>
         <div class="session-restrict-message">
             <span>
                 <?php _e('As a student, you must enter the lesson from your mobile phone!', 'academe-theme');
@@ -44,12 +44,14 @@ $show_session_content = true; ?>
         </div>
     <?php } ?>
 
-    <?php if ($show_session_content) { ?>
+    <?php if ($show_session_content) {
+        $author = get_post_field( 'post_author', $custom_fields['related_lesson']->ID ) ?>
         <session-slideshow
             :course_id="<?php echo $custom_fields['related_lesson']->ID; ?>"
             :session_id="<?php global $post; echo $post->ID; ?>"
             session_code="<?php global $post; echo $post->post_name; ?>"
             user_role="<?php echo is_user_in_role('student') ? 'student' : 'teacher'; ?>"
+            author="<?php echo the_author_meta( 'display_name' , $author ); ?>"
             device="<?php echo wp_is_mobile() ? 'mobile' : 'desktop'; ?>"
             :current_slide="<?php echo $custom_fields['current_slide'] ?? 0; ?>"
             websocket_url="<?php echo WEBSOCKET_URL; ?>">

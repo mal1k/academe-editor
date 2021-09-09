@@ -79,10 +79,27 @@
                                         </a>
                                     <?php } ?>
                                     <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses'])) { ?>
-                                        <a href="<?php the_permalink(); ?>" class="start-watch">
-                                            <?php icon('play-rounded'); ?>
-                                            <span><?php _e('Start Lesson', 'academe-theme'); ?></span>
-                                        </a>
+                                        <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) {
+                                            $wp_query = new WP_Query([
+                                                'post_type' => 'session',
+                                                'meta_query' => [
+                                                    array(
+                                                        'key' => 'related_lesson',
+                                                        'value' => $post->ID,
+                                                        'compare' => '=',
+                                                    )
+                                                ]
+                                            ]); ?>
+                                            <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="start-watch">
+                                                <?php icon('play-rounded'); ?>
+                                                <span><?php _e('Start Lesson', 'academe-theme'); ?></span>
+                                            </a>
+                                        <?php } else { ?>
+                                            <a href="<?php the_permalink(); ?>" class="start-watch">
+                                                <?php icon('play-rounded'); ?>
+                                                <span><?php _e('Start Lesson', 'academe-theme'); ?></span>
+                                            </a>
+                                        <?php } ?>
                                     <?php } ?>
                                     <?php if ($post->post_type == 'teaching-guide') { ?>
                                         <a href="<?php the_permalink(); ?>" class="start-watch">
@@ -91,7 +108,7 @@
                                         </a>
                                     <?php } ?>
 
-                                    <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'movie'])) { ?>
+                                    <?php if (in_array($post->post_type, ['sfwd-lessons', /*'sfwd-courses',*/ 'movie'])) { ?>
                                     <div class="actions-more ui dropdown link item dark">
                                         <div class="info">i</div>
                                         <div class="menu">

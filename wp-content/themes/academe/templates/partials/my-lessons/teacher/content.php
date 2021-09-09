@@ -24,4 +24,10 @@
             <?php wp_reset_query(); ?>
         </div>
     <?php } ?>
+
+    <div class="modal ui sessions-list">
+        <?php icon('cross', 'close'); ?>
+        <h3 class="sessions-title">"<span class="lesson-title"></span>" <?php _e('sessions list', 'academe-theme'); ?></h3>
+        <div class="sessions-list-wrap"></div>
+    </div>
 </section>

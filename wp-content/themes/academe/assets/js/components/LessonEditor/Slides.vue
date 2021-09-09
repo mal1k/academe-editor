@@ -24,6 +24,21 @@
           <span>Add New Slide</span>
         </div>
       </div>
+      <div v-if="store.slides.length"
+         class="slide-container slide-preview-wrap"
+         :class="{active: store.active_slide_id === parseInt(store.slides[0].lesson_id)}"
+         @click="changeActiveSlide(store.slides[0])">
+        <div class="slide-number">
+            <span>
+              <svg width="13" height="15" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.75 6.5625V7.0625H10.25C11.0093 7.0625 11.625 7.67817 11.625 8.4375V13.125C11.625 13.8843 11.0093 14.5 10.25 14.5H2.75C1.99067 14.5 1.375 13.8843 1.375 13.125V8.4375C1.375 7.67817 1.99067 7.0625 2.75 7.0625H3.25V6.5625V3.75C3.25 1.95886 4.70847 0.5 6.5 0.5C8.29196 0.5 9.75 1.95881 9.75 3.75V6.5625ZM8.375 7.0625H8.875V6.5625V3.75C8.875 2.43917 7.80961 1.375 6.5 1.375C5.18985 1.375 4.125 2.43922 4.125 3.75V6.5625V7.0625H4.625H8.375ZM7.46875 12.6562V11.3555C7.74713 11.1029 7.9375 10.7396 7.9375 10.3125C7.9375 9.51803 7.29372 8.875 6.5 8.875C5.70629 8.875 5.0625 9.51799 5.0625 10.3125C5.0625 10.7396 5.25287 11.1029 5.53125 11.3555V12.6562C5.53125 13.1915 5.96476 13.625 6.5 13.625C7.03524 13.625 7.46875 13.1915 7.46875 12.6562Z" fill="white" stroke="white"/>
+              </svg>
+            </span>
+        </div>
+        <div class="slide-preview flex-builder" :class="{active: store.active_slide_id === parseInt(store.slides[0].lesson_id)}">
+            <div class="cover-preview">LESSON COVER PAGE</div>
+        </div>
+      </div>
       <draggable
         v-model="store.slides"
         v-bind="dragOptions"
@@ -34,38 +49,41 @@
         <transition-group type="transition" :name="!drag ? 'flip-list' : null">
           <div
             v-for="(slide, index) in store.slides"
+            v-if="index > 0"
             :key="slide.lesson_id"
             class="slide-container slide-preview-wrap"
             :class="{
-              active: store.active_slide === parseInt(slide.lesson_id),
+              active: store.active_slide_id === parseInt(slide.lesson_id),
             }"
             @click="changeActiveSlide(slide)"
           >
             <div class="slide-number">
-              <span>{{ parseInt(index) + 1 }}</span>
+                <span>{{ parseInt(index) }}</span>
             </div>
             <div
               class="slide-preview flex-builder"
               :class="{
-                active: store.active_slide === parseInt(slide.lesson_id),
+                active: store.active_slide_id === parseInt(slide.lesson_id),
               }"
             >
               <template v-if="slide.slide_type === 'text_image'">
                 <template1 v-if="slide.template === 'template1'" />
                 <template2 v-if="slide.template === 'template2'" />
                 <template3 v-if="slide.template === 'template3'" />
+                <template6 v-if="slide.template === 'template6'" />
+                <template7 v-if="slide.template === 'template7'" />
               </template>
               <template v-if="slide.slide_type === 'movie'">
                 <template4 v-if="slide.template === 'template4'" :kalturaId="slide.fields && slide.fields.kaltura_id"  />
               </template>
               <template v-if="slide.slide_type === 'question'"> <template5/> </template>
-              <div class="draggable">
+              <div v-if="parseInt(index) > 0" class="draggable">
                 <img
                   alt=""
                   src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDYgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNDNEM0QzQiLz4KPHJlY3QgeD0iNCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iI0M0QzRDNCIvPgo8cmVjdCB5PSI2IiB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSIjQzRDNEM0Ii8+CjxyZWN0IHg9IjQiIHk9IjYiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNDNEM0QzQiLz4KPHJlY3QgeT0iMTIiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNDNEM0QzQiLz4KPHJlY3QgeD0iNCIgeT0iMTIiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNDNEM0QzQiLz4KPHJlY3QgeT0iMTgiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNDNEM0QzQiLz4KPHJlY3QgeD0iNCIgeT0iMTgiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiNDNEM0QzQiLz4KPC9zdmc+Cg=="
                 />
               </div>
-              <el-dropdown trigger="click" class="more-actions">
+              <el-dropdown v-if="parseInt(index) > 0" trigger="click" class="more-actions">
                 <img
                   src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwKSI+CjxwYXRoIGQ9Ik0xMC4wMDAxIDQuNDQ0NDhDMTEuMjI3NCA0LjQ0NDQ4IDEyLjIyMjMgMy40NDk1NSAxMi4yMjIzIDIuMjIyMjRDMTIuMjIyMyAwLjk5NDkzMSAxMS4yMjc0IDAgMTAuMDAwMSAwQzguNzcyNzYgMCA3Ljc3NzgzIDAuOTk0OTMxIDcuNzc3ODMgMi4yMjIyNEM3Ljc3NzgzIDMuNDQ5NTUgOC43NzI3NiA0LjQ0NDQ4IDEwLjAwMDEgNC40NDQ0OFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMC4wMDAxIDEyLjIyMjhDMTEuMjI3NCAxMi4yMjI4IDEyLjIyMjMgMTEuMjI3OSAxMi4yMjIzIDEwLjAwMDZDMTIuMjIyMyA4Ljc3MzI1IDExLjIyNzQgNy43NzgzMiAxMC4wMDAxIDcuNzc4MzJDOC43NzI3NiA3Ljc3ODMyIDcuNzc3ODMgOC43NzMyNSA3Ljc3NzgzIDEwLjAwMDZDNy43Nzc4MyAxMS4yMjc5IDguNzcyNzYgMTIuMjIyOCAxMC4wMDAxIDEyLjIyMjhaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTAuMDAwMSAyMC4wMDAxQzExLjIyNzQgMjAuMDAwMSAxMi4yMjIzIDE5LjAwNTIgMTIuMjIyMyAxNy43Nzc5QzEyLjIyMjMgMTYuNTUwNiAxMS4yMjc0IDE1LjU1NTcgMTAuMDAwMSAxNS41NTU3QzguNzcyNzYgMTUuNTU1NyA3Ljc3NzgzIDE2LjU1MDYgNy43Nzc4MyAxNy43Nzc5QzcuNzc3ODMgMTkuMDA1MiA4Ljc3Mjc2IDIwLjAwMDEgMTAuMDAwMSAyMC4wMDAxWiIgZmlsbD0id2hpdGUiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K"
                 />
@@ -85,15 +103,40 @@
       <div class="aspect-ratio-box">
         <div class="aspect-ratio-box-inside">
           <template v-if="activeSlide">
+            <template v-if="activeSlide.template === 'template0'">
+              <div class="slide-meta-preview">
+                  <img :src="store.meta.thumbnail" class="cover-image" />
+                  <div class="meta-details">
+                      <h1 class="lesson-name">{{store.meta.title}}</h1>
+                      <p v-if="store.meta.title" class="lesson-created-by">Lesson Created By: <span class="lesson-created-by-name">{{store.author}}</span></p>
+                      <p class="lesson-description">{{store.meta.description}}</p>
+                      <p class="lesson-terms" v-if="store.meta_fields_loaded && store.meta_select_options.subjects.length && store.meta.subjects && store.meta.subjects.length">
+                          Subject: {{selectedSubjectsNames.slice(0,3).join(', ')}}
+                          <template v-if="selectedSubjectsNames.length > 3">...</template>
+                      </p>
+                      <p class="lesson-terms" v-if="store.meta_fields_loaded && store.meta_select_options.topics.length && store.meta.topics && store.meta.topics.length">
+                          Topic: {{selectedTopicsNames.slice(0,3).join(', ')}}
+                          <template v-if="selectedTopicsNames.length > 3">...</template>
+                      </p>
+                      <p class="lesson-terms" v-if=" store.meta_fields_loaded && store.meta_select_options.grades.length && store.meta.grades && store.meta.grades.length">
+                          Grade: {{selectedGradesNames.slice(0,3).join(', ')}}
+                          <template v-if="selectedGradesNames.length > 3">...</template>
+                      </p>
+                      <p class="lesson-terms tags-list" v-if="store.meta_fields_loaded && store.meta_select_options.tags.length && store.meta.tags && store.meta.tags.length && selectedTagsNames">
+                          {{selectedTagsNames.slice(0,3).join(' ')}}
+                          <template v-if="selectedTagsNames.length > 3">...</template>
+                      </p>
+                  </div>
+              </div>
+
+            </template>
             <template v-if="activeSlide.template === 'template1'">
               <div class="slide-template-preview flex-builder">
                 <div class="row h-30">
                   <div
                     class="col w-100 text-title"
-                    :style="{
-                      backgroundColor:             activeSlide.fields.template1_text1_fill_color,}"
-                    @click="
-                      changeActiveBlockMeta(                        store.slide_templates.template1.template1_text1)">
+                    :style="{ backgroundColor: activeSlide.fields.template1_text1_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text1)">
                     <div
                       v-if="activeSlide.fields.template1_text1_text == null"
                       class="content-type">
@@ -201,23 +244,420 @@
             <template v-if="activeSlide.template === 'template2'">
               <div class="slide-template-preview flex-builder">
                 <div class="row h-30">
-                  <div class="col max-w-50"></div>
+                  <div  
+                    class="col max-w-60 m-s text-title"
+                    :style="{ backgroundColor: activeSlide.fields.template1_text1_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text1)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text1_text == null"
+                        class="content-type"> Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text1_font,
+                                  fontSize: activeSlide.fields.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text1_text_color,
+                                  fontWeight: activeSlide.fields.template1_text1_font_weight,
+                                  textAlign: activeSlide.fields.template1_text1_text_align,}"
+                        v-html="activeSlide.fields.template1_text1_text">
+                      </div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text1)"
+                      />
+                  </div>
                 </div>
                 <div class="row h-70">
-                  <div class="col w-100"></div>
+                  <div  
+                    class="col m-s w-50 free-text"
+                    :style="{backgroundColor: activeSlide.fields.template1_text2_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text2)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text2_text == null"
+                        class="content-type">
+                        Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text2_font,
+                                  fontSize: activeSlide.fields.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text2_text_color,
+                                  fontWeight: activeSlide.fields.template1_text2_font_weight,
+                                  textAlign: activeSlide.fields.template1_text2_text_align,}"
+                        v-html="activeSlide.fields.template1_text2_text"
+                      ></div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text2)"/>
+                    </div>
+                    <div class="w-50">
+                      <div class="row h-50">
+                        <div  
+                          class="col w-50 media"
+                          @click="changeActiveBlockMeta(store.slide_templates.template1.template1_media1)">
+                            <div  
+                              v-if="activeSlide.fields.template1_media1_image == null"
+                              class="content-type">
+                                Media
+                            </div>
+                            <template v-else>
+                              <img
+                                v-if="activeSlide.fields.template1_media1_image"
+                                :src="activeSlide.fields.template1_media1_image"
+                                style="width: 100%; height: 100%; object-fit: cover"
+                              />
+                            </template>
+
+                            <slide-block-corners
+                              v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_media1)"/>
+                        </div>
+                        <div  
+                          class="col w-50 media"
+                          @click="changeActiveBlockMeta(store.slide_templates.template1.template1_media2)">
+                            <div  
+                              v-if="activeSlide.fields.template1_media2_image == null"
+                              class="content-type">
+                                Media
+                            </div>
+                            <template v-else>
+                              <img
+                                v-if="activeSlide.fields.template1_media2_image"
+                                :src="activeSlide.fields.template1_media2_image"
+                                style="width: 100%; height: 100%; object-fit: cover"
+                              />
+                            </template>
+
+                            <slide-block-corners
+                              v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_media2)"/>
+                        </div>
+                      </div>
+                      <div class="row h-50">
+                        <div  
+                          class="col w-50 media"
+                          @click="changeActiveBlockMeta(store.slide_templates.template1.template1_media3)">
+                            <div  
+                              v-if="activeSlide.fields.template1_media3_image == null"
+                              class="content-type">
+                                Media
+                            </div>
+                            <template v-else>
+                              <img
+                                v-if="activeSlide.fields.template1_media3_image"
+                                :src="activeSlide.fields.template1_media3_image"
+                                style="width: 100%; height: 100%; object-fit: cover"
+                              />
+                            </template>
+
+                            <slide-block-corners
+                              v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_media3)"/>
+                        </div>
+                        <div  
+                          class="col w-50 media"
+                          @click="changeActiveBlockMeta(store.slide_templates.template1.template1_media4)">
+                            <div  
+                              v-if="activeSlide.fields.template1_media4_image == null"
+                              class="content-type">
+                                Media
+                            </div>
+                            <template v-else>
+                              <img
+                                v-if="activeSlide.fields.template1_media4_image"
+                                :src="activeSlide.fields.template1_media4_image"
+                                style="width: 100%; height: 100%; object-fit: cover"
+                              />
+                            </template>
+
+                            <slide-block-corners
+                              v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_media4)"/>
+                        </div>
+                      </div>
+                    </div>               
                 </div>
               </div>
             </template>
             <template v-if="activeSlide.template === 'template3'">
-              <div class="slide-template-preview flex-builder"></div>
+              <div class="slide-template-preview flex-builder">
+                <div class="row h-30">
+                  <div  
+                    class="col max-w-60 m-s text-title"
+                    :style="{ backgroundColor: activeSlide.fields.template1_text1_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text1)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text1_text == null"
+                        class="content-type"> Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text1_font,
+                                  fontSize: activeSlide.fields.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text1_text_color,
+                                  fontWeight: activeSlide.fields.template1_text1_font_weight,
+                                  textAlign: activeSlide.fields.template1_text1_text_align,}"
+                        v-html="activeSlide.fields.template1_text1_text">
+                      </div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text1)"
+                      />
+                  </div>
+                </div>
+                <div class="row h-70">
+                  <div  
+                    class="col m-s w-100 free-text"
+                    :style="{backgroundColor: activeSlide.fields.template1_text2_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text2)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text2_text == null"
+                        class="content-type">
+                        Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text2_font,
+                                  fontSize: activeSlide.fields.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text2_text_color,
+                                  fontWeight: activeSlide.fields.template1_text2_font_weight,
+                                  textAlign: activeSlide.fields.template1_text2_text_align,}"
+                        v-html="activeSlide.fields.template1_text2_text"
+                      ></div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text2)"/>
+                    </div>         
+                </div>
+              </div>
             </template>
+
+            <template v-if="activeSlide.template === 'template6'">
+              <div class="slide-template-preview flex-builder">
+                <div class="row h-30">
+                  <div  
+                    class="col w-100 m-s text-title"
+                    :style="{ backgroundColor: activeSlide.fields.template1_text1_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text1)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text1_text == null"
+                        class="content-type"> Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text1_font,
+                                  fontSize: activeSlide.fields.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text1_text_color,
+                                  fontWeight: activeSlide.fields.template1_text1_font_weight,
+                                  textAlign: activeSlide.fields.template1_text1_text_align,}"
+                        v-html="activeSlide.fields.template1_text1_text">
+                      </div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text1)"
+                      />
+                  </div>
+                </div>
+                <div class="row h-70">
+                  <div  
+                    class="col m-s w-50 free-text"
+                    :style="{backgroundColor: activeSlide.fields.template1_text2_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text2)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text2_text == null"
+                        class="content-type">
+                        Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text2_font,
+                                  fontSize: activeSlide.fields.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text2_text_color,
+                                  fontWeight: activeSlide.fields.template1_text2_font_weight,
+                                  textAlign: activeSlide.fields.template1_text2_text_align,}"
+                        v-html="activeSlide.fields.template1_text2_text"
+                      ></div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text2)"/>
+                    </div>
+                    <div class="w-50">
+                      <div class="row h-50">
+                        <div 
+                          class="col w-100 free-text" 
+                          :style="{backgroundColor: activeSlide.fields.template1_text3_fill_color,}"
+                          @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text3)">
+                            <div  
+                              v-if="activeSlide.fields.template1_text3_text == null"
+                              class="content-type">
+                              Text
+                            </div>
+                            <div  
+                              v-else
+                              class="formatted-text"
+                              :style="{ fontFamily: activeSlide.fields.template1_text3_font,
+                                        fontSize: activeSlide.fields.template1_text3_font_size,
+                                        lineHeight: '1.1em',
+                                        color: activeSlide.fields.template1_text3_text_color,
+                                        fontWeight: activeSlide.fields.template1_text3_font_weight,
+                                        textAlign: activeSlide.fields.template1_text3_text_align,}"
+                              v-html="activeSlide.fields.template1_text3_text"
+                            ></div>
+                            <slide-block-corners
+                              v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text3)"/>
+                        </div>
+                      </div>
+                      <div class="row h-50">
+                        <div 
+                          class="col w-100 free-text" 
+                          :style="{backgroundColor: activeSlide.fields.template1_text4_fill_color,}"
+                          @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text4)">
+                            <div  
+                              v-if="activeSlide.fields.template1_text4_text == null"
+                              class="content-type">
+                              Text
+                            </div>
+                            <div  
+                              v-else
+                              class="formatted-text"
+                              :style="{ fontFamily: activeSlide.fields.template1_text4_font,
+                                        fontSize: activeSlide.fields.template1_text4_font_size,
+                                        lineHeight: '1.1em',
+                                        color: activeSlide.fields.template1_text4_text_color,
+                                        fontWeight: activeSlide.fields.template1_text4_font_weight,
+                                        textAlign: activeSlide.fields.template1_text4_text_align,}"
+                              v-html="activeSlide.fields.template1_text4_text"
+                            ></div>
+                            <slide-block-corners
+                              v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text4)"/>
+                        </div>
+                      </div>
+                    </div>               
+                </div>
+              </div>
+            </template>
+
+            <template v-if="activeSlide.template === 'template7'">
+              <div class="slide-template-preview flex-builder">
+                <div class="row h-30">
+                  <div  
+                    class="col w-100 m-s text-title"
+                    :style="{ backgroundColor: activeSlide.fields.template1_text1_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text1)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text1_text == null"
+                        class="content-type"> Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text1_font,
+                                  fontSize: activeSlide.fields.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text1_text_color,
+                                  fontWeight: activeSlide.fields.template1_text1_font_weight,
+                                  textAlign: activeSlide.fields.template1_text1_text_align,}"
+                        v-html="activeSlide.fields.template1_text1_text">
+                      </div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text1)"
+                      />
+                  </div>
+                </div>
+                <div class="row h-30">
+                  <div 
+                    class="col w-50 m-s free-text" 
+                    :style="{backgroundColor: activeSlide.fields.template1_text3_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text3)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text3_text == null"
+                        class="content-type">
+                        Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text3_font,
+                                  fontSize: activeSlide.fields.template1_text3_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text3_text_color,
+                                  fontWeight: activeSlide.fields.template1_text3_font_weight,
+                                  textAlign: activeSlide.fields.template1_text3_text_align,}"
+                        v-html="activeSlide.fields.template1_text3_text"
+                      ></div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text3)"/>
+                  </div>
+                  <div 
+                    class="col w-50 m-s free-text" 
+                    :style="{backgroundColor: activeSlide.fields.template1_text4_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text4)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text4_text == null"
+                        class="content-type">
+                        Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text4_font,
+                                  fontSize: activeSlide.fields.template1_text4_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text4_text_color,
+                                  fontWeight: activeSlide.fields.template1_text4_font_weight,
+                                  textAlign: activeSlide.fields.template1_text4_text_align,}"
+                        v-html="activeSlide.fields.template1_text4_text"
+                      ></div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text4)"/>
+                  </div>
+                </div>  
+                <div class="row h-40">
+                  <div  
+                    class="col m-s w-50 free-text"
+                    :style="{backgroundColor: activeSlide.fields.template1_text2_fill_color,}"
+                    @click="changeActiveBlockMeta(store.slide_templates.template1.template1_text2)">
+                      <div  
+                        v-if="activeSlide.fields.template1_text2_text == null"
+                        class="content-type">
+                        Text
+                      </div>
+                      <div  
+                        v-else
+                        class="formatted-text"
+                        :style="{ fontFamily: activeSlide.fields.template1_text2_font,
+                                  fontSize: activeSlide.fields.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: activeSlide.fields.template1_text2_text_color,
+                                  fontWeight: activeSlide.fields.template1_text2_font_weight,
+                                  textAlign: activeSlide.fields.template1_text2_text_align,}"
+                        v-html="activeSlide.fields.template1_text2_text"
+                      ></div>
+                      <slide-block-corners
+                        v-if="checkActiveBlockMeta(store.slide_templates.template1.template1_text2)"/>
+                    </div>             
+                </div>
+              </div>
+            </template>
+
             <template v-if="activeSlide.template === 'template4'">
               <div
                 v-if="activeSlide.fields"
                 class="slide-template-preview video-slide"
               >
                 <div class="video-wrap">
-                  <VideoPlayer v-bind:movieData="activeSlide.fields" />
+                  <video-player v-bind:movieData="activeSlide.fields" @seeked="setSeekedTimeToQuestion" />
+                  <div v-if="store.active_slide_movie_meta" class="questions-timeline">
+                    <div class="question-marker"
+                         :style="'left:'+questionPosition(question.start_time)+'%'"
+                         @click="showQuestion(question.question_id)"
+                         v-for="(question, index) in movieQuestions"
+                         :key="question.question_id">
+                      <div>{{index + 1}}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <template v-else>
@@ -285,7 +725,7 @@
       
       <div v-if="store.active_question !== null && store.active_question.place !== 'slide'" class="block-meta">
         <div class="header">
-          <button class="back-meta" @click="store.active_question = null">New Questions</button>
+          <button class="back-meta" @click="backToQuestionsList()">New Questions</button>
         </div>
         <div class="body">
           <Question/>
@@ -299,11 +739,18 @@
           <SlideQuestion/>
         </div>
       </div>
-      
+      <div v-if="activeSlide && activeSlide.slide_type === 'meta'" class="block-meta">
+        <div class="header">
+            LESSON COVER PAGE
+        </div>
+        <div class="body">
+            <MetaSidebar @tags_changed="setSelectedTagsNames()" />
+        </div>
+      </div>
       
       <el-tabs
         v-if="
-          store.active_slide !== null &&
+          store.active_slide_id !== null &&
           store.active_block_meta == null &&
           store.active_question == null &&
           activeSlide &&
@@ -337,6 +784,25 @@
               class="clickable"
             >
             </template3>
+
+            <template6
+              @click.native="activeSlide.template = 'template6'"
+              :class="{
+                active: activeSlide.template === 'template6',
+              }"
+              class="clickable"
+            >
+            </template6>
+            <template7
+              @click.native="activeSlide.template = 'template7'"
+              :class="{
+                active: activeSlide.template === 'template7',
+              }"
+              class="clickable"
+            >
+            </template7>
+
+
           </div>
         </el-tab-pane>
         <el-tab-pane label="Background" name="background"> </el-tab-pane>
@@ -345,7 +811,7 @@
 
       <el-tabs
         v-if="
-          store.active_slide !== null &&
+          store.active_slide_id !== null &&
           store.active_block_meta == null &&
           store.active_question == null &&
           activeSlide &&
@@ -368,7 +834,7 @@
           </div>
         </el-tab-pane>
         
-        <el-tab-pane v-if="store.active_video != null"  label="Questions" name="questions">
+        <el-tab-pane v-if="activeSlide.template === 'template4' && activeSlide.fields"  label="Questions" name="questions">
           <div class="container-25px flex-builder">
             <div class="btn" @click="newQuestion()">
               <svg width="15" height="15" viewBox="0 0 15 15"
@@ -457,6 +923,8 @@ import Template2 from "./Shared/SlideTemplates/Template2";
 import Template3 from "./Shared/SlideTemplates/Template3";
 import Template4 from "./Shared/SlideTemplates/Template4";
 import Template5 from "./Shared/SlideTemplates/Template5";
+import Template6 from "./Shared/SlideTemplates/Template6";
+import Template7 from "./Shared/SlideTemplates/Template7";
 import SlideBlockCorners from "./Shared/SlideBlockCorners";
 import SlideBlockInput from "./Shared/SlideBlockInput";
 import SearchMovie from "./Shared/SearchMovie";
@@ -467,6 +935,7 @@ import Question from "./Shared/Question";
 import QuestionTemplate from "./Shared/QuestionTemplate";
 import SlideQuestion from "./Shared/SlideQuestion";
 import SlideQuestionTemplate from "./Shared/SlideQuestionTemplate";
+import MetaSidebar from "./Shared/MetaSidebar";
 import service from "../../service";
 import axios from "axios";
 
@@ -479,6 +948,8 @@ export default {
     Template3,
     Template4,
     Template5,
+    Template6,
+    Template7,
     draggable, // docs: https://github.com/SortableJS/Vue.Draggable
     SlideBlockCorners,
     SlideBlockInput,
@@ -490,6 +961,7 @@ export default {
     QuestionTemplate,
     SlideQuestion,
     SlideQuestionTemplate,
+    MetaSidebar,
   },
   data() {
     return {
@@ -499,6 +971,7 @@ export default {
       active_slide_meta_tab: "layout", // layout/background/theme
       active_video_slide_meta_tab: "movie", // movie/questions
       movie_question: "",
+      selectedTagsNames: null,
     };
   },
   mounted() {
@@ -519,23 +992,70 @@ export default {
     activeSlideIndex() {
       return this.store.slides
         .map((x) => x.lesson_id)
-        .indexOf(this.store.active_slide);
+        .indexOf(this.store.active_slide_id);
     },
     activeSlide() {
-      const activeSlide = this.getSlideById(this.store.active_slide);
+      const activeSlide = this.getSlideById(this.store.active_slide_id);
       return activeSlide;
     },
     
     movieQuestions: function() {
-			var idSlide = this.store.active_slide;
-			var video = this.store.active_video;
+        var idSlide = this.store.active_slide_id;
+        var video = this.store.active_video;
 
-			if(idSlide != null) {
-				return this.store.questions.filter(function(question) {
-					return question.idSlide === idSlide;
-				});
-			}
-		}
+        if(idSlide != null) {
+            let movie_questions = this.store.questions.filter(function(question) {
+                return question.idSlide === idSlide;
+            });
+
+
+            movie_questions.sort(function(a, b) {
+              return parseInt(a.start_time) - parseInt(b.start_time);
+            });
+
+            return movie_questions;
+        }
+    },
+    selectedSubjectsNames: function () {
+      let subjects = [];
+      let _this = this;
+      this.store.meta.subjects.forEach((subject, index) => {
+          let selected_subject = _this.store.meta_select_options.subjects.filter( obj => {
+              return obj.id === subject;
+          });
+          if (selected_subject.length) {
+              subjects.push(selected_subject[0].name);
+          }
+      });
+      return subjects;
+    },
+    selectedGradesNames: function () {
+      let grades = [];
+      let _this = this;
+      this.store.meta.grades.forEach((grade, index) => {
+          let selected_grade = _this.store.meta_select_options.grades.filter( obj => {
+              return obj.id === grade;
+          });
+          if (selected_grade.length) {
+              grades.push(selected_grade[0].name);
+          }
+      });
+      return grades;
+    },
+    selectedTopicsNames: function () {
+      let topics = [];
+      let _this = this;
+      this.store.meta.topics.forEach((topic, index) => {
+          let selected_topic = _this.store.meta_select_options.topics.filter( obj => {
+              return obj.id === topic;
+          });
+          if (selected_topic.length) {
+              topics.push(selected_topic[0].name);
+          }
+
+      });
+      return topics;
+    },
     
   },
   watch: {
@@ -554,8 +1074,8 @@ export default {
 
     addMovieToSlide(movieMeta) {
       this.store.active_video = movieMeta.kaltura_id;
-      this.$store.commit("LessonEditor/updateSlide", {
-        lesson_id: this.store.active_slide,
+      this.$store.commit("LessonEditor/updateSlideFields", {
+        id: this.store.active_slide_id,
         fields: {
           kaltura_id: movieMeta.kaltura_id,
           play_from: 0,
@@ -602,7 +1122,7 @@ export default {
         _this.store.slides.push({ ...slide, lesson_id });
 
         // Select last slide after creation
-        _this.store.active_slide = lesson_id;
+        _this.store.active_slide_id = lesson_id;
 
         // Close slide type selection modal
         _this.new_slide_modal = false;
@@ -649,7 +1169,7 @@ export default {
         // You should to create firstly a quiz
         axios.post('/academe/v1/create_new_step', {
             course_id: _this.store.lesson_id,
-            lesson_id: _this.store.active_slide,
+            lesson_id: _this.store.active_slide_id,
             post_type: 'sfwd-quiz'
         }).then(response => {
             const quiz_id = response.data;
@@ -662,7 +1182,7 @@ export default {
             // After quiz creation you should to create a question and add it to quiz
             axios.post('/academe/v1/create_new_step', {
                 course_id: _this.store.lesson_id,
-                lesson_id: _this.store.active_slide,
+                lesson_id: _this.store.active_slide_id,
                 quiz_id: quiz_id,
                 post_type: 'sfwd-question'
             }).then(response => {
@@ -670,7 +1190,7 @@ export default {
 
                 //create new question
                 let newQuestion = {};
-                newQuestion.idSlide = _this.store.active_slide;
+                newQuestion.idSlide = _this.store.active_slide_id;
                 newQuestion.quiz_id = quiz_id; // real WP id of quiz
                 newQuestion.question_id = question_id; // real WP id of question
                 newQuestion.type = '';
@@ -692,46 +1212,38 @@ export default {
     
     addSlideQuestionTempl(slide, newQuestion){
         var _this = this;
-        // Generate real quiz + question IDs using WP:
-        // You should to create firstly a quiz
-        axios.post('/academe/v1/create_new_step', {
-            course_id: _this.store.lesson_id,
-            lesson_id: _this.store.active_slide,
-            post_type: 'sfwd-quiz'
-        }).then(response => {
-            const quiz_id = response.data;
-            
-            // Add slide with empty structure to the slides list
-            const lesson_id = response.data;
-            _this.store.slides.push({ ...slide, lesson_id });
+        this.addSlide(slide).then(function (response) {
+          // Generate real quiz + question IDs using WP:
+          // You should to create firstly a quiz
+          axios.post('/academe/v1/create_new_step', {
+              course_id: _this.store.lesson_id,
+              lesson_id: _this.store.active_slide_id,
+              post_type: 'sfwd-quiz'
+          }).then(response => {
+              const quiz_id = response.data;
 
-            // Select last slide after creation
-            _this.store.active_slide = lesson_id;
+              // Update quiz settings (set up default params needed to show quiz correctly on the session front):
+              axios.post("/academe/v1/default-quiz-settings", {
+                  quiz_id: quiz_id
+              });
 
-            // Close slide type selection modal
-            _this.new_slide_modal = false;
+              // After quiz creation you should to create a question and add it to quiz
+              axios.post('/academe/v1/create_new_step', {
+                  course_id: _this.store.lesson_id,
+                  lesson_id: _this.store.active_slide_id,
+                  quiz_id: quiz_id,
+                  post_type: 'sfwd-question'
+              }).then(response => {
+                  const question_id = response.data;
+                  newQuestion.idSlide = _this.store.active_slide_id;
+                  newQuestion.quiz_id = quiz_id; // real WP id of quiz
+                  newQuestion.question_id = question_id; // real WP id of question
 
-            // Update quiz settings (set up default params needed to show quiz correctly on the session front):
-            axios.post("/academe/v1/default-quiz-settings", {
-                quiz_id: quiz_id
-            });
+                  _this.store.questions.push(newQuestion);
+                  _this.store.active_question = newQuestion;
+              });
 
-            // After quiz creation you should to create a question and add it to quiz
-            axios.post('/academe/v1/create_new_step', {
-                course_id: _this.store.lesson_id,
-                lesson_id: _this.store.active_slide,
-                quiz_id: quiz_id,
-                post_type: 'sfwd-question'
-            }).then(response => {
-                const question_id = response.data;
-                newQuestion.idSlide = _this.store.active_slide;
-                newQuestion.quiz_id = quiz_id; // real WP id of quiz
-                newQuestion.question_id = question_id; // real WP id of question
-
-                _this.store.questions.push(newQuestion);
-                _this.store.active_question = newQuestion;
-            });
-
+          });
         });
     },    
     addSlideQuestion() {
@@ -811,12 +1323,12 @@ export default {
 
       if (this.store.slides.length > 0) {
         if (index > 0) {
-          this.store.active_slide = this.store.slides[index - 1].lesson_id;
+          this.store.active_slide_id = this.store.slides[index - 1].lesson_id;
         } else {
-          this.store.active_slide = this.store.slides[0].lesson_id;
+          this.store.active_slide_id = this.store.slides[0].lesson_id;
         }
       } else {
-        this.store.active_slide = null;
+        this.store.active_slide_id = null;
       }
     },
     changeActiveBlockMeta(meta_obj) {
@@ -829,9 +1341,10 @@ export default {
     changeActiveSlide(slide) {
         this.store.view_question = null;
         this.store.active_question = null;
+        this.store.active_slide_movie_meta = null;
 
       const slideId = parseInt(slide.lesson_id);
-      this.store.active_slide = slideId;
+      this.store.active_slide_id = slideId;
       if (slide.slide_type === 'question'){
         this.store.active_question = this.getSlideQuestionById(slideId)
       }
@@ -860,7 +1373,7 @@ export default {
       // You should to create firstly a quiz
       axios.post('/academe/v1/create_new_step', {
           course_id: this.store.lesson_id,
-          lesson_id: this.store.active_slide,
+          lesson_id: this.store.active_slide_id,
           post_type: 'sfwd-quiz'
       }).then(response => {
           const quiz_id = response.data;
@@ -873,7 +1386,7 @@ export default {
           // After quiz creation you should to create a question and add it to quiz
           axios.post('/academe/v1/create_new_step', {
               course_id: this.store.lesson_id,
-              lesson_id: this.store.active_slide,
+              lesson_id: this.store.active_slide_id,
               quiz_id: quiz_id,
               post_type: 'sfwd-question'
           }).then(response => {
@@ -883,7 +1396,7 @@ export default {
               let question = {};
               let index = _this.store.questions.length;
               question.kaltura_id = this.store.active_video;
-              question.idSlide = this.store.active_slide; // real WP id of slide (lesson)
+              question.idSlide = this.store.active_slide_id; // real WP id of slide (lesson)
               question.quiz_id = quiz_id; // real WP id of quiz
               question.question_id = question_id; // real WP id of question
               question.questionIndex = index;
@@ -911,7 +1424,7 @@ export default {
       // You should to create firstly a quiz
       axios.post('/academe/v1/create_new_step', {
           course_id: _this.store.lesson_id,
-          lesson_id: _this.store.active_slide,
+          lesson_id: _this.store.active_slide_id,
           post_type: 'sfwd-quiz'
       }).then(response => {
           const quiz_id = response.data;
@@ -924,12 +1437,12 @@ export default {
           // After quiz creation you should to create a question and add it to quiz
           axios.post('/academe/v1/create_new_step', {
               course_id: _this.store.lesson_id,
-              lesson_id: _this.store.active_slide,
+              lesson_id: _this.store.active_slide_id,
               quiz_id: quiz_id,
               post_type: 'sfwd-question'
           }).then(response => {
               const question_id = response.data; 
-                question.idSlide = _this.store.active_slide; // real WP id of slide (lesson)
+                question.idSlide = _this.store.active_slide_id; // real WP id of slide (lesson)
                 question.quiz_id = quiz_id; // real WP id of quiz
                 question.question_id = question_id; // real WP id of question         
                 _this.store.active_question = question;
@@ -943,7 +1456,7 @@ export default {
       // You should to create firstly a quiz
       axios.post('/academe/v1/create_new_step', {
           course_id:  _this.store.lesson_id,
-          lesson_id:  _this.store.active_slide,
+          lesson_id:  _this.store.active_slide_id,
           post_type: 'sfwd-quiz'
       }).then(response => {
           const quiz_id = response.data;
@@ -956,12 +1469,12 @@ export default {
           // After quiz creation you should to create a question and add it to quiz
           axios.post('/academe/v1/create_new_step', {
               course_id:  _this.store.lesson_id,
-              lesson_id:  _this.store.active_slide,
+              lesson_id:  _this.store.active_slide_id,
               quiz_id: quiz_id,
               post_type: 'sfwd-question'
           }).then(response => {
               const question_id = response.data; 
-                question.idSlide =  _this.store.active_slide; // real WP id of slide (lesson)
+                question.idSlide =  _this.store.active_slide_id; // real WP id of slide (lesson)
                 question.quiz_id = quiz_id; // real WP id of quiz
                 question.question_id = question_id; // real WP id of question         
                 _this.store.questions.push(question);
@@ -985,7 +1498,9 @@ export default {
       question.checkedItems = [];
       question.correctAnswerIndex = '';
       question.addQuestion = true;
+      question.startTime = 0;
       question.place = 'movie';
+      question.start_time_error = false;
       this.addNewQuestion(question)
     },
 
@@ -996,7 +1511,16 @@ export default {
       this.store.active_question.addQuestion = false;
     },
     removeQuestion(index) {
-    let elIndex = this.store.questions.indexOf(this.getQuestionById(index));  
+
+    let question = this.getQuestionById(index);
+    let elIndex = this.store.questions.indexOf(question);
+
+    axios.delete('/ldlms/v1/sfwd-questions/'+question.question_id).then(res => {
+      //
+    });
+    axios.delete('/ldlms/v1/sfwd-quiz/'+question.quiz_id).then(res => {
+      //
+    });
     
     this.store.view_question = null;
     this.store.questions.splice(elIndex, 1);
@@ -1007,8 +1531,95 @@ export default {
       let activeQuestion = this.getQuestionById(index);
       this.store.view_question = null;
       this.store.view_question = activeQuestion;
-    }
-    
+    },
+    questionPosition(show_at) {
+      return parseInt(show_at) / this.store.active_slide_movie_meta.duration * 100;
+    },
+    /*setSeekedTimeToQuestion(time) {
+      this.store.active_question.start_time = time;
+    },*/
+    setSeekedTimeToQuestion(time) {      
+      let question = this.store.active_question != null;   
+      let firstTime = this.activeSlide.fields.play_from ? this.activeSlide.fields.play_from : 0;
+      let lastTime = this.activeSlide.fields.play_to ? this.activeSlide.fields.play_to : 0;
+      let movieFrom = document.querySelector('#tab-movie.is-active') !== null 
+                      && document.querySelector('.el-input--from.is-active') !== null 
+                      && (time <= lastTime || firstTime === 0 || lastTime === 0);
+      let movieTo = document.querySelector('#tab-movie.is-active') !== null 
+                      && document.querySelector('.el-input--to.is-active') !== null
+                      && (time > firstTime || firstTime === 0 || lastTime === 0);
+      // add time to input from timeline in question
+      if(question){
+        this.store.active_question.start_time = time
+      }
+      // add time to input from timeline in movie 
+      else if (movieFrom) {
+        this.activeSlide.fields.play_from = time;  
+      } 
+      else if (movieTo) {
+        this.activeSlide.fields.play_to = time;
+      }    
+    },
+    createMetaSlide() {
+      this.store.active_question = null;
+      const new_slide = {
+          slide_type: "meta",
+          template: "template0",
+      };
+      let _this = this;
+      this.addSlide(new_slide).then(function (response) {
+          if(_this.store.movie_id) {
+              _this.createMovieSlide();
+          } else {
+              _this.store.loading = false;
+          }
+      });
+
+    },
+    createMovieSlide() {
+      let _this = this;
+      const new_slide = {
+          slide_type: "movie",
+          template: "template4",
+      };
+
+      this.addSlide(new_slide).then(function (response) {
+          axios.get('/wp/v2/movie/' + _this.store.movie_id).then(res => {
+              _this.$store.commit("LessonEditor/updateSlideFields", {
+                  id: _this.store.slides[_this.store.slides.length - 1].lesson_id,
+                  fields: {
+                      kaltura_id: res.data.acf.kaltura_id,
+                      play_from: 0,
+                      play_to: 0,
+                  },
+              });
+              _this.store.loading = false;
+          });
+      });
+    },
+    setSelectedTagsNames() {
+      let tags = [];
+      let _this = this;
+      setTimeout(function() {
+          jQuery('.tags-selector .el-tag .el-select__tags-text').each(function( index ) {
+              tags.push('#'+jQuery( this ).html());
+          });
+          _this.selectedTagsNames = tags;
+      }, 200); //debounce
+    },
+    backToQuestionsList() {
+      if (this.store.active_question.addQuestion == true) {
+          let question_id = this.store.active_question.question_id;
+          let quiz_id = this.store.active_question.quiz_id;
+          axios.delete('/ldlms/v1/sfwd-questions/'+question_id).then(res => {
+              //
+          });
+          axios.delete('/ldlms/v1/sfwd-quiz/'+quiz_id).then(res => {
+              //
+          });
+      }
+      this.store.active_question = null;
+    },
   },
 };
 </script>
@@ -1293,6 +1904,11 @@ export default {
   margin: 3%;
   background: rgba(196, 196, 196, 0.64);
 }
+
+.flex-builder .col.m-s {
+  margin: 1.5%;
+}
+
 .flex-builder .w-100 {
   width: 100%;
 }
@@ -1302,6 +1918,11 @@ export default {
 .flex-builder .max-w-50 {
   max-width: 50%;
 }
+
+.flex-builder .max-w-60 {
+  max-width: 60%;
+}
+
 .flex-builder .h-30 {
   height: 30%;
 }
@@ -1341,6 +1962,41 @@ export default {
 .el-tabs__header {
   margin: 0;
 }
+.questions-timeline {
+  position: absolute;
+  bottom: 55px;
+  width: 100%;
+}
+.question-marker {
+  height: 16px;
+  width: 16px;
+  background: #51acfd;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 0px;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px 0px black;
+}
+.question-marker:after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #51acfd;
+  clear: both;
+}
+.question-marker > div {
+  font-size: 10px;
+  margin-top: 3px;
+}
 </style>
 
 <style>
@@ -1356,7 +2012,7 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0 0 20px 0;
+  padding: 0;
 }
 .video-wrap {
   width: 100%;
@@ -1386,6 +2042,66 @@ export default {
 .video-slide .video-footer-img img {
     width: 100%;
 } */
+.cover-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    font-weight: 600;
+}
+.cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.slide-meta-preview {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+.meta-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-left: 40px;
+    padding-bottom: 60px;
+}
+.meta-details * {
+    text-shadow: 0px 0px 15px black;
+}
+.lesson-name {
+    font-size: 39px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+.lesson-created-by {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+.lesson-created-by-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #51ACFD;
+    text-shadow: none !important;
+}
+.lesson-description {
+    color: #F2F2F2;
+    line-height: 24px;
+    max-width: 400px;
+    text-shadow: 0px 0px 15px black;
+    margin-bottom: 20px;
+}
+.lesson-terms {
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+.lesson-terms.tags-list {
+    color: #51ACFD;
+    margin-top: 10px;
+}
 </style>
 
 

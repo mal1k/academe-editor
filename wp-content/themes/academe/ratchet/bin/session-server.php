@@ -5,6 +5,7 @@ use Ratchet\WebSocket\WsServer;
 use MyApp\Session;
 
 require dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+require dirname(dirname(dirname(dirname(dirname(__DIR__))))) . '/wp-config.php';
 
 $server = IoServer::factory(
     new HttpServer(
@@ -12,7 +13,7 @@ $server = IoServer::factory(
             new Session()
         )
     ),
-    8080
+    WEBSOCKET_PORT
 );
 
 $server->run();

@@ -20,6 +20,13 @@ add_action( 'rest_api_init', function() {
             'schema' => null,
         ]
     );
+    register_rest_field('sfwd-quiz', 'questions', [
+            'get_callback' => function($object) {
+                return learndash_get_quiz_questions( $object['id'] );
+            },
+            'schema' => null,
+        ]
+    );
 
     require_once ACADEME_THEME_DIR . 'includes/lesson-slide-templates.php';
     register_rest_route( 'academe/v1', '/slide-templates', [
@@ -214,7 +221,7 @@ add_action( 'rest_api_init', function() {
     register_rest_route( 'academe/v1', '/get-movie-images/(?P<id>[a-zA-Z0-9-_]+)', array(
 		'methods'  => 'GET',
 		'callback' => 'movieImagesFromKaltura',
-    ) );
+	) );
 
     register_rest_route( 'academe/v1', '/get-movie-list', array(
 		'methods'  => 'GET',
@@ -270,6 +277,115 @@ add_action( 'rest_api_init', function() {
         }
     ) );
 
+
+    register_rest_route( 'academe/v1', '/get-lesson-quizzes', [
+        'methods'  => 'GET',
+        'callback' => function($data) {
+            $parameters = $data->get_params();
+            if ($parameters['course'] && $parameters['lesson']) {
+                $quizzes = learndash_course_get_children_of_step( $parameters['course'], $parameters['lesson'], 'sfwd-quiz' );
+
+                $result = [];
+                foreach ($quizzes as $quiz) {
+                    $result[] = [
+                        'id' => $quiz,
+                        'time' => get_field('show_at', $quiz)
+                    ];
+                }
+
+                return $result;
+            }
+
+        }
+    ]);
+
+    register_rest_route( 'academe/v1', '/get-lesson-last-session-url', [
+        'methods'  => 'GET',
+        'callback' => function($data) {
+            $parameters = $data->get_params();
+            if ($parameters['lesson']) {
+
+                $wp_query = new WP_Query([
+                    'post_type' => 'session',
+                    'meta_query' => [
+                        array(
+                            'key' => 'related_lesson',
+                            'value' => $parameters['lesson'],
+                            'compare' => '=',
+                        )
+                    ]
+                ]);
+
+                $session_url = '/sessions/' . $wp_query->posts[0]->post_name;
+
+                return $session_url;
+            }
+
+        }
+    ]);
+
+    register_rest_route( 'academe/v1', '/save-image', [
+        'methods'  => 'POST',
+        'callback' => function($data) {
+            $parameters = $data->get_params();
+
+            $old_url = $parameters['url'];
+
+            // Save pixabay images locally:
+            if (parse_url($old_url, PHP_URL_HOST) === 'pixabay.com') {
+                $get = wp_remote_get( $old_url );
+                $type = wp_remote_retrieve_header( $get, 'content-type' );
+
+                if (!$type)
+                    return false;
+
+                $mirror = wp_upload_bits( basename( $old_url ), '', wp_remote_retrieve_body( $get ) );
+
+                $attachment = array(
+                    'post_mime_type' => $type
+                );
+
+                $attach_id = wp_insert_attachment( $attachment, $mirror['file']);
+
+                require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+                $attach_data = wp_generate_attachment_metadata( $attach_id, $mirror['file'] );
+
+                wp_update_attachment_metadata( $attach_id, $attach_data );
+
+                $new_url = wp_get_attachment_image_url($attach_id, 'full');
+
+            } else {
+                $new_url = $old_url;
+            }
+            update_field( $parameters['field'], $new_url, $parameters['post_id'] );
+
+            return json_encode(['status' => 'success']);
+        }
+    ] );
+
+    register_rest_route( 'academe/v1', '/get-lesson-meta-terms', [
+        'methods'  => 'GET',
+        'callback' => function($data) {
+            $lesson_id = $data->get_param( 'lesson_id' );
+
+            $subjects = wp_get_post_terms($lesson_id, 'subject', ['fields' => 'names']);
+            $topics = wp_get_post_terms($lesson_id, 'topic', ['fields' => 'names']);
+            $grades = wp_get_post_terms($lesson_id, 'grade', ['fields' => 'names']);
+            $tags = wp_get_post_tags($lesson_id, ['fields' => 'names']);
+
+            $tags_hash = array_map(function ($tag) {
+                return '#' . $tag;
+            }, $tags);
+
+            return [
+                'subjects' => $subjects,
+                'topics' => $topics,
+                'grades' => $grades,
+                'tags' => $tags_hash,
+            ];
+        }
+    ]);
 });
 
 function getMovieDataFromPost($movie_post) {
@@ -283,10 +399,16 @@ function getMovieDataFromPost($movie_post) {
 
     // duration
     if (isset($custom_fields['duration'])) {
+
+        //duration in seconds
+        $array['duration'] = format_time_to_seconds($custom_fields['duration']);
+
+        //duration human friendly
         $duration = explode(":", $custom_fields['duration']);
         $durationTime = (int)$duration[0].'h '. (int)$duration[1].'m';
+        $array['time'] = $durationTime;
     }
-    $array['time'] = $durationTime;
+
     
         // tags
         if( in_array($movie_post->post_type, ['movie', 'teaching-guide']) ) {

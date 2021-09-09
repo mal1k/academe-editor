@@ -5,28 +5,79 @@ axios.defaults.baseURL = window.wpApiSettings.root;
 axios.defaults.headers.common["X-WP-Nonce"] = window.wpApiSettings.nonce;
 
 export default {
-    initSave() {
-        let storage = store.state.LessonEditor;
+    async initSave () {
 
+        let storage = store.state.LessonEditor;
         console.log('lesson save initialized');
+        storage.loading = true;
+
         console.log(store.state.LessonEditor);
+
+        // Create session only on first save
+        if (!storage.first_session_created) {
+            console.log(ajaxurl + "?action=create_lesson_session");
+
+            const result = await fetch(ajaxurl + "?action=create_lesson_session", {
+                method: "POST",
+                body: JSON.stringify({lesson_id: store.state.LessonEditor.lesson_id})
+            });
+
+            const serverResp = await result.json();
+            if (!serverResp.error) {
+                const element = jQuery("#previewButton");
+                element.attr(
+                    "href",
+                    serverResp.success
+                );
+                storage.first_session_created = true;
+            } else {
+                alert(serverResp.error);
+            };
+        }
 
         const saveCourse = this.saveCourseMeta();
         // Update ACF fields:
         saveCourse.then(function (results) {
-            axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
-                fields: {
-                    featured_image_url: storage.meta.thumbnail,
-                }
+            // Old implementation (direct saving):
+            // axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
+            //     fields: {
+            //         cover_image_url: storage.meta.thumbnail,
+            //     }
+            // });
+            // New implementation (pixabay re-save locally):
+            axios.post("/academe/v1/save-image", {
+                post_id: storage.lesson_id,
+                field: 'cover_image_url',
+                url: storage.meta.thumbnail,
+            }).then(res => {
+                storage.loading = false; // seems all saved
             });
+            // Save movie_id if created from movie:
+            if (storage.movie_id) {
+                axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
+                    fields: {
+                        movie_id: storage.movie_id,
+                    }
+                });
+            }
         });
 
+        let slides_ids = storage.slides.map(function(slide) {
+            return slide.lesson_id;
+        });
+
+        // Does not work for unknown reasons (403)
+        // axios.post('/ldlms/v1/sfwd-courses/'+storage.lesson_id+'/steps', {
+        //     "t": {
+        //         "sfwd-lessons": slides_ids
+        //     }
+        // });
+
         if(storage.slides.length) {
-            storage.slides.forEach((slide) => {
-                this.saveSlide(slide);
+            storage.slides.forEach((slide, index) => {
+                this.saveSlide(slide, index);
             });
         }
-
 
     },
     async saveCourseMeta() {
@@ -35,6 +86,11 @@ export default {
         try {
             const response = await axios.post("/ldlms/v1/sfwd-courses/"+storage.lesson_id, {
                 course_disable_lesson_progression: true,
+                course_price_type: 'open',
+                course_prerequisite_compare: 'ANY',
+                courses_expire_access: '',
+                courses_expire_access_days: 0,
+
                 title: storage.meta.title,
                 content: storage.meta.description,
 
@@ -42,7 +98,7 @@ export default {
                 grade: storage.meta.grades,
                 subject: storage.meta.subjects,
                 topic: storage.meta.topics,
-                ld_course_tag: storage.meta.tags,
+                ptag: storage.meta.tags,
 
                 status: 'publish',
 
@@ -52,14 +108,26 @@ export default {
             console.error(`Failed to save course`, err);
         }
     },
-    saveSlide(slide) {
+    saveSlide(slide, index) {
         let storage = store.state.LessonEditor;
+
+        axios.post("/ldlms/v1/sfwd-lessons/"+slide.lesson_id, {
+            menu_order: index + 1,
+        });
 
         var acf_fields = {
             slide_type: slide.slide_type,
         };
 
         switch (slide.slide_type) {
+            case "meta":
+                axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
+                    fields: acf_fields
+                }).then( response => {
+
+                });
+
+                break;
             case "text_image":
 
                 acf_fields.pre_defined_template = slide.template;
@@ -85,10 +153,17 @@ export default {
                             template1_text2_text_color: slide.fields.template1_text2_text_color,
 
                         },
-                        template1_media1: {
-                            template1_media1_image: slide.fields.template1_media1_image,
-                        }
+                        // template1_media1: {
+                        //     template1_media1_image: slide.fields.template1_media1_image,
+                        // }
                     };
+
+                    // Save image (ACF with local saving pixabay):
+                    axios.post("/academe/v1/save-image", {
+                        post_id: slide.lesson_id,
+                        field: 'template1_template1_media1_template1_media1_image',
+                        url: slide.fields.template1_media1_image,
+                    });
                 }
 
                 axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
@@ -104,7 +179,7 @@ export default {
                 acf_fields.movie_slide = {
                     kaltura_id: slide.fields.kaltura_id,
                     play_from: slide.fields.play_from,
-                    play_to: slide.fields.play_from,
+                    play_to: slide.fields.play_to,
                 };
 
                 axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
@@ -186,10 +261,14 @@ export default {
                     }
                 });
 
+                // Update ACF fields for lesson (slide type):
+                axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
+                    fields: acf_fields
+                });
+
                 break;
         }
 
     }
 
 };
-

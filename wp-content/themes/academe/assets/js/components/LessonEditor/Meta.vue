@@ -10,6 +10,7 @@
                                 placeholder=""
                                 v-model="store.meta.title"
                                 @input="debounceSuggestions"
+                                @change="saveLesson()"
                                 size="medium"
                                 style="width:100%">
                         </el-input>
@@ -36,7 +37,6 @@
                                 filterable
                                 remote
                                 clearable
-                                reserve-keyword
                                 size="medium"
                                 style="width:100%"
                                 placeholder="Enter Tag..."
@@ -46,7 +46,7 @@
                                 :remote-method="loadTags"
                                 :loading="loading">
                             <el-option
-                                    v-for="tag in tags"
+                                    v-for="tag in store.meta_select_options.tags"
                                     :key="tag.id"
                                     :label="tag.name"
                                     :value="tag.id">
@@ -69,7 +69,7 @@
                                 placeholder="All"
                                 no-data-text="No data">
                             <el-option
-                                    v-for="subject in subjects"
+                                    v-for="subject in store.meta_select_options.subjects"
                                     :key="subject.id"
                                     :label="subject.name"
                                     :value="subject.id">
@@ -91,7 +91,7 @@
                                 placeholder="All"
                                 no-data-text="No data">
                             <el-option
-                                    v-for="topic in topics"
+                                    v-for="topic in store.meta_select_options.topics"
                                     :key="topic.id"
                                     :label="topic.name"
                                     :value="topic.id">
@@ -113,7 +113,7 @@
                                 placeholder="All"
                                 no-data-text="No data">
                             <el-option
-                                    v-for="grade in grades"
+                                    v-for="grade in store.meta_select_options.grades"
                                     :key="grade.id"
                                     :label="grade.name"
                                     :value="grade.id">
@@ -123,7 +123,7 @@
                 </tr>
             </table>
 
-            <el-checkbox v-model="store.meta.accept">I Have Read And Accept The Terms Of Use And Privacy Policy</el-checkbox>
+            <el-checkbox v-model="store.meta.accept">I Have Read And Accept <a class="colorlink" href="#">The Terms Of Use</a> And <a class="colorlink" href="#">Privacy Policy</a></el-checkbox>
         </div>
 
         <div class="right-side">
@@ -197,6 +197,7 @@
 <script>
     import axios from 'axios';
     import { debounce } from "debounce";
+    import saveLessonService from "../../save-lesson-service";
 
     export default {
         name: "Meta",
@@ -211,18 +212,18 @@
             this.loadTopics();
             this.loadFaculties();
             this.loadGrades();
-            this.getPixabaySuggestions(this.store.meta.title);
             this.loadMovieMeta();
-            this.getKalturaSuggestions();
+
+            let _this = this;
+            setTimeout(function() {
+                _this.getPixabaySuggestions(_this.store.meta.title);
+                _this.getKalturaSuggestions();
+            }, 3000);
+
         },
         data() {
             return {
                 loading: false,
-                subjects: [],
-                topics: [],
-                faculties: [],
-                grades: [],
-                tags: [],
                 pixabay_suggestions: [],
                 kaltura_suggestions: [],
                 extended_search_pixabay_modal: false,
@@ -231,30 +232,30 @@
         },
         methods: {
             loadSubjects() {
-                axios.get('/wp/v2/subject?_wpnonce=' + wpApiSettings.nonce ).then(res => {
-                    this.subjects = this.mapTerms(res.data);
+                axios.get('/wp/v2/subject?per_page=100&_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                    this.store.meta_select_options.subjects = this.mapTerms(res.data);
                 });
             },
             loadTopics() {
-                axios.get('/wp/v2/topic?_wpnonce=' + wpApiSettings.nonce ).then(res => {
-                    this.topics = this.mapTerms(res.data);
+                axios.get('/wp/v2/topic?per_page=100&_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                    this.store.meta_select_options.topics = this.mapTerms(res.data);
                 });
             },
             loadFaculties() {
-                axios.get('/wp/v2/faculty?_wpnonce=' + wpApiSettings.nonce ).then(res => {
-                    this.faculties = this.mapTerms(res.data);
+                axios.get('/wp/v2/faculty?per_page=100&_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                    this.store.meta_select_options.faculties = this.mapTerms(res.data);
                 });
             },
             loadGrades() {
-                axios.get('/wp/v2/gradys?_wpnonce=' + wpApiSettings.nonce ).then(res => {
-                    this.grades = this.mapTerms(res.data);
+                axios.get('/wp/v2/grade?per_page=100&_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                    this.store.meta_select_options.grades = this.mapTerms(res.data);
                 });
             },
             loadTags(query) {
                 if (query !== '') {
                     this.loading = true;
                     axios.get('/wp/v2/ptag?per_page=20&orderby=count&order=desc&search=' + query + '&_wpnonce=' + wpApiSettings.nonce).then(res => {
-                        this.tags = this.mapTerms(res.data);
+                        this.store.meta_select_options.tags = this.mapTerms(res.data);
                         this.loading = false;
                     });
                 } else {
@@ -267,11 +268,24 @@
                     if (_this.store.movie_id) {
                         axios.get('/wp/v2/movie/'+_this.store.movie_id+'?_wpnonce=' + wpApiSettings.nonce ).then(res => {
                             _this.store.meta.title = res.data.title.rendered;
-                            _this.store.meta.description = res.data.content.rendered;
+                            _this.store.meta.description = jQuery(res.data.content.rendered).text();
 
                             // This image is hardcoded. Please change it:
                             _this.store.meta.thumbnail = 'https://cdnapisec.kaltura.com/p/2538842/thumbnail/entry_id/'+res.data.acf.kaltura_id+'/width/280/height/175/type/1/quality/45';
                             // Add here tags, subjects, topics, faculties, grades
+                             _this.store.meta.subjects = res.data.subject;
+                             _this.store.meta.topics = res.data.topic;
+                             _this.store.meta.grades = res.data.grade;
+                             _this.store.meta.tags = res.data.ptag;
+
+                            // Load tags names (to not show only ID):
+                            axios.get('/wp/v2/ptag?per_page=100&orderby=count&order=desc&include=' + _this.store.meta.tags.join(',') + '&_wpnonce=' + wpApiSettings.nonce).then(res => {
+                                _this.store.meta_select_options.tags = res.data.map(term => ({
+                                    id: term.id,
+                                    name: term.name,
+                                    slug: term.slug,
+                                }));
+                            });
                         });
                     }
                 }, 500);
@@ -324,12 +338,16 @@
                     name: term.name,
                     slug: term.slug,
                 }));
+            },
+            saveLesson() {
+                saveLessonService.initSave();
             }
         }
     }
 </script>
 
 <style scoped>
+    .colorlink {color: #51ACFD;}
     .lesson-editor-title {
         color: #51ACFD;
         font-weight: 600;

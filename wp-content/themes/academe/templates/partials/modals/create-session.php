@@ -50,6 +50,28 @@
 
                 <script type="text/javascript">
                     jQuery(document).ready((jQuery) => {
+                        
+                        const asyncSessionHook = jQuery("#sessionAsync_<?php echo $args['id']; ?>");
+                        const syncSessionHook = jQuery("#sessionSync_<?php echo $args['id']; ?>");
+                        const scheduleHook = jQuery("#scheduleDate");
+                        const scheduleInput = jQuery("#schedule");
+
+                        asyncSessionHook.change(() => {
+                            if (asyncSessionHook.is(":checked")) {
+                                jQuery('#scheduleBtn').hide();
+                                scheduleInput.val(formatDate(new Date()));
+                                scheduleHook.hide();
+                            };
+                        });
+
+                        syncSessionHook.change(() => {
+                            if (syncSessionHook.is(":checked")) {
+                                jQuery('#scheduleBtn').show();
+                                scheduleInput.val("");
+                                scheduleHook.show();
+                            };
+                        });
+
                         const formatDate = (input) => {
                             const day = input.getDate();
                             const month = input.getMonth() + 1;
@@ -58,24 +80,6 @@
                             const hours = input.getHours();
                             return `${day}/${month.toString().length === 1 ? "0" + month : month}/${year} ${hours}:${minutes}`
                         };
-                        const asyncSessionHook = jQuery("#sessionAsync_<?php echo $args['id']; ?>");
-                        const syncSessionHook = jQuery("#sessionSync_<?php echo $args['id']; ?>");
-                        const scheduleHook = jQuery("#scheduleDate");
-                        const scheduleInput = jQuery("#schedule");
-                        asyncSessionHook.change(() => {
-                            if (asyncSessionHook.is(":checked")) {
-                                jQuery('#scheduleBtn').hide();
-                                scheduleInput.val(formatDate(new Date()));
-                                scheduleHook.hide();
-                            };
-                        });
-                        syncSessionHook.change(() => {
-                            if (syncSessionHook.is(":checked")) {
-                                jQuery('#scheduleBtn').show();
-                                scheduleInput.val("");
-                                scheduleHook.show();
-                            };
-                        });
                     });
                 </script>
 

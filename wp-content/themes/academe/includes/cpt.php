@@ -410,7 +410,7 @@ function create_taxonomy()
         "rewrite" => [ 'slug' => 'grade', 'with_front' => true, ],
         "show_admin_column" => false,
         "show_in_rest" => true,
-        "rest_base" => "gradys",
+        "rest_base" => "grade",
         "rest_controller_class" => "WP_REST_Terms_Controller",
         "show_in_quick_edit" => false,
     ];

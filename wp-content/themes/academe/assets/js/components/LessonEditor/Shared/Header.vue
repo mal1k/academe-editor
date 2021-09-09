@@ -10,7 +10,7 @@
         </div>
         <div class="right-part">
 
-            <el-button type="default" size="medium" @click="saveLesson()">Save</el-button>
+            <el-button plain type="default" size="medium" @click="saveLesson()">Save</el-button>
 
             <el-button type="primary" size="medium"
                 :disabled="!store.meta.accept"
@@ -23,9 +23,9 @@
 
                 <el-dropdown-menu slot="dropdown">
                     <a href="/"><el-dropdown-item>Back To Academe</el-dropdown-item></a>
-                    <el-dropdown-item v-if="store.active_page == 'slides'" @click.native="store.active_page='meta'">Edit Metadata</el-dropdown-item>
-                    <el-dropdown-item v-if="store.active_page == 'meta'" @click.native="store.active_page='slides'">Edit Slides</el-dropdown-item>
-                    <el-dropdown-item>Preview</el-dropdown-item>
+                        <!--<el-dropdown-item v-if="store.active_page == 'slides'" @click.native="store.active_page='meta'">Edit Metadata</el-dropdown-item>-->
+                        <!--<el-dropdown-item v-if="store.active_page == 'meta'" @click.native="store.active_page='slides'">Edit Slides</el-dropdown-item>-->
+                    <a href="#" target="_blank" id="previewButton"><el-dropdown-item>Preview</el-dropdown-item></a>
                 </el-dropdown-menu>
             </el-dropdown>
         </div>
@@ -48,6 +48,12 @@
         methods: {
             saveLesson() {
                 saveLessonService.initSave();
+                if(!this.store.meta.accept){
+                 this.$notify.error({
+                    title: 'Error',
+                    message: 'This is an error message'
+                    });   
+                }
             }
         }
     }

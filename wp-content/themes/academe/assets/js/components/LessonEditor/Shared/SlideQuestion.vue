@@ -10,7 +10,8 @@
                     v-for="(item, index) in types"
                     :key="index"
                     :label="item.text"
-                    :value="item.value">
+                    :value="item.value"
+                    :disabled="item.disabled">
             </el-option>
         </el-select>
        </div>
@@ -37,8 +38,8 @@
              <input  type="radio" 
                      class="answer-check" 
                      name="answer"
-                     value="false"
-                     v-model="store.active_question.checkedItems[index]">
+                     :value="index"
+                     v-model="store.active_question.correctAnswerIndex">
              <el-dropdown trigger="click" class="more-actions">
                  <img
                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwKSI+CjxwYXRoIGQ9Ik0xMC4wMDAxIDQuNDQ0NDhDMTEuMjI3NCA0LjQ0NDQ4IDEyLjIyMjMgMy40NDk1NSAxMi4yMjIzIDIuMjIyMjRDMTIuMjIyMyAwLjk5NDkzMSAxMS4yMjc0IDAgMTAuMDAwMSAwQzguNzcyNzYgMCA3Ljc3NzgzIDAuOTk0OTMxIDcuNzc3ODMgMi4yMjIyNEM3Ljc3NzgzIDMuNDQ5NTUgOC43NzI3NiA0LjQ0NDQ4IDEwLjAwMDEgNC40NDQ0OFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMC4wMDAxIDEyLjIyMjhDMTEuMjI3NCAxMi4yMjI4IDEyLjIyMjMgMTEuMjI3OSAxMi4yMjIzIDEwLjAwMDZDMTIuMjIyMyA4Ljc3MzI1IDExLjIyNzQgNy43NzgzMiAxMC4wMDAxIDcuNzc4MzJDOC43NzI3NiA3Ljc3ODMyIDcuNzc3ODMgOC43NzMyNSA3Ljc3NzgzIDEwLjAwMDZDNy43Nzc4MyAxMS4yMjc5IDguNzcyNzYgMTIuMjIyOCAxMC4wMDAxIDEyLjIyMjhaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTAuMDAwMSAyMC4wMDAxQzExLjIyNzQgMjAuMDAwMSAxMi4yMjIzIDE5LjAwNTIgMTIuMjIyMyAxNy43Nzc5QzEyLjIyMjMgMTYuNTUwNiAxMS4yMjc0IDE1LjU1NTcgMTAuMDAwMSAxNS41NTU3QzguNzcyNzYgMTUuNTU1NyA3Ljc3NzgzIDE2LjU1MDYgNy43Nzc4MyAxNy43Nzc5QzcuNzc3ODMgMTkuMDA1MiA4Ljc3Mjc2IDIwLjAwMDEgMTAuMDAwMSAyMC4wMDAxWiIgZmlsbD0id2hpdGUiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K"
@@ -160,10 +161,10 @@
               types: [
                 { text: 'Open', value: 'Open' },
                 { text: 'Single Choice', value: 'Single Choice' },
-                { text: 'Multiple Choice', value: 'Multiple Choice' },
-                { text: 'True / False', value: 'True / False' },
-                { text: 'Poll', value: 'Poll' },
-                { text: 'Discussion', value: 'Discussion' },
+                { text: 'Multiple Choice', value: 'Multiple Choice', disabled: true },
+                { text: 'True / False', value: 'True / False', disabled: true },
+                { text: 'Poll', value: 'Poll', disabled: true },
+                { text: 'Discussion', value: 'Discussion', disabled: true },
               ],
               times: [
                {time: 'No Time Limit', value: ''},

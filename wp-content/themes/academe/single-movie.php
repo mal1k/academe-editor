@@ -113,21 +113,7 @@
 
     <?php get_template_part( 'templates/partials/modals/create-session', 'null', ['id' => $cs_modal_id]); ?>
 
-    <?php if (is_user_logged_in()) { ?>
-        <div class="modal ui overlay fullscreen movie-player" style="<?php echo (is_admin_bar_showing()) ? 'margin-top: 32px; height: calc(100% - 32px);' : ''; ?>">
-            <?php icon('cross', 'close'); ?>
-            <?php 
-            if ( empty(get_field('partner_id', 'option')) )
-                $partner_id = get_field('partner_id', 'option'); 
-            else
-                $partner_id = '2538842';
-            ?>
-            <script src="https://cdnapisec.kaltura.com/p/<?php echo $partner_id; ?>/sp/253884200/embedIframeJs/uiconf_id/46602743/partner_id/<?php echo $partner_id; ?>"></script>
-            <div id="kalturaPlayer">
-
-            </div>
-        </div>
-    <?php } ?>
+    
 
     <?php $post_terms = get_the_terms( $post->ID, 'genre' );
     $post_term = $post_terms ? $post_terms[0]->term_id : NULL;
@@ -162,4 +148,10 @@
         }
     });
 </script>
+
+<style>
+.ui.overlay.fullscreen.modal {
+    height:100%;
+}
+</style>    
 <?php get_footer(); ?>
