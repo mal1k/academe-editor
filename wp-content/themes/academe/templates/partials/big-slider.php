@@ -15,7 +15,10 @@
                                     <a href="<?php echo get_permalink(); ?>"><div class="title"><?php the_title(); ?></div></a>
                                 </div>
                                 <div class="created-by">
-                                    <?php _e('Created By:', 'academe-theme'); ?>
+                                     <?php 
+                                     if ($post->post_type == 'teaching-guide') { echo 'Teachind Guide '; }
+                                     if ($post->post_type == 'sfwd-lessons') { echo 'Lesson '; }
+                                      _e('Created By:', 'academe-theme'); ?>
                                     <span class="name"><?php the_author(); ?></span>
                                 </div>
                                 <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide'])) { ?>
