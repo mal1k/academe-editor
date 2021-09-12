@@ -1148,7 +1148,7 @@ h2.section-heading {
 /* End Single movie */
 
 /* Start session modal */
-.start-session.modal {
+.start-session.modal, .sessions-list.modal {
     background: #272424;
     border: 3px solid #FFFFFF;
     border-radius: 10px;
@@ -1157,11 +1157,11 @@ h2.section-heading {
     max-width: 570px;
     position: relative;
 }
-.start-session.modal h3 {
+.start-session.modal h3, .sessions-list.modal h3,  .sessions-list.modal h3 span{
     font-size: 20px;
     margin-bottom: 25px;
 }
-.start-session.modal .close {
+.start-session.modal .close, .sessions-list.modal .close {
     position: absolute;
     right: 5px;
     top: 0;
@@ -1643,6 +1643,7 @@ h2.section-heading {
     font-weight: 700;
     white-space: nowrap;
     width: 120px;
+    cursor: pointer;
 }
 .wrap-link {
     position: absolute;
@@ -2330,6 +2331,48 @@ h2.section-heading {
 }
 /* Enter the lesson (session) end */
 
+.sessions-list.modal {
+    max-width: 800px;
+}
+.sessions-list.modal .sessions-list-wrap {
+    max-height: 500px;
+    overflow-y: auto;
+}
+.sessions-list.modal .sessions-list-wrap::-webkit-scrollbar{
+    width: 20px;
+    height: 18px;
+}
+.sessions-list.modal .sessions-list-wrap::-webkit-scrollbar-thumb{
+    background-color:#51ACFD;
+    border: 7px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    -webkit-border-radius: 14px;
+}
+.sessions-list.modal .sessions-list-wrap .session-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+.sessions-list.modal .sessions-list-wrap .session-row:not(:last-of-type) {
+    border-bottom: 1px solid #979797;
+}
+.sessions-list.modal .sessions-list-wrap .session-code {
+    color: #51ACFD;
+    font-weight: 600;
+    font-size: 24px;
+    flex-basis: 250px;
+}
+.sessions-list.modal .sessions-list-wrap .session-starts {
+    flex: 1;
+}
+.sessions-list.modal .sessions-list-wrap .session-starts .static-text {
+    color: #979797;
+}
+.start-movie-preview {
+    cursor: pointer;
+}
+
 /* Icons */
 .with-rotate {
     transition: .2s;
@@ -2354,6 +2397,7 @@ h2.section-heading {
 }
 .icon-blue-stroke * {
     stroke: #51ACFD;
+    fill: #51ACFD;
 }
 .icon-32 {
     width: 32px;
@@ -2559,4 +2603,4 @@ span.highlighted {
 }
 .author-teacher #search {
     display: none;
-}
+} 

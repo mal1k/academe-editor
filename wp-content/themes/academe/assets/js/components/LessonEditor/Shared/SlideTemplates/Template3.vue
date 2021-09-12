@@ -1,6 +1,11 @@
 <template>
     <div class="slide-template-preview">
-        Not available yet
+        <div class="row h-30">
+            <div class="col max-w-50"></div>
+        </div>
+        <div class="row h-70">
+            <div class="col"></div>
+        </div>
     </div>
 </template>
 

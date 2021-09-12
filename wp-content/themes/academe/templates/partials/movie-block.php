@@ -61,15 +61,41 @@
                     <?php if(is_user_logged_in()) {
                         the_my_list_button($post->ID, 'icon');
                     } ?>
-                    <a href="<?php the_permalink(); ?>">
-                        <?php icon('element', 'icon-24'); ?>
-                    </a>
+                    <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) {
+                        $wp_query = new WP_Query([
+                            'post_type' => 'session',
+                            'meta_query' => [
+                                array(
+                                    'key' => 'related_lesson',
+                                    'value' => $post->ID,
+                                    'compare' => '=',
+                                )
+                            ]
+                        ]); ?>
+                        <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>">
+                            <?php icon('element', 'icon-24'); ?>
+                        </a>
+                    <?php } else { ?>
+                        <a href="<?php the_permalink(); ?>">
+                            <?php icon('element', 'icon-24'); ?>
+                        </a>
+                    <?php } ?>
+
                 </div>
 
             </div>
+            <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) { ?>
+                <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="watch">
+                    <div class="start-watch"><?php icon('play-rounded'); ?></div>
+                </a>
+            <?php } else { ?>
             <a href="<?php the_permalink(); ?>" class="watch">
-                <div class="start-watch"><?php icon('play-rounded'); ?></div>
+                <div class="watch">
+                    <div class="start-watch <?php if ($post->post_type == 'movie') { ?> start-movie-preview<?php } ?> " <?php if ($post->post_type == 'movie') { ?> data-movie-id="<?php echo $post->ID; ?>" onclick="return false;" data-mode="advanced" style="position: relative; z-index: 1;" <?php } ?>><?php icon('play-rounded'); ?></div>
+                </div>
             </a>
+            <?php } ?>
+
         </div>
         <?php if (0) { ?>
         <div class="actions-more ui dropdown link item dark">
@@ -90,10 +116,13 @@
         <?php if ($post->post_type == 'movie') { ?>
             <img class="slide-image" src="<?php echo get_movie_thumbnail($custom_fields['kaltura_id'], 280, 175); ?>" />
         <?php } ?>
-        <?php if ( in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide']) ) { ?>
+        <?php if ( in_array($post->post_type, ['sfwd-lessons', 'teaching-guide']) ) { ?>
             <?php if(has_post_thumbnail($post->ID)) { ?>
                 <img class="slide-image" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
             <?php } ?>
+        <?php } ?>
+        <?php if ($post->post_type ==  'sfwd-courses') { ?>
+            <img class="slide-image" src="<?php echo $custom_fields['cover_image_url']; ?>" />
         <?php } ?>
         <div class="slide-label">
             <?php icon($post->post_type); ?>

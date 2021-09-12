@@ -151,6 +151,138 @@ function get_lesson_slide_templates() {
                     ],
                 ]
             ],
+            'template1_text3' => [
+                'type' => 'text',
+                'label' => 'Text design',
+                'fields' => [
+                    'template1_text3_font' => [
+                        'type' => 'select',
+                        'label' => 'Font',
+                        'values' => [
+                            'arial' => 'Arial',
+                            'courier_new' => 'Courier New',
+                            'montserrat' => 'Montserrat',
+                            'times_new_roman' => 'Times New Roman',
+                        ]
+                    ],
+                    'template1_text3_font_weight' => [
+                        'type' => 'select',
+                        'label' => 'Font weight',
+
+                        'values' => [
+                            '200' => 'Light',
+                            '400' => 'Regular',
+                            '600' => 'Bold',
+                        ]
+                    ],
+                    'template1_text3_font_size' => [
+                        'type' => 'select',
+                        'label' => 'Font size',
+                        'values' => [
+                            "10px" => '10',
+                            '11px' => '11',
+                            '12px' => '12',
+                            '14px' => '14',
+                            '16px' => '16',
+                            '18px' => '18',
+                            '20px' => '20',
+                            '24px' => '24',
+                            '28px' => '28',
+                            '30px' => '30',
+                            '32px' => '32',
+                            '40px' => '40',
+                            '48px' => '48'
+                        ]
+                    ],
+                    'template1_text3_text_align' => [
+                        'type' => 'alignment',
+                        'label' => 'Align',
+                        'values' => [
+                            'left' => 'Left',
+                            'center' => 'Center',
+                            'right' => 'Right',
+                        ]
+                    ],
+                    'template1_text3_text_color' => [
+                        'type' => 'colorpicker',
+                        'label' => 'Text Color',
+                    ],
+                    'template1_text3_fill_color' => [
+                        'type' => 'colorpicker',
+                        'label' => 'Fill Color',
+                    ],
+                    'template1_text3_text' => [
+                        'type' => 'textarea',
+                        'label' => 'Text',
+                    ],
+                ]
+            ],
+            'template1_text4' => [
+                'type' => 'text',
+                'label' => 'Text design',
+                'fields' => [
+                    'template1_text4_font' => [
+                        'type' => 'select',
+                        'label' => 'Font',
+                        'values' => [
+                            'arial' => 'Arial',
+                            'courier_new' => 'Courier New',
+                            'montserrat' => 'Montserrat',
+                            'times_new_roman' => 'Times New Roman',
+                        ]
+                    ],
+                    'template1_text4_font_weight' => [
+                        'type' => 'select',
+                        'label' => 'Font weight',
+
+                        'values' => [
+                            '200' => 'Light',
+                            '400' => 'Regular',
+                            '600' => 'Bold',
+                        ]
+                    ],
+                    'template1_text4_font_size' => [
+                        'type' => 'select',
+                        'label' => 'Font size',
+                        'values' => [
+                            "10px" => '10',
+                            '11px' => '11',
+                            '12px' => '12',
+                            '14px' => '14',
+                            '16px' => '16',
+                            '18px' => '18',
+                            '20px' => '20',
+                            '24px' => '24',
+                            '28px' => '28',
+                            '30px' => '30',
+                            '32px' => '32',
+                            '40px' => '40',
+                            '48px' => '48'
+                        ]
+                    ],
+                    'template1_text4_text_align' => [
+                        'type' => 'alignment',
+                        'label' => 'Align',
+                        'values' => [
+                            'left' => 'Left',
+                            'center' => 'Center',
+                            'right' => 'Right',
+                        ]
+                    ],
+                    'template1_text4_text_color' => [
+                        'type' => 'colorpicker',
+                        'label' => 'Text Color',
+                    ],
+                    'template1_text4_fill_color' => [
+                        'type' => 'colorpicker',
+                        'label' => 'Fill Color',
+                    ],
+                    'template1_text4_text' => [
+                        'type' => 'textarea',
+                        'label' => 'Text',
+                    ],
+                ]
+            ],
             'template1_media1' => [
                 'type' => 'media',
                 'label' => 'Media',
@@ -165,7 +297,37 @@ function get_lesson_slide_templates() {
 //                    ],
                 ]
             ],
-        ]
+            'template1_media2' => [
+                'type' => 'media',
+                'label' => 'Media',
+                'fields' => [
+                    'template1_media2_image' => [
+                        'type' => 'image',
+                        'label' => 'Image',
+                    ],
+                ]
+            ],
+            'template1_media3' => [
+                'type' => 'media',
+                'label' => 'Media',
+                'fields' => [
+                    'template1_media3_image' => [
+                        'type' => 'image',
+                        'label' => 'Image',
+                    ],
+                ]
+            ],
+            'template1_media4' => [
+                'type' => 'media',
+                'label' => 'Media',
+                'fields' => [
+                    'template1_media4_image' => [
+                        'type' => 'image',
+                        'label' => 'Image',
+                    ],
+                ]
+            ],
+        ],
     ];
 
     return $templates;

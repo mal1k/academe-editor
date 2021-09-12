@@ -12,7 +12,7 @@ if (!$_GET['lesson_id']) {
 } else {
     $lesson_id = $_GET['lesson_id'];
 }
-
+$current_user = wp_get_current_user();
 ?>
 
 <?php get_template_part( 'templates/partials/document-open' ); ?>
@@ -22,7 +22,12 @@ if (!$_GET['lesson_id']) {
                 <header-component></header-component>
             </template>
             <template v-slot:editor>
-                <lesson-editor v-slot="editor" :post="<?php echo $lesson_id; ?>" :movie="<?php echo $_GET['movie_id'] ?? 'null'; ?>"></lesson-editor>
+                <lesson-editor v-slot="editor"
+                               :post="<?php echo $lesson_id; ?>"
+                               :movie="<?php echo $_GET['movie_id'] ?? 'null'; ?>"
+                               author="<?php echo $current_user->user_firstname . ' ' . $current_user->user_lastname; ?>">
+
+                </lesson-editor>
             </template>
 
         </lesson-editor-layout>

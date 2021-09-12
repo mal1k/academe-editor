@@ -140,6 +140,7 @@
             </div>
             <?php
 
+            $cue=0;
             if ($mediaEntry->itemsData) {
                 foreach($mediaEntry->itemsData  as $itemsData) {
                     if ($itemsData->itemsType == "metadata") { ?>
@@ -170,9 +171,13 @@
                                     <?php $subtitles_counter = 0; ?>
                                     <?php foreach ($itemsData->items as $item) { ?>
                                         <li class="subtitle <?php echo ($subtitles_counter > 3) ? 'subtitle-hidden' : ''; ?>">
-                                            <a href="<?php print get_post_permalink($post->ID); ?>?start_from=<?php print $item->startsAt; ?>">
+                                            <span class="start-movie-preview"
+                                                  data-movie-id="<?php echo $post->ID; ?>"
+                                                  data-mode="basic"
+                                                  data-play-from="<?php echo msToSec($item->startsAt) ?? 0; ?>"
+                                                  data-play-to="<?php echo msToSec($item->endAt) ?? 0; ?>">
                                                 <span class="text-blue"><?php print formatMilliseconds($item->startsAt) . "</span> - " . highlight($search_query,$item->line); ?>
-                                            </a>
+                                            </span>
                                         </li>
                                         <?php $subtitles_counter++; ?>
                                     <?php } ?>
@@ -183,6 +188,39 @@
                             </div>
                         </div>
                     <?php }
+
+                    if ($itemsData->itemsType == "cue_points" && $cue==0) { ?>
+                        <div class="caption-wrap">
+                            <div class="caption_title chapters">
+                                <span class="tooltips">  <?php print "clips"; ?></span>
+                                ch
+                            </div>
+                            <div class="caption_text">
+                                <ul>
+                                    <?php
+                                    if ($itemsData->items) {
+                                        foreach ($itemsData->items as $item) {
+
+                                            ?>
+                                            <li>
+                                                <span class="start-movie-preview"
+                                                      data-movie-id="<?php echo $post->ID; ?>"
+                                                      data-mode="basic"
+                                                      data-play-from="<?php echo msToSec($item->startTime) ?? 0; ?>"
+                                                      data-play-to="<?php echo msToSec($item->endTime) ?? 0; ?>">
+                                                    <span class="text-blue"><?php print formatMilliseconds($item->startTime) . "</span> - " . highlight($search_query,$item->name); ?></span>
+                                            </li>
+                                            <?php
+                                        }
+                                        $cue=1;
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <?php
+                    }
                 }
             } ?>
             <?php if ($tags) { ?>

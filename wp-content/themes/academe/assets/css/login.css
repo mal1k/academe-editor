@@ -44,4 +44,12 @@ body.login div#login p#backtoblog a:hover {
 body.login div#login p#backtoblog {}
 body.login div#login p#backtoblog a {}
 
+body.login div#login form.admin-email-confirm-form {
+    background: #212121;
+    border-radius: 5px;
+}
+body.login div#login form.admin-email-confirm-form a.button.button-large {
+    background: #131212;
+}
+
 /* Login page end */

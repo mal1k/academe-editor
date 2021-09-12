@@ -6,7 +6,8 @@
         <span class="movie-item__name">{{ movie_data.title }}</span>
         <span class="movie-item__time">{{ movie_data.time }}</span>
       </div>
-      <div class="movie-item__tags">
+      
+      <div v-if="movie_data.tags" class="movie-item__tags">
         <a
           href="#"
           class="movie-item__tag"
@@ -15,6 +16,8 @@
           >#{{ tag.tag }}
         </a>
       </div>
+
+
       <div class="movie-item__footer">
         <button class="movie-item__btn" @click="$emit('add-click')">Add</button>
       </div>

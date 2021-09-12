@@ -47,4 +47,7 @@
     .el-textarea__inner, .el-input__inner {
         background: rgba(0,0,0,0);
     }
+    .el-select-dropdown__item.is-disabled {
+        opacity: .5;
+    }
 </style>

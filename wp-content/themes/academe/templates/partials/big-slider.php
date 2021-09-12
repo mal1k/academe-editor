@@ -12,14 +12,15 @@
                              style="background: linear-gradient(90deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 60%) no-repeat center / cover;">
                             <div class="slide-info">
                                 <div class="title-wrap">
-                                    <div class="title"><?php the_title(); ?></div>
+                                    <a href="<?php echo get_permalink(); ?>"><div class="title"><?php the_title(); ?></div></a>
                                 </div>
-                                <?php if ($post->post_type == 'movie') { ?>
-                                    <div class="created-by">
-                                        <?php _e('Created By:', 'academe-theme'); ?>
-                                        <span class="name"><?php the_author(); ?></span>
-                                    </div>
-                                <?php } ?>
+                                <div class="created-by">
+                                     <?php 
+                                     if ($post->post_type == 'teaching-guide') { echo 'Teachind Guide '; }
+                                     if ($post->post_type == 'sfwd-lessons') { echo 'Lesson '; }
+                                      _e('Created By:', 'academe-theme'); ?>
+                                    <span class="name"><?php the_author(); ?></span>
+                                </div>
                                 <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide'])) { ?>
 
                                     <div class="description">
@@ -73,16 +74,33 @@
                                 </div>
                                 <div class="watch">
                                     <?php if ($post->post_type == 'movie') { ?>
-                                        <a href="<?php the_permalink(); ?>" class="start-watch">
+                                        <div class="start-watch start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced">
                                             <?php icon('play-rounded'); ?>
-                                            <span><?php _e('Present Now', 'academe-theme'); ?></span>
-                                        </a>
+                                            <span>Present Now</span>
+                                        </div>
                                     <?php } ?>
                                     <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses'])) { ?>
-                                        <a href="<?php the_permalink(); ?>" class="start-watch">
-                                            <?php icon('play-rounded'); ?>
-                                            <span><?php _e('Start Lesson', 'academe-theme'); ?></span>
-                                        </a>
+                                        <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) {
+                                            $wp_query = new WP_Query([
+                                                'post_type' => 'session',
+                                                'meta_query' => [
+                                                    array(
+                                                        'key' => 'related_lesson',
+                                                        'value' => $post->ID,
+                                                        'compare' => '=',
+                                                    )
+                                                ]
+                                            ]); ?>
+                                            <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="start-watch">
+                                                <?php icon('play-rounded'); ?>
+                                                <span><?php _e('Start Lesson', 'academe-theme'); ?></span>
+                                            </a>
+                                        <?php } else { ?>
+                                            <a href="<?php the_permalink(); ?>" class="start-watch">
+                                                <?php icon('play-rounded'); ?>
+                                                <span><?php _e('Start Lesson', 'academe-theme'); ?></span>
+                                            </a>
+                                        <?php } ?>
                                     <?php } ?>
                                     <?php if ($post->post_type == 'teaching-guide') { ?>
                                         <a href="<?php the_permalink(); ?>" class="start-watch">
@@ -91,7 +109,7 @@
                                         </a>
                                     <?php } ?>
 
-                                    <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'movie'])) { ?>
+                                    <?php if (in_array($post->post_type, ['sfwd-lessons', /*'sfwd-courses',*/ 'movie'])) { ?>
                                     <div class="actions-more ui dropdown link item dark">
                                         <div class="info">i</div>
                                         <div class="menu">

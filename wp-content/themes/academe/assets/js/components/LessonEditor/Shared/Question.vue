@@ -1,16 +1,15 @@
 <template>
     <div>
-     <div class="row-view">
-       <div v-if="store.active_question.addQuestion != false" class="btn" @click="saveQuestion('create')">
-         <span>Save question</span>
-       </div>
-       <div v-else class="btn" @click="saveQuestion('update')">
-         <span>Change question</span>
-       </div>
-     </div>
+     
       <div class="row-view">
        <label>Start at</label>
-       <input type="text" v-model="store.active_question.start_time" class="el-input--time el-input">
+       <!--<input type="text" v-model="store.active_question.start_time" class="el-input--time el-input">-->
+       <input type="text" 
+              :value="start_time"
+              @input="changePlayTime($event.target.value)"
+              class="el-input--time el-input">
+          <p v-if="this.store.active_question.start_time_error" class="error-msg">Please select a time to display the question!</p>
+       
        </div>
        <div class="row-view">
         <label>Question Type</label>
@@ -22,7 +21,8 @@
                     v-for="(item, index) in types"
                     :key="index"
                     :label="item.text"
-                    :value="item.value">
+                    :value="item.value"
+                    :disabled="item.disabled">
             </el-option>
         </el-select>
        </div>
@@ -223,6 +223,14 @@
          </div>
         </div>
        </div>
+       <div class="row-view">
+       <div v-if="store.active_question.addQuestion != false" class="btn" @click="saveQuestion('create')">
+         <span>Save question</span>
+       </div>
+       <div v-else class="btn" @click="saveQuestion('update')">
+         <span>Change question</span>
+       </div>
+     </div>
     </div>
 </template>
 
@@ -240,10 +248,10 @@
               types: [
                 { text: 'Open', value: 'Open' },
                 { text: 'Single Choice', value: 'Single Choice' },
-                { text: 'Multiple Choice', value: 'Multiple Choice' },
-                { text: 'True / False', value: 'True / False' },
-                { text: 'Poll', value: 'Poll' },
-                { text: 'Discussion', value: 'Discussion' },
+                { text: 'Multiple Choice', value: 'Multiple Choice', disabled: true },
+                { text: 'True / False', value: 'True / False', disabled: true },
+                { text: 'Poll', value: 'Poll', disabled: true },
+                { text: 'Discussion', value: 'Discussion', disabled: true },
               ],
               times: [
                {time: 'No Time Limit', value: ''},
@@ -261,73 +269,116 @@
             store() {
                 return this.$store.state.LessonEditor;
             },
+            start_time() {
+              const seconds = this.store.active_question.start_time || 0;
+              return this.secondsToTimeString(seconds);
+            },
         },
         methods: {
          toggleAdvanced(){
           this.showAdvanced = !this.showAdvanced
          },
-         saveQuestion(action){ // action: create/update
-            let newQuestion = this.store.active_question;
 
-            // Prepare question data to save:
-            var answer_data = [];
-            var answer_type = "";
-            switch (newQuestion.type) {
-                case "Single Choice":
-                    answer_type = 'single';
-                    newQuestion.answers.forEach((answer, index) => {
+        changePlayTime(val) {
+          const match = val.match(/\d\d:\d\d:\d\d/);
+          if (!match) return;
+                console.log(val);
+              console.log(this.timeStringToSeconds(val));
+          this.store.active_question.start_time = this.timeStringToSeconds(val)
+        },
+        timeStringToSeconds(timeString) {
+          const [hh, mm, ss] = timeString.split(":");
+          const seconds = +hh * 60 * 60 + +mm * 60 + +ss;
+          return seconds;
+        },
+      secondsToTimeString(input) {
+          const sec_num = parseInt(input, 10);
+          let hours = Math.floor(sec_num / 3600);
+          let minutes = Math.floor((sec_num - hours * 3600) / 60);
+          let seconds = sec_num - hours * 3600 - minutes * 60;
+
+          if (hours < 10) {
+            hours = "0" + hours;
+          }
+          if (minutes < 10) {
+            minutes = "0" + minutes;
+          }
+          if (seconds < 10) {
+            seconds = "0" + seconds;
+          }
+          return hours + ":" + minutes + ":" + seconds;
+        },
+
+
+         saveQuestion(action){ // action: create/update
+
+            if (this.store.active_question.start_time === 0 || this.store.active_question.start_time === "00:00:00") {
+                this.store.active_question.start_time_error = true;
+            } else {
+                this.store.active_question.start_time_error = false;
+
+                let newQuestion = this.store.active_question;
+
+                // Prepare question data to save:
+                var answer_data = [];
+                var answer_type = "";
+                switch (newQuestion.type) {
+                    case "Single Choice":
+                        answer_type = 'single';
+                        newQuestion.answers.forEach((answer, index) => {
+                            let answer_params = {
+                                _answer: answer.text,
+                                _correct: index === newQuestion.correctAnswerIndex,
+                                _graded: "1",
+                                _gradedType: "text",
+                                _gradingProgression: "not-graded-none",
+                                _html: false,
+                                _points: (index === newQuestion.correctAnswerIndex) ? parseInt(newQuestion.score) : 0,
+                                _sortString: "",
+                                _sortStringHtml: false,
+                                _type: "answer",
+                            };
+                            answer_data.push(answer_params);
+                        });
+                        break;
+                    case "Open":
+                        answer_type = 'essay';
                         let answer_params = {
-                            _answer: answer.text,
-                            _correct: index === newQuestion.correctAnswerIndex,
+                            _answer: "",
+                            _correct: false,
                             _graded: "1",
                             _gradedType: "text",
                             _gradingProgression: "not-graded-none",
                             _html: false,
-                            _points: (index === newQuestion.correctAnswerIndex) ? parseInt(newQuestion.score) : 0,
+                            _points: parseInt(newQuestion.score),
                             _sortString: "",
                             _sortStringHtml: false,
                             _type: "answer",
                         };
                         answer_data.push(answer_params);
-                    });
-                    break;
-                case "Open":
-                    answer_type = 'essay';
-                    let answer_params = {
-                        _answer: "",
-                        _correct: false,
-                        _graded: "1",
-                        _gradedType: "text",
-                        _gradingProgression: "not-graded-none",
-                        _html: false,
-                        _points: parseInt(newQuestion.score),
-                        _sortString: "",
-                        _sortStringHtml: false,
-                        _type: "answer",
-                    };
-                    answer_data.push(answer_params);
-                    break;
-            }
+                        break;
+                }
 
-            // Save question data (and answers)
-            axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
-                _quizId: newQuestion.quiz_id,
-                _question: newQuestion.description,
-                _answerData: answer_data,
-                _answerType: answer_type,
-                _points: parseInt(newQuestion.score),
-            });
+                // Save question data (and answers)
+                axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
+                    _quizId: newQuestion.quiz_id,
+                    _question: newQuestion.description,
+                    _answerData: answer_data,
+                    _answerType: answer_type,
+                    _points: parseInt(newQuestion.score),
+                });
 
-             // Update ACF fields (show at):
-             axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
-                 fields: {
-                     show_at: newQuestion.start_time,
-                 }
-             });
-            if(action === 'create') {
-                this.store.questions.push(newQuestion);
+                // Update ACF fields (show at):
+                axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
+                    fields: {
+                        show_at: newQuestion.start_time,
+                    }
+                });
+                if(action === 'create') {
+                    this.store.questions.push(newQuestion);
+                }
+                this.store.active_question = null;
             }
-            this.store.active_question = null;
          },
          changeAnswers() {
            this.store.active_question.answers = [];
@@ -364,6 +415,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
     }
     .col-view label {
         margin-bottom: 10px;
@@ -528,5 +580,11 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
+}
+.error-msg {
+    width: 100%;
+    font-size: 14px;
+    color: #ffc3c3;
+    margin-top: 10px;
 }
 </style>

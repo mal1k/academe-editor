@@ -3,23 +3,74 @@
     <main class="dark-wrap">
         <div class="slide-content" :class="user_role">
             <h1 v-if="store.course_content && user_role === 'student'" class="lesson-title">{{store.course_content.title.rendered}}</h1>
+
+            <!-- Meta type: -->
+            <template v-if="store.slide_type === 'meta'">
+                <template v-if="user_role === 'teacher'">
+                    <div class="aspect-ratio-box">
+                        <div class="aspect-ratio-box-inside">
+                            <div class="slide-meta-preview">
+                                <img :src="store.course_content.acf.cover_image_url" class="cover-image" />
+                                <div class="meta-details">
+                                    <h1 class="lesson-name">{{store.course_content.title.rendered}}</h1>
+                                    <p v-if="store.course_content.title.rendered" class="lesson-created-by">Lesson Created By: <span class="lesson-created-by-name">{{author}}</span></p>
+                                    <p class="lesson-description" v-html="store.course_content.content.rendered"></p>
+                                    <p class="lesson-terms" v-if="store.course_meta && store.course_meta.subjects.length">
+                                        Subject: {{store.course_meta.subjects.slice(0,3).join(', ')}}
+                                        <template v-if="store.course_meta.subjects.length > 3">...</template>
+                                    </p>
+                                    <p class="lesson-terms" v-if="store.course_meta && store.course_meta.topics.length">
+                                        Topic: {{store.course_meta.topics.slice(0,3).join(', ')}}
+                                        <template v-if="store.course_meta.topics.length > 3">...</template>
+                                    </p>
+                                    <p class="lesson-terms" v-if="store.course_meta && store.course_meta.grades.length">
+                                        Grade: {{store.course_meta.grades.slice(0,3).join(', ')}}
+                                        <template v-if="store.course_meta.grades.length > 3">...</template>
+                                    </p>
+                                    <p class="lesson-terms tags-list" v-if="store.course_meta && store.course_meta.tags.length">
+                                        {{store.course_meta.tags.slice(0,3).join(' ')}}
+                                        <template v-if="store.course_meta.tags.length > 3">...</template>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="slide-message">
+                        <span>Please raise your eyes up to the screen</span>
+                        <img src="/wp-content/themes/academe/assets/img/presentation.svg" />
+                    </div>
+                </template>
+            </template>
+
             <!-- Quiz type: -->
             <div class="quiz-content" v-show="store.slide_type === 'question'"></div>
 
             <!-- Movie type: -->
             <template v-if="store.slide_type === 'movie'">
                 <template v-if="playerObject">
-                    <video-player v-if="user_role === 'teacher'"
-                                  ref="videoPlayer"
-                                  class="player-full"
-                                  :movieData="playerObject"
-                                  :showControls="false"
-                                  @paused="checkForNextQuestion">
-                        <div class="quiz-content-movie" :class="{ 'with-content' : this.movieQuizShowing }"></div>
-                        <div v-if="this.movieQuizShowing && user_role === 'teacher'" @click="loadNextSegment" class="next-segment" :class="{ 'with-content' : this.movieQuizShowing }">
-                            <div class="next-segment-btn">Continue watching</div>
-                        </div>
-                    </video-player>
+                    <template v-if="user_role === 'teacher'">
+                        <video-player ref="videoPlayer"
+                                      class="player-full"
+                                      :movieData="playerObject"
+                                      @paused="checkForNextQuestion"
+                                      @duration_received="setMovieDuration">
+                            <div v-if="quizzes" class="questions-timeline">
+                                <div v-if="store.active_movie_duration" class="question-marker"
+                                     :style="'left:'+questionPosition(question.time)+'%'"
+                                     v-for="(question, index) in quizzes"
+                                     :key="question.id">
+                                    <div>{{index + 1}}</div>
+                                </div>
+                            </div>
+                            <div class="quiz-content-movie" :class="{ 'with-content' : this.movieQuizShowing }"></div>
+                            <div v-if="this.movieQuizShowing && user_role === 'teacher'" @click="loadNextSegment" class="next-segment" :class="{ 'with-content' : this.movieQuizShowing }">
+                                <div class="next-segment-btn">Continue watching</div>
+                            </div>
+
+                        </video-player>
+                    </template>
                     <template v-if="user_role === 'student'">
                         <div v-show="movieQuizShowing" class="quiz-content-movie"></div>
                         <div v-show="!movieQuizShowing" class="slide-message">
@@ -73,7 +124,7 @@
                                         </div>
                                         <div class="col w-50 media">
                                             <img v-if="predefined_template.template1_media1.template1_media1_image"
-                                                 :src="predefined_template.template1_media1.template1_media1_image.url"
+                                                 :src="predefined_template.template1_media1.template1_media1_image"
                                                  style="width: 100%; height: 100%; object-fit: cover;"/>
                                         </div>
                                     </div>
@@ -131,6 +182,7 @@
             course_id: Number,
             session_id: Number,
             session_code: String,
+            author: String,
             user_role: String,
             device: String,
             current_slide: Number,
@@ -181,8 +233,13 @@
             /* SESSION WEBSOCKETS CODE END */
 
             // Get course
-            axios.get('/ldlms/v2/sfwd-courses/'+this.course_id).then(res => {
+            axios.get('/ldlms/v1/sfwd-courses/'+this.course_id).then(res => {
                 this.store.course_content = res.data;
+
+                axios.get('/academe/v1/get-lesson-meta-terms?lesson_id='+this.course_id).then(res => {
+                    _this.store.course_meta = res.data
+                });
+
             });
 
             // Get course slides
@@ -210,6 +267,7 @@
                 this.playerObject = null;
                 this.movieQuizShowing = false;
                 this.lastQuestionLoaded = false;
+                this.store.active_movie_duration = null;
 
                 this.getSlideContent(slide_id);
                 this.sendMessage({"load_slide" : slide_id});
@@ -241,14 +299,9 @@
                         case "text_image":
                             break;
                         case "movie":
-                            axios.get('/ldlms/v1/sfwd-quiz?course='+this.course_id+'&lesson='+slide_id).then(res => {
-
-                                // Transform full quiz objects to simple time:quiz_id objects
-                                this.quizzes = res.data.map( quiz => ({
-                                        id: quiz.id,
-                                        time: parseInt(quiz.acf.show_at)
-                                    })
-                                );
+                            axios.get('/academe/v1/get-lesson-quizzes?course='+this.course_id+'&lesson='+slide_id).then(res => {
+                                console.log(res.data);
+                                this.quizzes = res.data;
 
                                 // Sort quizzes in ASC order by showing time
                                 this.quizzes.sort(function (a, b) {
@@ -261,7 +314,9 @@
                                 // Trick to create not updatable copy of store object
                                 var tempPlayerObject = JSON.parse(JSON.stringify(this.store.slide_content.acf.movie_slide));
                                 // Set first question (quiz) point as mediaPlayTo
-                                tempPlayerObject.play_to = this.quizzes[0].time;
+                                if (tempPlayerObject.play_to != 0) {
+                                    tempPlayerObject.play_to = this.quizzes[0].time;
+                                }
                                 this.playerObject = tempPlayerObject;
 
                                 // Set next quiz index
@@ -303,19 +358,21 @@
                     return;
                 }
 
-                // Load current quiz:
-                // this.quizzes[this.nextQuizIndex].id
-                console.log('player paused');
-                this.sendMessage({"load_quiz" : this.quizzes[this.nextQuizIndex].id});
-                this.getQuiz(this.quizzes[this.nextQuizIndex].id);
+                // Check if paused exactly on quiz time & load current quiz:
+                console.log('player paused at ' + time + ' / curr quiz at ' + this.quizzes[this.nextQuizIndex].time);
+                if ( parseInt(this.quizzes[this.nextQuizIndex].time) === time) { //
+                    this.sendMessage({"load_quiz" : this.quizzes[this.nextQuizIndex].id});
+                    this.getQuiz(this.quizzes[this.nextQuizIndex].id);
+                    this.$refs.videoPlayer.playerCloseFullscreen();
 
-                // Update next quiz
-                if (this.quizzes.length > this.nextQuizIndex+1) { // if next quiz exists (not last quiz already loaded)
-                    this.nextQuizIndex++;
-                    this.quizzes[this.nextQuizIndex].id;
-                    //this.$refs.videoPlayer.nextSegment(this.quizzes[this.nextQuizIndex].time)
-                } else { // last question
-                    this.lastQuestionLoaded = true;
+                    // Update next quiz
+                    if (this.quizzes.length > this.nextQuizIndex+1) { // if next quiz exists (not last quiz already loaded)
+                        this.nextQuizIndex++;
+                        this.quizzes[this.nextQuizIndex].id;
+                        //this.$refs.videoPlayer.nextSegment(this.quizzes[this.nextQuizIndex].time)
+                    } else { // last question
+                        this.lastQuestionLoaded = true;
+                    }
                 }
 
             },
@@ -328,6 +385,12 @@
                 jQuery('.quiz-content-movie').html(''); // remove completed quiz content
 
                 this.sendMessage({"hide_quiz" : true}); // close previous completed quiz for students
+            },
+            questionPosition(show_at) {
+                return parseInt(show_at) / this.store.active_movie_duration * 100;
+            },
+            setMovieDuration(duration) {
+                this.store.active_movie_duration = duration;
             }
         }
     }
@@ -404,6 +467,8 @@
         aspect-ratio: 16/9;
         max-height: 100%;
         margin: auto;
+        min-width: 80%;
+        max-width: 100%;
     }
     .aspect-ratio-box-inside {
         /*position: absolute;*/
@@ -481,6 +546,109 @@
         width: 100%;
     }
 
+    .questions-timeline {
+        position: absolute;
+        bottom: 55px;
+        width: 100%;
+        opacity: 0;
+        transition: .5s;
+    }
+    .question-marker {
+        height: 16px;
+        width: 16px;
+        background: #51acfd;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        margin-top: 0px;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        cursor: pointer;
+        box-shadow: 0px 0px 5px 0px black;
+    }
+    .question-marker:after {
+        content: '';
+        position: absolute;
+        left: 2px;
+        top: 14px;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 7px solid #51acfd;
+        clear: both;
+    }
+    .question-marker > div {
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    .cover-preview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+        font-weight: 600;
+    }
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .slide-meta-preview {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+    .meta-details {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding-left: 40px;
+        padding-bottom: 60px;
+    }
+    .meta-details * {
+        text-shadow: 0px 0px 15px black;
+    }
+    .lesson-name {
+        font-size: 39px;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+    .lesson-created-by {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 20px;
+    }
+    .lesson-created-by-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #51ACFD;
+        text-shadow: none !important;
+    }
+    .lesson-description {
+        color: #F2F2F2;
+        line-height: 24px;
+        max-width: 400px;
+        text-shadow: 0px 0px 15px black;
+        margin-bottom: 20px;
+    }
+    .lesson-terms {
+        margin-bottom: 5px;
+        font-size: 15px;
+    }
+    .lesson-terms.tags-list {
+        color: #51ACFD;
+        margin-top: 10px;
+    }
+    .slide-content .slide-message img {
+        max-width: 100%;
+        height: 250px;
+        margin-top: 20px;
+    }
     @media screen and (max-width: 767px) {
         .slide-content {
             padding: 30px;
@@ -550,6 +718,9 @@
     }
     .wpProQuiz_content .wpProQuiz_questionListItem {
         padding: 3px 0 !important;
+    }
+    .wpProQuiz_content .wpProQuiz_questionListItem, .wpProQuiz_content .wpProQuiz_questionListItem input[type='radio'] {
+        cursor: pointer;
     }
     .learndash-wrapper .wpProQuiz_content .wpProQuiz_questionListItem label {
         position: relative;
@@ -634,6 +805,9 @@
         transition: .2s;
         color: #51ACFD;
         font-weight: 600;
+    }
+    #slide-movie:hover .questions-timeline {
+        opacity: 1;
     }
     @media screen and (max-width: 767px) {
         .quiz-content-movie {

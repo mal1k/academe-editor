@@ -1,7 +1,9 @@
+<?php $custom_fields = get_fields($post->ID);  ?>
+
 <div class="lesson-row">
-    <!-- <a class="wrap-link" href="<?php the_permalink(); ?>" target="_blank"></a> -->
+    <!--<a class="wrap-link" href="<?php //the_permalink(); ?>" target="_blank"></a>-->
     <div class="thumbnail">
-        <img src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
+        <img src="<?php echo $custom_fields['cover_image_url']; ?>" />
     </div>
     <div class="session-info">
         <div class="name">
@@ -30,12 +32,14 @@
         </div>
     </div>
     <div class="stretcher"></div>
-    <div class="progress">
-        <?php icon('clock', 'icon-24'); ?>
-        1h 23m
-    </div>
+    <?php if (0) { ?>
+        <div class="progress">
+            <?php icon('clock', 'icon-24'); ?>
+            1h 23m
+        </div>
+    <?php } ?>
 
-    <div class="sessions-count">
+    <div class="sessions-count" data-lesson-id="<?php echo $post->ID; ?>">
         <?php
         $wp_query = new WP_Query([
             'post_type' => 'session',
@@ -62,7 +66,8 @@
                         <?php icon('blue-plus'); ?>
                         <span class="text-blue"><?php _e('Create New Session', 'academe-theme'); ?></span>
                     </div>
-                    <a href="<?php the_permalink(); ?>" class="item">View Lesson</a>
+                    <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="item">Edit Lesson</a>
+                    <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="item">View Lesson</a>
                 </div>
             </div>
         </div>

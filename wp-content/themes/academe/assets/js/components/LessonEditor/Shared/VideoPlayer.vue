@@ -74,13 +74,22 @@ export default {
         readyCallback: (playerId) => {
           this.loaded = true;
           var _this = this;
+
           this.kdp = document.getElementById( playerId );
+
+          this.kdp.kBind("durationChange", function () {
+            _this.$emit('duration_received', _this.kdp.evaluate('{duration}'));
+          });
           this.kdp.kBind("playerPaused", function () {
             _this.$emit('paused', _this.playerCurrentTime());
           });
           this.kdp.kBind("playerPlayed", function () {
             _this.$emit('played', _this.playerCurrentTime());
           });
+          this.kdp.kBind("userInitiatedSeek", function (event) {
+            _this.$emit('seeked', Math.floor(JSON.stringify(event)));
+          });
+
         },
       });
     },
@@ -92,6 +101,12 @@ export default {
     },
     playerPause() {
       this.kdp.sendNotification('doPause')
+    },
+    playerOpenFullscreen() {
+      this.kdp.sendNotification('openFullScreen')
+    },
+    playerCloseFullscreen() {
+      this.kdp.sendNotification('closeFullScreen')
     },
     nextSegment(playTo) {
       this.kdp.setKDPAttribute('mediaProxy', 'mediaPlayFrom', this.playerCurrentTime());
