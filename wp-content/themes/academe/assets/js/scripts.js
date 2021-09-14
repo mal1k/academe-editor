@@ -201,6 +201,7 @@ jQuery(document).ready(function($) {
         
         let id = $(this).attr('data-modal-id');
         $('#'+id).find('.nextScreen').click();
+        $('#'+id).find('.play-now').hide();
 
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
             type: 'datetime',
@@ -271,8 +272,7 @@ jQuery(document).ready(function($) {
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
                     $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');
-                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');                
-                    $('#'+modal+'.start-session.modal .nextScreen').addClass('disabled');                
+                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');             
                     $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
                     $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden').html(
                         'Content Available from ' + formatDateFrom  + ' until ' + formatDateUntil
