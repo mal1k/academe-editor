@@ -62,10 +62,12 @@
             </div>
             <div class="menu">
                 <div class="menu-body">
-                    <div class="item create-session-btn" data-modal-id="<?php echo $cs_modal_id; ?>">
+                   <div class="item create-session-btn" data-modal-id="<?php echo $cs_modal_id; ?>">
                         <?php icon('blue-plus'); ?>
                         <span class="text-blue"><?php _e('Create New Session', 'academe-theme'); ?></span>
                     </div>
+                    <a href="#" class="item">Play Now</a>
+                    <a href="#" class="item">Schedule</a>
                     <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="item">Edit Lesson</a>
                     <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="item">View Lesson</a>
                 </div>
