@@ -163,6 +163,9 @@ jQuery(document).ready(function($) {
 
     $('.create-session-btn').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.start-now').click();
+        
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
                 type: 'datetime',
                 ampm: false,
@@ -189,12 +192,16 @@ jQuery(document).ready(function($) {
                         return day + '/' + month + '/' + year;
                     }
                 }
-            });
+            })
+        ;
     });
 
     $('.create-session-btn-schedule').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
-        $('.nextScreen').click();
+        
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.nextScreen').click();
+
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
             type: 'datetime',
             ampm: false,
@@ -223,6 +230,7 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
     
     $('.start-session .cancel').on('click', function () {
         $('.modal.ui.start-session').modal('hide');
@@ -231,9 +239,8 @@ jQuery(document).ready(function($) {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
 
-        //start add dates from and to in form
         const months= ["January","February","March","April","May","June","July",
-        "August","September","October","November","December"];
+            "August","September","October","November","December"];
         const days= ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
         const form = _this.closest('.sessionForm');
@@ -246,7 +253,7 @@ jQuery(document).ready(function($) {
         let  formatDateFrom = days[dateFrom.getDay()] +', '+months[dateFrom.getMonth()] +' '+ dateFrom.getDate();
         let  dateUntil = addHoursToDate(dateFrom, duration);
         let  formatDateUntil = days[dateUntil.getDay()] +', '+months[dateUntil.getMonth()] +' '+ dateUntil.getDate();
-        //end add dates from and to in form
+
         _this.removeClass('schedule-now');
         $.ajax({
             url: ajaxurl,
@@ -263,17 +270,13 @@ jQuery(document).ready(function($) {
                     //$('#'+modal+'.start-session.modal .session-url .copy').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
                     $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
-                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');                
-                    $('#'+modal+'.start-session.modal .sessionShare .shareModalLink').removeClass('disabled');           
-                    $('#'+modal+'.start-session.modal .sessionShare .puzzleModalLink').removeClass('disabled');  
+                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');
                     $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');                
                     $('#'+modal+'.start-session.modal .nextScreen').addClass('disabled');                
-                    $('#'+modal+'.start-session.modal .start-now').addClass('hidden');
-                    //start add dates from and to in form
+                    $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
                     $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden').html(
                         'Content Available from ' + formatDateFrom  + ' until ' + formatDateUntil
-                    );     
-                    //end add dates from and to in form     
+                    );                
                     _this.attr('href', response.success).text('Go to session');
                     copySessionLink(modal);
                     //$('.modal.ui.start-session').modal('hide');
@@ -285,18 +288,18 @@ jQuery(document).ready(function($) {
             }
         });
     });
-    //start add dates from and to in form
     function addHoursToDate(date, hours) {
         console.log(typeof (date.getHours()));
         return new Date(new Date(date).setHours(date.getHours() + hours));
       }
-    //end add dates from and to in form
     $('.start-now').on('click', function () {
         let _this = $(this);
+        _this.closest('form').find('.nextScreen').css('display', 'none');
         let modal = getCreateSessionModalId(_this);
         $("#scheduleDate").hide();
         $("#schedule").val(formatDate(new Date()));
         _this.removeClass('start-now');
+        _this.addClass('play-now');
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -304,7 +307,14 @@ jQuery(document).ready(function($) {
             data: $('#sessionForm').serialize() + "&action=create_session",
             success: function (response) {
                 if (!response.error) {
-                    window.location.href = response.success
+                    console.log(response.success);
+                    let str = response.success
+                    let newstr = str.split('/')
+                    let sessionCode = newstr[4]
+
+                    _this.closest('form').find('.url').text(str);
+                    _this.closest('form').find('.lessonCode').text(sessionCode);
+                    _this.closest('form').find('.play-now').attr('href', str);
                 } else {
                     _this.addClass('start-now');
                     showToast('Error', response.error);

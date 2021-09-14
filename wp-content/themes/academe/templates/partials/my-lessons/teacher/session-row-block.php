@@ -62,7 +62,7 @@
             </div>
             <div class="menu">
                 <div class="menu-body">
-                    <a href="#" class="item" data-modal-id="<?php echo $cs_modal_id; ?>">Play Now</a>
+                    <a href="#" class="item create-session-btn" data-modal-id="<?php echo $cs_modal_id; ?>">Play Now</a>
                     <a href="#" class="item create-session-btn-schedule" data-modal-id="<?php echo $cs_modal_id; ?>">Schedule</a>
                     <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="item">Edit Lesson</a>
                     <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="item">View Lesson</a>
@@ -70,6 +70,44 @@
             </div>
         </div>
     </div>
+
+    <script>
+
+    function ltiCopy(id) {
+        const form = jQuery('#'+id);
+        const code = form.find('.lessonCode').text();
+        const time = form.find('.schedule').val();
+        const postID = form.find('.related_item').val();
+        jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=' + postID + '&time=' + time,{
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+            success: (data)=>{
+                var copyText = "<?php echo get_home_url(); ?>/lti-movies?code=" + code;
+
+                navigator.clipboard.writeText(copyText).then(function() {
+                    showToast('Copied!', 'The LTI link was successfully copied to your clipboard.');
+                });
+
+                function showToast(title, message) {
+                    jQuery('body').toast({
+                        title: title,
+                        message: message,
+                        displayTime: 3000,
+                        position: 'bottom right',
+                        class : 'dark',
+                        className: {
+                            toast: 'ui toast'
+                        }
+                    });
+                }
+
+            }
+
+        })  
+    }
+    </script>
 
     <?php get_template_part( 'templates/partials/modals/create-session', 'null', ['id' => $cs_modal_id]); ?>
 

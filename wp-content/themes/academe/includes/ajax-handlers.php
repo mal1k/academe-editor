@@ -361,7 +361,8 @@ function create_session() {
 
         if (!isset($_POST['schedule']) || empty($_POST['schedule'])) {
             echo json_encode(['error' => __('Date/Time should be selected', 'academe-theme')]);
-            wp_die();
+            // wp_die();
+            exit;
         }
 
         $session_data = array(

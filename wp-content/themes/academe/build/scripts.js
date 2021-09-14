@@ -265,6 +265,9 @@ jQuery(document).ready(function($) {
 
     $('.create-session-btn').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.start-now').click();
+        
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
                 type: 'datetime',
                 ampm: false,
@@ -297,7 +300,10 @@ jQuery(document).ready(function($) {
 
     $('.create-session-btn-schedule').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
-        $('.nextScreen').click();
+        
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.nextScreen').click();
+
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
             type: 'datetime',
             ampm: false,
@@ -366,9 +372,7 @@ jQuery(document).ready(function($) {
                     //$('#'+modal+'.start-session.modal .session-url .copy').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
                     $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
-                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');                
-                    $('#'+modal+'.start-session.modal .sessionShare .shareModalLink').removeClass('disabled');           
-                    $('#'+modal+'.start-session.modal .sessionShare .puzzleModalLink').removeClass('disabled');  
+                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');
                     $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');                
                     $('#'+modal+'.start-session.modal .nextScreen').addClass('disabled');                
                     $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
@@ -392,10 +396,12 @@ jQuery(document).ready(function($) {
       }
     $('.start-now').on('click', function () {
         let _this = $(this);
+        _this.closest('form').find('.nextScreen').css('display', 'none');
         let modal = getCreateSessionModalId(_this);
         $("#scheduleDate").hide();
         $("#schedule").val(formatDate(new Date()));
         _this.removeClass('start-now');
+        _this.addClass('play-now');
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -403,7 +409,14 @@ jQuery(document).ready(function($) {
             data: $('#sessionForm').serialize() + "&action=create_session",
             success: function (response) {
                 if (!response.error) {
-                    window.location.href = response.success
+                    console.log(response.success);
+                    let str = response.success
+                    let newstr = str.split('/')
+                    let sessionCode = newstr[4]
+
+                    _this.closest('form').find('.url').text(str);
+                    _this.closest('form').find('.lessonCode').text(sessionCode);
+                    _this.closest('form').find('.play-now').attr('href', str);
                 } else {
                     _this.addClass('start-now');
                     showToast('Error', response.error);

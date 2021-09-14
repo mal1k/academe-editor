@@ -20,7 +20,7 @@
             <div class="sessionForm__code">
                 <span class="sessionForm__title">Join with this lesson code</span>
                 <div class="session-code">
-                    <span class="code lessonCode" id="lessonCode">xxxxx</span>
+                    <span class="code lessonCode" id="lessonCode"></span>
                 </div>
                 <span class="note-text sessionTime hidden">Content Available from Sun, July 21st until Tue, July 23rd</span>
                 <div class="session-url" style="display: none">
@@ -29,12 +29,12 @@
                 <div class="flex-row items-center flex-center" style="margin-top: 60px;">
                     <div class="buttons">
                         <a class="nextScreen primary-btn "style="margin: 0 10px;"><?php _e('Schedule', 'academe-theme'); ?></a>
-                        <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <a class="start-now primary-btn "><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
             </div>
             <div class="sessionForm__description hidden">
-                <div class="flex-row items-center">
+                <!-- <div class="flex-row items-center">
                     <div class="row-title"><?php _e('Type:', 'academe-theme'); ?></div>
                     <div class="row-data">
                         <input 
@@ -59,7 +59,7 @@
                             <?php _e('A-synchronous', 'academe-theme'); ?>
                         </label>
                     </div>
-                </div>
+                </div> -->
 
                 <script type="text/javascript">
                     jQuery(document).ready((jQuery) => {
@@ -154,53 +154,25 @@
                     </div>
                     <div class="flex-row space-between">
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink shareModalLink disabled" id="shareModalLink" href=""><?php icon('copy-modal', 'copy'); ?><br>
+                            <span class="shareLink shareModalLink"><?php icon('copy-modal', 'copy'); ?><br>
                             Copy link
                             </span>
                         </div>
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink disabled" id="whatsAppModalLink" href=""><?php icon('whatsapp-modal'); ?><br>
+                            <span class="shareLink disabled"><?php icon('whatsapp-modal'); ?><br>
                             WhatsApp
                             </span>
                         </div>
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink disabled" id="emailModalLink" href=""><?php icon('email-modal'); ?><br>
+                            <span class="shareLink disabled"><?php icon('email-modal'); ?><br>
                             Email
                             </span>
                         </div>
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink disabled puzzleModalLink" id="puzzleModalLink" href=""><?php icon('puzzle-modal'); ?><br>
+                            <span onclick="ltiCopy('<?php echo $args['id']; ?>')" class="shareLink puzzleModalLink"><?php icon('puzzle-modal', 'lti-copy'); ?><br>
                             LTI
                             </span>
                         </div>
-
-                        <script>
-                        //change 13.09.2021    
-                        jQuery(document).on('click', '.puzzleModalLink:not(".disabled")', function(e){
-                            e.preventDefault();                              
-                            const form = jQuery(this).closest('.sessionForm');
-                            const code = form.find('.lessonCode').text();
-                            const time = form.find('.schedule').val();
-                            const postID = form.find('.related_item').val();
-                            console.log(code);
-                            console.log(time);
-                            console.log(postID);
-                            jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=' + postID + '&time=' + time,{
-                            type: 'POST',
-                            processData: false,
-                            contentType: false,
-                            dataType: 'json',
-                                success: (data)=>{
-                                    var copyText = "<?php echo get_home_url(); ?>/lti-movies?code=" + code;
-
-                                    navigator.clipboard.writeText(copyText).then(function() {
-                                        alert('Copied');
-                                    });
-
-                                }
-                            })  
-                        })
-                        </script>
 
                         <div style="margin-left: 25px;">
                             <span class="shareLink disabled" id="shareButtonLink" href=""><?php icon('share-modal'); ?><br>
