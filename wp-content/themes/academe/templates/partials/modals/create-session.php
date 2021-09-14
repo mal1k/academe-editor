@@ -30,7 +30,8 @@
                 <div class="flex-row items-center flex-center" style="margin-top: 60px;">
                     <div class="buttons">
                         <a class="nextScreen primary-btn "style="margin: 0 10px;"><?php _e('Schedule', 'academe-theme'); ?></a>
-                        <a class="start-now primary-btn "><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <a class="start-now primary-btn " style="display: none"><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <a class="play-now primary-btn "><?php _e('Start Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
             </div>
