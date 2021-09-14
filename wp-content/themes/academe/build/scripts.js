@@ -300,6 +300,22 @@ jQuery(document).ready(function($) {
     $('.start-session .schedule-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
+
+        const months= ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
+        const days= ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+        const form = _this.closest('.sessionForm');
+        const basicDate = form.find("[name=schedule]").val();
+        const [date, time] =  basicDate.split(' ');
+        const [dd, mm, yy] =  date.split('/');
+        const duration = parseInt(form.find("[name=access_duration]").val());
+
+        let  dateFrom = new Date(mm +" "+ dd + " " + yy + " " + time);
+        let  formatDateFrom = days[dateFrom.getDay()] +', '+months[dateFrom.getMonth()] +' '+ dateFrom.getDate();
+        let  dateUntil = addHoursToDate(dateFrom, duration);
+        let  formatDateUntil = days[dateUntil.getDay()] +', '+months[dateUntil.getMonth()] +' '+ dateUntil.getDate();
+
         _this.removeClass('schedule-now');
         $.ajax({
             url: ajaxurl,
@@ -315,7 +331,16 @@ jQuery(document).ready(function($) {
                     sessionCode = newstr[4]
                     //$('#'+modal+'.start-session.modal .session-url .copy').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
-                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');
+                    $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
+                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');                
+                    $('#'+modal+'.start-session.modal .sessionShare .shareModalLink').removeClass('disabled');           
+                    $('#'+modal+'.start-session.modal .sessionShare .puzzleModalLink').removeClass('disabled');  
+                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');                
+                    $('#'+modal+'.start-session.modal .nextScreen').addClass('disabled');                
+                    $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
+                    $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden').html(
+                        'Content Available from ' + formatDateFrom  + ' until ' + formatDateUntil
+                    );                
                     _this.attr('href', response.success).text('Go to session');
                     copySessionLink(modal);
                     //$('.modal.ui.start-session').modal('hide');
@@ -327,6 +352,10 @@ jQuery(document).ready(function($) {
             }
         });
     });
+    function addHoursToDate(date, hours) {
+        console.log(typeof (date.getHours()));
+        return new Date(new Date(date).setHours(date.getHours() + hours));
+      }
     $('.start-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
