@@ -294,6 +294,40 @@ jQuery(document).ready(function($) {
             })
         ;
     });
+
+    $('.create-session-btn-schedule').on('click', function () {
+        $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        $('.nextScreen').click();
+        $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
+            type: 'datetime',
+            ampm: false,
+            text: {
+                days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                today: 'Today',
+                now: 'Now',
+            },
+            firstDayOfWeek: 1,
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate() + '';
+                    if (day.length < 2) {
+                        day = '0' + day;
+                    }
+                    var month = (date.getMonth() + 1) + '';
+                    if (month.length < 2) {
+                        month = '0' + month;
+                    }
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+    });
+
+    
     $('.start-session .cancel').on('click', function () {
         $('.modal.ui.start-session').modal('hide');
     });
