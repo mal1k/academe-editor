@@ -65,7 +65,6 @@
                     jQuery(document).ready((jQuery) => {
                         jQuery(document).on('click', '.nextScreen:not(".disabled")', function(e) {
                             e.preventDefault;
-                            console.log(jQuery(this).closest('.sessionForm'))
                             const form = jQuery(this).closest('.sessionForm');
                             form.find('.sessionForm__code').addClass('hidden');
                             form.find('.sessionForm__description').removeClass('hidden');
