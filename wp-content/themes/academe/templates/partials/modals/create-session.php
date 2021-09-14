@@ -13,6 +13,7 @@
             $post_ID = $wpdb->get_var( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = 'movie' LIMIT 1" , $meta_key) );
             ?>
             <input type="hidden" name="related_item" class="related_item" value="<?php echo $post_ID; ?>" />
+            <input type="hidden" name="parent_item" class="parent_item" value="<?php echo $post->ID; ?>" />
             <div class="sessionForm__top">
                 <h3 class="sessionForm__title"><?php the_title(); ?></h3>
                 <span class="sessionForm__subtitle">A Lesson by Jurneys in Film</span>
