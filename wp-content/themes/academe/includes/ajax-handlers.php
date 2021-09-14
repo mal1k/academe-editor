@@ -360,8 +360,7 @@ function create_session() {
     if (is_user_logged_in()) {
 
         if (!isset($_POST['schedule']) || empty($_POST['schedule'])) {
-            echo json_encode(['error' => __('Date/Time should be selected', 'academe-theme')]);
-            exit;
+            $_POST['schedule'] = current_time('d/m/Y H:i');
         }
 
         $session_data = array(
@@ -376,7 +375,7 @@ function create_session() {
 
         if ($post_id) {
             update_field( "based_on", $_POST['based_on'], $post_id );
-            update_field( "related_".$_POST['based_on'], $_POST['related_item'], $post_id );
+            update_field( "related_".$_POST['based_on'], $_POST['parent_item'], $post_id );
             update_field( "session_type", $_POST['session_type'], $post_id );
 
             if ($_POST['session_type'] == 'async') {
