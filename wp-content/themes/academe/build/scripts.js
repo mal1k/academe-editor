@@ -406,7 +406,7 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             dataType : 'json',
-            data: $('#sessionForm').serialize() + "&action=create_session",
+            data: $(_this.closest('form')).serialize() + "&action=create_session",
             success: function (response) {
                 if (!response.error) {
                     console.log(response.success);
