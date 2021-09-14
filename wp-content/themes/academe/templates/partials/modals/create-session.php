@@ -18,11 +18,11 @@
                 <span class="sessionForm__subtitle">A Lesson by Jurneys in Film</span>
             </div>
             <div class="sessionForm__code">
-                <span class="sessionForm__title">Join with this lesson cODE</span>
+                <span class="sessionForm__title">Join with this lesson code</span>
                 <div class="session-code">
                     <span class="code lessonCode" id="lessonCode">xxxxx</span>
                 </div>
-                <span class="note-text sessionTime hidden">Content Avail from Sun, July 21st until Tue, July 23rd</span>
+                <span class="note-text sessionTime hidden">Content Available from Sun, July 21st until Tue, July 23rd</span>
                 <div class="session-url" style="display: none">
                     <span class="url"></span>
                 </div>
@@ -176,12 +176,16 @@
                         </div>
 
                         <script>
-                        jQuery('.puzzleModalLink:not(".disabled")').click(function(){
-                            event.preventDefault();                              
+                        //change 13.09.2021    
+                        jQuery(document).on('click', '.puzzleModalLink:not(".disabled")', function(e){
+                            e.preventDefault();                              
                             const form = jQuery(this).closest('.sessionForm');
                             const code = form.find('.lessonCode').text();
                             const time = form.find('.schedule').val();
                             const postID = form.find('.related_item').val();
+                            console.log(code);
+                            console.log(time);
+                            console.log(postID);
                             jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=' + postID + '&time=' + time,{
                             type: 'POST',
                             processData: false,
