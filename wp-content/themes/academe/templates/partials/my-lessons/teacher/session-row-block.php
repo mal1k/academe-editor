@@ -66,6 +66,7 @@
                     <a href="#" class="item create-session-btn-schedule" data-modal-id="<?php echo $cs_modal_id; ?>">Schedule</a>
                     <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="item">Edit Lesson</a>
                     <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="item">View Lesson</a>
+                    <a href="#" class="item text-red delete-session-btn" data-lesson-id="<?php echo $post->ID; ?>">Delete Now</a>
                 </div>
             </div>
         </div>

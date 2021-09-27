@@ -298,6 +298,25 @@ jQuery(document).ready(function($) {
         ;
     });
 
+    $('.delete-session-btn').on('click', function () {
+        var result = confirm("Are you sure?");
+        if (result) {
+
+            let id = $(this).attr('data-lesson-id');
+
+            var data = {
+                action: 'delete_session',
+                id: id
+            };
+    
+            jQuery.post( ajaxurl, data, function( response ){
+                alert( 'Получено с сервера: ' + response );
+                // showToast('Session deleted!', 'Are you sure you want to remove this lesson?');
+            } );
+
+        }
+    });
+
     $('.create-session-btn-schedule').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
         
