@@ -197,7 +197,7 @@ jQuery(document).ready(function($) {
     });
 
     $('.delete-session-btn').on('click', function () {
-        var result = confirm("Are you sure?");
+        var result = confirm("Are you sure you want to remove this lesson?");
         if (result) {
 
             let id = $(this).attr('data-lesson-id');
@@ -208,8 +208,8 @@ jQuery(document).ready(function($) {
             };
     
             jQuery.post( ajaxurl, data, function( response ){
-                alert( 'Получено с сервера: ' + response );
-                // showToast('Session deleted!', 'Are you sure you want to remove this lesson?');
+                showToast('Lesson deleted!', 'Lesson successfully removed');
+                $('#lesson_id_'+id).hide();
             } );
 
         }

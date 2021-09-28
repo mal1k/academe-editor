@@ -401,6 +401,20 @@ function create_session() {
     wp_die();
 }
 
+add_action("wp_ajax_delete_session" , "delete_session");
+add_action('wp_ajax_nopriv_delete_session', 'delete_session');
+function delete_session() {
+    if (is_user_logged_in()) {
+        
+        $my_post = array();
+        $my_post['ID'] = $_POST['id'];
+        $my_post['post_status'] = 'trash';
+
+        echo json_encode(wp_update_post( wp_slash($my_post) ));
+    }
+    wp_die();
+}
+
 
 add_action("wp_ajax_load_more_sessions" , "load_more_sessions");
 add_action('wp_ajax_nopriv_load_more_sessions', 'load_more_sessions');
