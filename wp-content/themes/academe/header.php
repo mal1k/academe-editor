@@ -40,6 +40,25 @@ $unread = learndash_notifications_unread_count_by_user();
         </nav>
     </div>
     <div class="right-part">
+        <?php if(is_user_logged_in() && is_user_in_role('student')) { ?>
+                <span style='color: white; margin-right: 10px;'><b>Join a lesson</b></span>
+                <form action="" method="POST" id="session-form">
+                    <input type="text" style="padding: 6px 27px 6px 7px; width: 120px;" class="form-control" name="post_name" />
+                    <button type="submit" 
+                    style="width: 20px;
+                        height: 20px;
+                        border: 0;
+                        border-radius: 100%;
+                        background: #51acfd;
+                        position: absolute;
+                        margin-top: 7px;
+                        margin-left: -23px;
+                        
+                    ">
+                        <b>></b>
+                    </button>
+                </form>
+        <?php } ?>
         <?php if(is_user_logged_in() && !is_user_in_role('student')) { ?>
             <a href="/lesson-editor" class="create-lesson-btn">
                 <?php icon('blue-plus'); ?>
@@ -154,3 +173,38 @@ $unread = learndash_notifications_unread_count_by_user();
         right: 0;
     }
 </style>    
+
+<script>
+    jQuery('#session-form').submit(function(e){
+        e.preventDefault();
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            dataType : 'json',
+            data: jQuery('#session-form').serialize() + "&action=check_session",
+            success: function (response) {
+                console.log(response)
+                if (!response.error) {
+                    window.location.href = response.success;
+                } 
+                else {
+                    showToast('Error!', response.error);
+                }
+
+            }
+        });
+    })
+
+    function showToast(title, message) {
+        jQuery('body').toast({
+            title: title,
+            message: message,
+            displayTime: 3000,
+            position: 'top center',
+            class : 'dark',
+            className: {
+                toast: 'ui toast'
+            }
+        });
+    }
+</script>
