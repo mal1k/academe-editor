@@ -401,6 +401,30 @@ function create_session() {
     wp_die();
 }
 
+add_action("wp_ajax_check_session" , "check_session");
+add_action('wp_ajax_nopriv_check_session', 'check_session');
+function check_session() {
+    if (is_user_logged_in()) {
+        $posts = get_posts(
+            [
+                'name'           => $_POST['post_name'],
+                'post_type'      => 'session',
+                'posts_per_page' => 1,
+                'post_status'    => 'publish',
+            ]
+        );
+    
+        if ( ! empty( $posts ) ) {
+            $post = $posts[0];
+            echo json_encode(['success' => home_url() . '/sessions/' . $post->post_name]);
+        } else {
+            echo json_encode(['error' => __('This code is invalid', 'academe-theme')]);
+        }
+
+    }
+    wp_die();
+}
+
 add_action("wp_ajax_delete_session" , "delete_session");
 add_action('wp_ajax_nopriv_delete_session', 'delete_session');
 function delete_session() {
