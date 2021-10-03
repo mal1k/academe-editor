@@ -1,5 +1,7 @@
 <?php if (!is_user_logged_in()) {
-    wp_redirect(home_url());
+    // wp_redirect(home_url());
+    $_SESSION['session'] = $post->post_name;
+    wp_redirect(home_url() . '/wp-login.php');
 } ?>
 
 <?php get_header(); ?>
