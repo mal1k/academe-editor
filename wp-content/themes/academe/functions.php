@@ -29,6 +29,13 @@ if( function_exists('acf_add_options_page') ) {
     ));
 }
 
+function register_my_session() {
+    if( !session_id() ) {
+        session_start();
+    }
+}
+add_action('init', 'register_my_session');
+
 add_action( 'wp_enqueue_scripts', 'print_ajaxurl', 99 );
 function print_ajaxurl(){
     wp_localize_script( 'jquery', 'ajaxurl', admin_url('admin-ajax.php'));
@@ -255,6 +262,11 @@ function save_post_generate_session_slug( $post_id ) {
 
 function redirect_after_login($redirect_to, $request, $user) {
     if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+        if ( $_SESSION['session'] != null ) {
+            $link = home_url() . '/sessions/' . $_SESSION['session'];
+            $_SESSION['session'] = null;
+            return $link;
+        }
         // check for students and teachers
         if (in_array( 'subscriber', $user->roles ) || in_array( 'wdm_instructor', $user->roles )) {
             return home_url();
