@@ -4,22 +4,21 @@
         <?php icon('filter', $icon_classes); ?>
     <?php } else { ?>
     <div class="icon" style="color: #51ACFD">
-        Advanced<br>
-        Search
+    <?php _e( 'Advanced<br>Search', 'academe-theme' );?>
     </div>
     <?php } ?>
     <div class="menu">
         <div class="menu-body">
             <div class="filter-top item">
-                <div>Applied filters (<span class="filters-applied-count">0</span>)</div>
-                <div class="reset-filters">Reset</div>
+                <div><?php _e( 'Applied filters', 'academe-theme' );?> (<span class="filters-applied-count">0</span>)</div>
+                <div class="reset-filters"><?php _e( 'Reset', 'academe-theme' );?></div>
             </div>
             <?php if (in_array('faculty', $args['filters'])) { ?>
                 <div class="filter-row-block">
-                    <div>Faculty</div>
+                    <div><?php _e( 'Faculty', 'academe-theme' );?></div>
                     <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="faculty">
                         <input name="faculty" type="hidden" value="<?php echo (isset($_GET['faculty'])) ? $_GET['faculty'] : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -40,7 +39,7 @@
                     <div>Grades</div>
                     <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="grade">
                         <input name="grade" type="hidden" value="<?php echo (isset($_GET['grade'])) ? $_GET['grade'] : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -61,7 +60,7 @@
                     <div>Subject</div>
                     <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="subject">
                         <input name="subject" type="hidden" value="<?php echo (isset($_GET['subject'])) ? $_GET['subject'] : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -81,7 +80,7 @@
                     <div>Topic</div>
                     <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="topic">
                         <input name="topic" type="hidden" value="<?php echo (isset($_GET['topic'])) ? $_GET['topic'] : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -98,10 +97,10 @@
             <?php } ?>
             <?php if (in_array('genre', $args['filters'])) { ?>
                 <div class="filter-row-block">
-                    <div>Genre</div>
+                    <div><?php _e( 'Genre', 'academe-theme' );?></div>
                     <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="genre">
                         <input name="genre" type="hidden" value="<?php echo (isset($_GET['genre'])) ? strtolower(urlencode($_GET['genre'])) : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -118,10 +117,10 @@
             <?php } ?>
             <?php if (in_array('session_teacher', $args['filters'])) { ?>
                 <div class="filter-row-block">
-                    <div>Teacher</div>
+                    <div><?php _e( 'Teacher', 'academe' );?></div>
                     <div class="dropdown ui search movies-filter dark">
                         <input name="teacher" type="hidden" value="<?php echo (isset($_GET['teacher'])) ? strtolower(urlencode($_GET['teacher'])) : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -144,10 +143,10 @@
             <?php } ?>
             <?php if (in_array('session_status', $args['filters'])) { ?>
                 <div class="filter-row-block">
-                    <div>Status</div>
+                    <div><?php _e( 'Status', 'academe' );?></div>
                     <div class="dropdown ui search movies-filter dark">
                         <input name="status" type="hidden" value="<?php echo (isset($_GET['status'])) ? strtolower(urlencode($_GET['status'])) : ''; ?>" >
-                        <span class="default text">All</span>
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
                         <?php icon('chevron-bold', 'with-rotate'); ?>
                         <div class="menu">
                             <div class="menu-body">
@@ -161,8 +160,8 @@
                 </div>
             <?php } ?>
             <div class="filter-bottom">
-                <div class="cancel-filters secondary-btn">Cancel</div>
-                <div class="<?php echo $args['apply_async'] ? 'apply-filters-async' : 'apply-filters'; ?> primary-btn">Apply</div>
+                <div class="cancel-filters secondary-btn"><?php _e( 'Cancel', 'academe-theme' );?></div>
+                <div class="<?php echo $args['apply_async'] ? 'apply-filters-async' : 'apply-filters'; ?> primary-btn"><?php _e( 'Apply', 'academe-theme' );?></div>
             </div>
         </div>
     </div>

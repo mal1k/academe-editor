@@ -10,7 +10,7 @@
         <?php if (is_user_logged_in() && !is_user_in_role('student')) { ?>
             <section class="two-strips">
                 <?php continue_watching_list(false);
-                continue_editing_course_list(); ?>
+                // continue_editing_course_list(); ?>
             </section>
         <?php } ?>
 

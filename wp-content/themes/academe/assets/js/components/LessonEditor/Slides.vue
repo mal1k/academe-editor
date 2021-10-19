@@ -1,28 +1,8 @@
 <template>
   <div class="slides-content">
     <div class="slide-list">
-      <div class="slide-container">
-        <div @click="new_slide_modal = true" class="btn">
-          <svg
-            class="icon"
-            width="15"
-            height="15"
-            viewBox="0 0 15 15"
-            fill="#51acfd"
-            id="plusBlue"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              class="cls-1"
-              d="M7.5,15a1,1,0,0,1-1-1V1a1,1,0,0,1,2,0V14A1,1,0,0,1,7.5,15Z"
-            ></path>
-            <path
-              class="cls-1"
-              d="M14,8.5H1a1,1,0,0,1,0-2H14a1,1,0,0,1,0,2Z"
-            ></path>
-          </svg>
-          <span>Add New Slide</span>
-        </div>
+      <div class="slide-list-header">
+         SLIDES • {{store.slides.length}}
       </div>
       <div v-if="store.slides.length"
          class="slide-container slide-preview-wrap"
@@ -97,6 +77,12 @@
           </div>
         </transition-group>
       </draggable>
+      <div class="slide-container">
+        <div @click="new_slide_modal = true" class="slide-template-preview new-slide-btn">
+            <span class="plus-sign">+</span>
+            <span class="text">ADD NEW</span>
+        </div>
+      </div>
     </div>
 
     <div class="slide-content">
@@ -106,6 +92,7 @@
             <template v-if="activeSlide.template === 'template0'">
               <div class="slide-meta-preview">
                   <img :src="store.meta.thumbnail" class="cover-image" />
+                  <div class="cover-gradient"></div>
                   <div class="meta-details">
                       <h1 class="lesson-name">{{store.meta.title}}</h1>
                       <p v-if="store.meta.title" class="lesson-created-by">Lesson Created By: <span class="lesson-created-by-name">{{store.author}}</span></p>
@@ -122,9 +109,16 @@
                           Grade: {{selectedGradesNames.slice(0,3).join(', ')}}
                           <template v-if="selectedGradesNames.length > 3">...</template>
                       </p>
+                      <p class="lesson-terms movies-list" v-if="participantMovies()">
+                          <svg class="movies-icon" width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M2.125 0.5C1.09684 0.5 0.25 1.34684 0.25 2.375V12.375C0.25 13.4032 1.09684 14.25 2.125 14.25H15.875C16.9032 14.25 17.75 13.4032 17.75 12.375V2.375C17.75 1.34684 16.9032 0.5 15.875 0.5H2.125ZM2.125 1.75H15.875C16.2268 1.75 16.5 2.02316 16.5 2.375V12.375C16.5 12.7268 16.2268 13 15.875 13H2.125C1.77316 13 1.5 12.7268 1.5 12.375V2.375C1.5 2.02316 1.77316 1.75 2.125 1.75ZM2.75 3V4.25H4V3H2.75ZM14 3V4.25H15.25V3H14ZM2.75 5.5V6.75H4V5.5H2.75ZM14 5.5V6.75H15.25V5.5H14ZM2.75 8V9.25H4V8H2.75ZM14 8V9.25H15.25V8H14ZM2.75 10.5V11.75H4V10.5H2.75ZM14 10.5V11.75H15.25V10.5H14Z" fill="white"/>
+                          </svg>
+                          {{participantMovies()}}
+                      </p>
                       <p class="lesson-terms tags-list" v-if="store.meta_fields_loaded && store.meta_select_options.tags.length && store.meta.tags && store.meta.tags.length && selectedTagsNames">
-                          {{selectedTagsNames.slice(0,3).join(' ')}}
-                          <template v-if="selectedTagsNames.length > 3">...</template>
+                          <span class="tags-icon">#</span>
+                          {{selectedTagsNames.slice(0,1).join(' ')}}
+                          <template v-if="selectedTagsNames.length > 1">...</template>
                       </p>
                   </div>
               </div>
@@ -643,20 +637,22 @@
             </template>
 
             <template v-if="activeSlide.template === 'template4'">
-              <div
-                v-if="activeSlide.fields"
-                class="slide-template-preview video-slide"
-              >
+              <div v-if="activeSlide.fields" class="slide-template-preview video-slide">
                 <div class="video-wrap">
-                  <video-player v-bind:movieData="activeSlide.fields" @seeked="setSeekedTimeToQuestion" />
+                  <video-player v-bind:movieData="prepareFieldsForPlayer(activeSlide.fields)" @seeked="setSeekedTimeToQuestion" />
                   <div v-if="store.active_slide_movie_meta" class="questions-timeline">
                     <div class="question-marker"
-                         :style="'left:'+questionPosition(question.start_time)+'%'"
+                         :style="'left:'+questionPosition(timeStringToSeconds(question.start_time))+'%'"
                          @click="showQuestion(question.question_id)"
                          v-for="(question, index) in movieQuestions"
                          :key="question.question_id">
                       <div>{{index + 1}}</div>
                     </div>
+                  </div>
+                  <div class="selected-timeline" v-if="store.active_slide_movie_meta">
+                      <div class="before-selected-part" :style="'width:'+questionPosition(timeStringToSeconds(store.slides[activeSlideIndex].fields.play_from))+'%'"></div>
+                      <div class="selected-part" :style="'width:'+selectedWidth()+'%'"></div>
+                      <div class="after-selected-part"></div>
                   </div>
                 </div>
               </div>
@@ -665,6 +661,49 @@
                   <div class="video-label">Select movie</div>
                 </div>
               </template>
+                <div class="clip-settings" v-if="
+                  store.active_slide_id !== null &&
+                  store.active_block_meta == null &&
+                  store.active_question == null &&
+                  activeSlide &&
+                  activeSlide.fields &&
+                  activeSlide.slide_type === 'movie'">
+                    <div class="clip-settings-title">Clip settings:</div>
+                    <div class="clip-settings-input-group">
+                        <label>In</label>
+                        <the-mask
+                                type="tel"
+                                mask="##:##:##"
+                                :masked="true"
+                                v-model="activeSlide.fields.play_from"
+                                @input="refreshPlayer()"
+                                placeholder="XX:XX:XX"
+                                class="el-input--time el-input--from el-input"
+                                :class="{'is-active': activeInput === 'playFrom'}"
+                                :disabled="activeInput !== 'playFrom'"
+                                @focus.native="changeActiveInput('playFrom')"
+                        />
+                        <span class="in-out-control-btn" v-if="activeInput === 'playFrom'" @click="changeActiveInput('')">Set</span>
+                        <span class="in-out-control-btn" v-else @click="changeActiveInput('playFrom')">Edit</span>
+                    </div>
+                    <div class="clip-settings-input-group">
+                        <label>Out</label>
+                        <the-mask
+                                type="tel"
+                                mask="##:##:##"
+                                :masked="true"
+                                v-model="activeSlide.fields.play_to"
+                                @input="refreshPlayer()"
+                                placeholder="XX:XX:XX"
+                                class="el-input--time el-input--to el-input"
+                                :class="{'is-active': activeInput === 'playTo'}"
+                                :disabled="activeInput !== 'playTo'"
+                                @focus.native="changeActiveInput('playTo')"
+                        />
+                        <span class="in-out-control-btn" v-if="activeInput === 'playTo'" @click="changeActiveInput('')">Set</span>
+                        <span class="in-out-control-btn" v-else @click="changeActiveInput('playTo')">Edit</span>
+                    </div>
+                </div>
             </template>
             
             
@@ -757,11 +796,12 @@
           activeSlide.slide_type === 'text_image'
         "
         v-model="active_slide_meta_tab"
+        class="block-meta"
       >
-        <el-tab-pane label="Layout" name="layout">
-          <div class="container-25px slide-templates flex-builder">
+        <el-tab-pane label="Layout" name="layout" class="body">
+          <div class="slide-templates flex-builder">
             <template1
-              @click.native="activeSlide.template = 'template1'"
+              @click.native="activeSlide.template = 'template1', autoSave()"
               :class="{
                 active: activeSlide.template === 'template1',
               }"
@@ -769,7 +809,7 @@
             >
             </template1>
             <template2
-              @click.native="activeSlide.template = 'template2'"
+              @click.native="activeSlide.template = 'template2', autoSave()"
               :class="{
                 active: activeSlide.template === 'template2',
               }"
@@ -777,7 +817,7 @@
             >
             </template2>
             <template3
-              @click.native="activeSlide.template = 'template3'"
+              @click.native="activeSlide.template = 'template3', autoSave()"
               :class="{
                 active: activeSlide.template === 'template3',
               }"
@@ -786,7 +826,7 @@
             </template3>
 
             <template6
-              @click.native="activeSlide.template = 'template6'"
+              @click.native="activeSlide.template = 'template6', autoSave()"
               :class="{
                 active: activeSlide.template === 'template6',
               }"
@@ -794,7 +834,7 @@
             >
             </template6>
             <template7
-              @click.native="activeSlide.template = 'template7'"
+              @click.native="activeSlide.template = 'template7', autoSave()"
               :class="{
                 active: activeSlide.template === 'template7',
               }"
@@ -818,15 +858,18 @@
           activeSlide.slide_type === 'movie'
         "
         v-model="active_video_slide_meta_tab"
+        class="block-meta"
       >
-        <el-tab-pane label="Movie" name="movie">
-          <div
-            v-if="!isReplaceMovie && activeSlide.fields && activeSlide.fields.kaltura_id"
-            class="container-25px flex-builder"
-          >
-            <MovieOptions v-on:replace-click="isReplaceMovie=true" v-on:remove-click="removeMovie()" v-bind:kalturaId="activeSlide.fields.kaltura_id" />
+        <el-tab-pane label="Movie" name="movie" class="body">
+          <div v-if="!isReplaceMovie && activeSlide.fields && activeSlide.fields.kaltura_id" class="flex-builder">
+            <MovieOptions
+                v-on:replace-click="isReplaceMovie=true"
+                v-on:remove-click="removeMovie()"
+                v-on:add-question="newQuestion()"
+                v-bind:movie_meta="activeSlide.movie_meta"
+            />
           </div>
-          <div v-else class="container-25px flex-builder">
+          <div v-else class="flex-builder">
             <div v-if="isReplaceMovie" @click="isReplaceMovie=false" class="btn --cancel-replace">
               <span>Cancel</span>
             </div>
@@ -834,8 +877,8 @@
           </div>
         </el-tab-pane>
         
-        <el-tab-pane v-if="activeSlide.template === 'template4' && activeSlide.fields"  label="Questions" name="questions">
-          <div class="container-25px flex-builder">
+        <el-tab-pane v-if="activeSlide.template === 'template4' && activeSlide.fields"  label="Questions" name="questions" class="body">
+          <div class="flex-builder">
             <div class="btn" @click="newQuestion()">
               <svg width="15" height="15" viewBox="0 0 15 15"
                 fill="#51acfd" id="plusBlue"                 xmlns="http://www.w3.org/2000/svg"
@@ -865,6 +908,10 @@
           </div>
         </el-tab-pane>
       </el-tabs>
+        <div class="footer">
+            <el-button plain type="default" size="medium" @click="saveLesson()">Save</el-button>
+            <el-switch v-model="store.private" inactive-text="Make Private"></el-switch>
+        </div>
     </div>
 
     <el-dialog
@@ -937,7 +984,10 @@ import SlideQuestion from "./Shared/SlideQuestion";
 import SlideQuestionTemplate from "./Shared/SlideQuestionTemplate";
 import MetaSidebar from "./Shared/MetaSidebar";
 import service from "../../service";
+import saveLessonService from "../../save-lesson-service";
 import axios from "axios";
+import helper from "../../helper";
+import {mask, TheMask} from 'vue-the-mask';
 
 export default {
   name: "Slides",
@@ -962,6 +1012,7 @@ export default {
     SlideQuestion,
     SlideQuestionTemplate,
     MetaSidebar,
+    TheMask,
   },
   data() {
     return {
@@ -972,6 +1023,7 @@ export default {
       active_video_slide_meta_tab: "movie", // movie/questions
       movie_question: "",
       selectedTagsNames: null,
+      activeInput: 'playFrom',
     };
   },
   mounted() {
@@ -1056,7 +1108,9 @@ export default {
       });
       return topics;
     },
-    
+    participantMovies() {
+        return helper.participantMovies;
+    }
   },
   watch: {
     async activeSlide(slide) {
@@ -1066,7 +1120,23 @@ export default {
     },
   },
   methods: {
-
+    autoSave() {
+        saveLessonService.initSave({
+            'type': 'auto'
+        });
+    },
+    saveLesson() {
+      if(!this.store.meta.accept){
+          this.$notify.error({
+              title: 'Save error',
+              message: 'Please accept the Terms Of Use and Privacy Policy!'
+          });
+      } else {
+          saveLessonService.initSave({
+              'type': 'manual'
+          });
+      }
+    },
     removeMovie() {
       this.store.active_video = null;
       this.activeSlide.fields = null;
@@ -1078,13 +1148,15 @@ export default {
         id: this.store.active_slide_id,
         fields: {
           kaltura_id: movieMeta.kaltura_id,
-          play_from: 0,
-          play_to: 0,
+          play_from: (movieMeta.post_type === 'clip') ? movieMeta.play_from : null,
+          play_to: (movieMeta.post_type === 'clip') ? movieMeta.play_to : null,
+          post_type: movieMeta.post_type,
         },
       });
-
+      this.activeSlide.movie_meta = movieMeta;
       // Hide search movies panel
       this.isReplaceMovie = false;
+      this.autoSave();
     },
     getSlideTemplates() {
       service
@@ -1110,6 +1182,7 @@ export default {
       return block_fields;
     },
     async addSlide(slide) {
+      this.store.loading = true;
       var _this = this;
 
       // Generate real slide (lesson) ID using WP:
@@ -1126,6 +1199,7 @@ export default {
 
         // Close slide type selection modal
         _this.new_slide_modal = false;
+        _this.store.loading = false;
       });
 
     },
@@ -1150,66 +1224,11 @@ export default {
       const new_slide = {
         slide_type: "movie",
         template: "template4",
+        movie_meta: null,
       };
 
       this.addSlide(new_slide);
     },
-    
-    /*addSlideQuestion() {
-      this.store.view_question = null;
-      //create slide
-      const new_slide = {
-        slide_type: "question",
-        template: "template5",
-      };
-      var _this = this;
-      this.addSlide(new_slide).then(function (response) {
-
-        // Generate real quiz + question IDs using WP:
-        // You should to create firstly a quiz
-        axios.post('/academe/v1/create_new_step', {
-            course_id: _this.store.lesson_id,
-            lesson_id: _this.store.active_slide_id,
-            post_type: 'sfwd-quiz'
-        }).then(response => {
-            const quiz_id = response.data;
-
-            // Update quiz settings (set up default params needed to show quiz correctly on the session front):
-            axios.post("/academe/v1/default-quiz-settings", {
-                quiz_id: quiz_id
-            });
-
-            // After quiz creation you should to create a question and add it to quiz
-            axios.post('/academe/v1/create_new_step', {
-                course_id: _this.store.lesson_id,
-                lesson_id: _this.store.active_slide_id,
-                quiz_id: quiz_id,
-                post_type: 'sfwd-question'
-            }).then(response => {
-                const question_id = response.data;
-
-                //create new question
-                let newQuestion = {};
-                newQuestion.idSlide = _this.store.active_slide_id;
-                newQuestion.quiz_id = quiz_id; // real WP id of quiz
-                newQuestion.question_id = question_id; // real WP id of question
-                newQuestion.type = '';
-                newQuestion.description = '';
-                newQuestion.answers = [];
-                newQuestion.checkedItems = [];
-                newQuestion.questionIndex = [];
-                newQuestion.score = '0';
-                newQuestion.place = 'slide';
-
-                _this.store.questions.push(newQuestion);
-                _this.store.active_question = newQuestion;
-            });
-
-        });
-
-      });
-    },*/
-    
     addSlideQuestionTempl(slide, newQuestion){
         var _this = this;
         this.addSlide(slide).then(function (response) {
@@ -1270,8 +1289,6 @@ export default {
 
       this.addSlideQuestionTempl(new_slide, newQuestion);
     },
-
-
     //slide actions
     duplicateQuestions(id, newId){
       for (var i = 0; i < this.store.questions.length; i++) {
@@ -1314,9 +1331,7 @@ export default {
         console.log(_this.store.slides);
       }
     },
-    
     removeSlide(index) {
-
       axios.delete('/ldlms/v1/sfwd-lessons/'+this.store.slides[index].lesson_id);
 
       this.store.slides.splice(index, 1);
@@ -1339,9 +1354,11 @@ export default {
       return this.store.active_block_meta === meta_obj;
     },
     changeActiveSlide(slide) {
-        this.store.view_question = null;
-        this.store.active_question = null;
-        this.store.active_slide_movie_meta = null;
+      this.autoSave();
+      this.store.active_block_meta = null;
+      this.store.view_question = null;
+      this.store.active_question = null;
+      this.store.active_slide_movie_meta = null;
 
       const slideId = parseInt(slide.lesson_id);
       this.store.active_slide_id = slideId;
@@ -1353,72 +1370,15 @@ export default {
     getSlideById(lesson_id) {
       return this.store.slides.find((s) => s.lesson_id === lesson_id);
     },
-    
     getSlideQuestionById(lesson_id) {
       return this.store.questions.find((s) => s.idSlide === lesson_id);
     },
-    
-
-
     getQuestionById(id) {
-          return this.store.questions.find((s) => s.question_id === id);
-        },
-
-
-    //create new question in movies - commented
-    /*newQuestion() {
-      var _this = this;
-
-      // Generate real quiz + question IDs using WP:
-      // You should to create firstly a quiz
-      axios.post('/academe/v1/create_new_step', {
-          course_id: this.store.lesson_id,
-          lesson_id: this.store.active_slide_id,
-          post_type: 'sfwd-quiz'
-      }).then(response => {
-          const quiz_id = response.data;
-
-          // Update quiz settings (set up default params needed to show quiz correctly on the session front):
-          axios.post("/academe/v1/default-quiz-settings", {
-            quiz_id: quiz_id
-          });
-
-          // After quiz creation you should to create a question and add it to quiz
-          axios.post('/academe/v1/create_new_step', {
-              course_id: this.store.lesson_id,
-              lesson_id: this.store.active_slide_id,
-              quiz_id: quiz_id,
-              post_type: 'sfwd-question'
-          }).then(response => {
-              const question_id = response.data;
-
-              // Question structure:
-              let question = {};
-              let index = _this.store.questions.length;
-              question.kaltura_id = this.store.active_video;
-              question.idSlide = this.store.active_slide_id; // real WP id of slide (lesson)
-              question.quiz_id = quiz_id; // real WP id of quiz
-              question.question_id = question_id; // real WP id of question
-              question.questionIndex = index;
-              question.start_time = '00:00:00';
-              question.type = 'Open';
-              question.score ='0';
-              question.limit ='';
-              question.answers = [];
-              question.checkedItems = [];
-              question.correctAnswerIndex = '';
-              question.addQuestion = true;
-              question.place = 'movie';
-              _this.store.active_question = question;
-        });
-
-      });
-
-
-    },*/
-    
+      return this.store.questions.find((s) => s.question_id === id);
+    },
     //create new question in movies
     addNewQuestion(question){
+      this.store.loading = true;
       var _this = this;
       // Generate real quiz + question IDs using WP:
       // You should to create firstly a quiz
@@ -1441,11 +1401,12 @@ export default {
               quiz_id: quiz_id,
               post_type: 'sfwd-question'
           }).then(response => {
-              const question_id = response.data; 
+                const question_id = response.data;
                 question.idSlide = _this.store.active_slide_id; // real WP id of slide (lesson)
                 question.quiz_id = quiz_id; // real WP id of quiz
-                question.question_id = question_id; // real WP id of question         
+                question.question_id = question_id; // real WP id of question
                 _this.store.active_question = question;
+                this.store.loading = false;
         });
       });
     },
@@ -1490,7 +1451,7 @@ export default {
       question.quiz_id = ''; // real WP id of quiz
       question.question_id = ''; // real WP id of question
       question.questionIndex = index;
-      question.start_time = '00:00:00';
+      question.start_time = null;
       question.type = 'Open';
       question.score ='0';
       question.limit ='';
@@ -1535,13 +1496,22 @@ export default {
     questionPosition(show_at) {
       return parseInt(show_at) / this.store.active_slide_movie_meta.duration * 100;
     },
+    selectedWidth() {
+        const play_from = this.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_from);
+        const play_to = this.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_to)
+            ? this.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_to)
+            : parseInt(this.store.active_slide_movie_meta.duration);
+        return this.questionPosition(play_to - play_from);
+    },
+    timeStringToSeconds: helper.timeStringToSeconds,
+    secondsToTimeString: helper.secondsToTimeString,
     /*setSeekedTimeToQuestion(time) {
       this.store.active_question.start_time = time;
     },*/
     setSeekedTimeToQuestion(time) {      
       let question = this.store.active_question != null;   
-      let firstTime = this.activeSlide.fields.play_from ? this.activeSlide.fields.play_from : 0;
-      let lastTime = this.activeSlide.fields.play_to ? this.activeSlide.fields.play_to : 0;
+      let firstTime = this.timeStringToSeconds(this.activeSlide.fields.play_from) ?? 0;
+      let lastTime = this.timeStringToSeconds(this.activeSlide.fields.play_to) ?? 0;
       let movieFrom = document.querySelector('#tab-movie.is-active') !== null 
                       && document.querySelector('.el-input--from.is-active') !== null 
                       && (time <= lastTime || firstTime === 0 || lastTime === 0);
@@ -1550,14 +1520,14 @@ export default {
                       && (time > firstTime || firstTime === 0 || lastTime === 0);
       // add time to input from timeline in question
       if(question){
-        this.store.active_question.start_time = time
+        this.store.active_question.start_time = this.secondsToTimeString(time);
       }
       // add time to input from timeline in movie 
       else if (movieFrom) {
-        this.activeSlide.fields.play_from = time;  
+        this.activeSlide.fields.play_from = this.secondsToTimeString(time);
       } 
       else if (movieTo) {
-        this.activeSlide.fields.play_to = time;
+        this.activeSlide.fields.play_to = this.secondsToTimeString(time);
       }    
     },
     createMetaSlide() {
@@ -1572,6 +1542,7 @@ export default {
               _this.createMovieSlide();
           } else {
               _this.store.loading = false;
+              _this.changeActiveSlide(_this.store.slides[0]);
           }
       });
 
@@ -1589,11 +1560,12 @@ export default {
                   id: _this.store.slides[_this.store.slides.length - 1].lesson_id,
                   fields: {
                       kaltura_id: res.data.acf.kaltura_id,
-                      play_from: 0,
-                      play_to: 0,
+                      play_from: null,
+                      play_to: null,
                   },
               });
               _this.store.loading = false;
+              _this.changeActiveSlide(_this.store.slides[0]);
           });
       });
     },
@@ -1620,6 +1592,23 @@ export default {
       }
       this.store.active_question = null;
     },
+    prepareFieldsForPlayer(fields) {
+        // Trick to create not updatable copy of store object
+        let tempFieldsObject = JSON.parse(JSON.stringify(fields));
+
+        tempFieldsObject.play_from = this.timeStringToSeconds(fields.play_from);
+        tempFieldsObject.play_to = this.timeStringToSeconds(fields.play_to);
+        return tempFieldsObject;
+    },
+    changeActiveInput(input){
+        this.activeInput = input;
+    },
+    refreshPlayer() {
+        this.$store.commit("LessonEditor/updateSlideFields", {
+            id: this.activeSlide.lesson_id,
+            fields: this.activeSlide.fields,
+        });
+    },
   },
 };
 </script>
@@ -1642,21 +1631,25 @@ export default {
   height: calc(100vh - 82px);
   overflow-y: auto;
 }
+.slide-list-header {
+    margin-bottom: 15px;
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(81, 172, 253, .33);
+}
 .slide-list::-webkit-scrollbar-thumb,
-.slide-meta::-webkit-scrollbar-thumb {
+.slide-meta::-webkit-scrollbar-thumb,
+.slide-meta .block-meta .body::-webkit-scrollbar-thumb {
   border: 5px solid rgba(0, 0, 0, 0);
   background-clip: padding-box;
   -webkit-border-radius: 7px;
   height: 30px;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 .slide-list::-webkit-scrollbar,
-.slide-meta::-webkit-scrollbar {
+.slide-meta::-webkit-scrollbar,
+.slide-meta .block-meta .body::-webkit-scrollbar {
   width: 14px;
   height: 18px;
-}
-.slide-list::-webkit-scrollbar-thumb,
-.slide-meta::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
 }
 .slide-content {
   flex: 1;
@@ -1669,7 +1662,21 @@ export default {
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.8);
   height: calc(100vh - 150px);
   margin-right: 25px;
-  overflow-y: auto;
+  position: relative;
+  /*overflow-y: auto;*/
+}
+.slide-meta .footer {
+    position: absolute;
+    padding: 20px 30px;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.slide-meta .footer .accept {
+    margin-bottom: 10px;
 }
 .slide-list .slide-container {
   padding: 25px;
@@ -1689,6 +1696,9 @@ export default {
 .btn:hover {
   background-color: #51acfd;
   color: #fff;
+}
+.btn svg {
+    transition: .2s;
 }
 .btn:hover svg {
   fill: #fff;
@@ -1784,7 +1794,7 @@ export default {
 }
 .aspect-ratio-box {
   height: 0;
-  overflow: hidden;
+  /*overflow: hidden;*/
   padding-top: 56%;
   background: #2f2f2f;
   position: relative;
@@ -1800,6 +1810,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 .question-popup {
   position: absolute;
@@ -1848,7 +1859,9 @@ export default {
   display: flex;
   align-items: center;
 }
-
+.block-meta {
+    height: 100%;
+}
 .block-meta .header {
   height: 50px;
   padding: 0 30px;
@@ -1859,6 +1872,8 @@ export default {
 }
 .block-meta .body {
   padding: 30px;
+  overflow-y: auto;
+  height: calc(100% - 175px);
 }
 .formatted-text {
   width: 100%;
@@ -1866,6 +1881,83 @@ export default {
   overflow: hidden;
   white-space: pre-line;
   word-break: break-word;
+}
+.new-slide-btn {
+    height: 100px;
+    margin: 0 10px 0 15px;
+    justify-content: center;
+    align-items: center;
+    background: rgb(72,72,72);
+    background: linear-gradient(0deg, rgba(18,18,18,1) 0%, rgba(72,72,72,1) 100%);
+    border-radius: 7px;
+    flex-direction: column;
+    cursor: pointer;
+    opacity: .9;
+    transition: .3s;
+}
+.new-slide-btn:hover {
+    opacity: 1;
+}
+.new-slide-btn .plus-sign {
+    font-weight: 800;
+    font-size: 53px;
+    color: rgba(255, 255, 255, .85);
+    margin-bottom: 15px;
+}
+.new-slide-btn .text {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+    color: rgba(255, 255, 255, .75);
+}
+.clip-settings {
+    width: 100%;
+    display: flex;
+    margin-top: 8px;
+    padding: 15px;
+}
+.clip-settings .clip-settings-title {
+    font-size: 14px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+.clip-settings .clip-settings-input-group {
+    margin-right: 40px;
+}
+.clip-settings .el-input {
+    -webkit-appearance: none;
+    background-color: #2f2f2f;
+    background-image: none;
+    border-radius: 0px;
+    border: 1px solid #ffffff;
+    box-sizing: border-box;
+    color: #ffffff;
+    display: inline-block;
+    font-size: 16px;
+    height: 34px;
+    line-height: 34px;
+    outline: none;
+    padding: 0 20px;
+    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    text-align: center;
+}
+.clip-settings .el-input--from {
+    border: 1px solid #298f05;
+}
+.clip-settings .el-input--to {
+    border: 1px solid #fd5151;
+}
+.clip-settings .el-input--time {
+    width: 120px;
+    max-width: 100%;
+    text-align: center;
+}
+.clip-settings .is-active {
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, .82);
+}
+.clip-settings .in-out-control-btn {
+    cursor: pointer;
 }
 </style>
 
@@ -1997,6 +2089,17 @@ export default {
   font-size: 10px;
   margin-top: 3px;
 }
+.selected-timeline {
+    width: 100%;
+    height: 8px;
+    background: #8e8e8e;
+    display: flex;
+    justify-content: flex-start;
+}
+.selected-timeline .selected-part {
+    height: 100%;
+    background: #f8da00;
+}
 </style>
 
 <style>
@@ -2015,6 +2118,7 @@ export default {
   padding: 0;
 }
 .video-wrap {
+  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -2055,6 +2159,14 @@ export default {
     height: 100%;
     object-fit: cover;
 }
+.cover-gradient {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%);
+}
 .slide-meta-preview {
     position: relative;
     height: 100%;
@@ -2066,9 +2178,6 @@ export default {
     left: 0;
     padding-left: 40px;
     padding-bottom: 60px;
-}
-.meta-details * {
-    text-shadow: 0px 0px 15px black;
 }
 .lesson-name {
     font-size: 39px;
@@ -2098,9 +2207,24 @@ export default {
     margin-bottom: 5px;
     font-size: 15px;
 }
-.lesson-terms.tags-list {
+.lesson-terms.movies-list {
+    margin-top: 20px;
+}
+.lesson-terms.tags-list, .lesson-terms.movies-list {
     color: #51ACFD;
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+.lesson-terms.tags-list .tags-icon {
+    font-size: 20px;
+    color: #FFFFFF;
+    margin-right: 8px;
+}
+.lesson-terms.movies-list .movies-icon {
+    margin-right: 5px;
+}
+.el-switch__label.is-active {
+    color: #dcdcdc;
 }
 </style>
 
@@ -2126,6 +2250,9 @@ export default {
     padding: 3px;
         transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
+  }
+  .block-meta .el-tabs__content {
+      height: 100%;
   }
   
 </style>

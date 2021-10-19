@@ -47,9 +47,9 @@
                                     <?php if(is_user_logged_in()) { ?>
                                         <div class="item"><?php the_my_list_button($post->ID); ?></div>
                                     <?php } ?>
-                                    <div class="item start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced">Preview</div>
-                                    <div class="item goto-related-lessons">View related Lessons</div>
-                                    <div class="item start-movie-trailer" data-mode="basic">View trailer</div>
+                                    <div class="item start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced"><?php _e( 'Preview', 'academe-theme' );?></div>
+                                    <div class="item goto-related-lessons"><?php _e( 'View related Lessons!', 'academe-theme' );?></div>
+                                    <div class="item start-movie-trailer" data-mode="basic"><?php _e( 'View trailer', 'academe-theme' );?></div>
                                 </div>
                             </div>
                         </div>
@@ -142,16 +142,10 @@
         let urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('play')) {
             setTimeout(function () {
-                $('.start-movie-preview').trigger('click');
+                $('.movie-poster .start-movie-preview').trigger('click');
             }, 1000);
             window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
         }
     });
 </script>
-
-<style>
-.ui.overlay.fullscreen.modal {
-    height:100%;
-}
-</style>    
 <?php get_footer(); ?>

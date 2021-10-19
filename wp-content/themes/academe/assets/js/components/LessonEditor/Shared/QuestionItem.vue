@@ -2,7 +2,7 @@
   <div class="quesyion-item" @click="$emit('show-question')">
     <div class="quesyion-item__index">{{ number + 1 }}</div>
     <div class="quesyion-item__body">
-      <div class="quesyion-item__time">{{questionTimeString}}</div>
+      <div class="quesyion-item__time">{{question_data.start_time}}</div>
       
       <div class="quesyion-item__type">{{ question_data.type }} Question</div>
       <div class="quesyion-item__text">
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import helper from "../../../helper";
+
 export default {
   name: "quesyion-item",
   props: {
@@ -51,25 +53,11 @@ export default {
       },
     },
   },
+  computed: {
 
-computed: {
-    questionTimeString() {
-      const sec_num = parseInt(this.question_data.start_time, 10);
-      let hours = Math.floor(sec_num / 3600);
-      let minutes = Math.floor((sec_num - hours * 3600) / 60);
-      let seconds = sec_num - hours * 3600 - minutes * 60;
+  },
+  methods: {
 
-      if (hours < 10) {
-        hours = "0" + hours;
-      }
-      if (minutes < 10) {
-        minutes = "0" + minutes;
-      }
-      if (seconds < 10) {
-        seconds = "0" + seconds;
-      }
-      return hours + ":" + minutes + ":" + seconds;
-    },
   }
 
 };

@@ -30,6 +30,17 @@
  * http://opensource.org/licenses/MIT
  *
  */
+!function(I,E,S,O){"use strict";I.isFunction=I.isFunction||function(e){return"function"==typeof e&&"number"!=typeof e.nodeType},E=void 0!==E&&E.Math==Math?E:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")(),I.fn.checkbox=function(s){var u,e=I(this),b=e.selector||"",y=(new Date).getTime(),C=[],x=s,w="string"==typeof x,D=[].slice.call(arguments,1);return e.each(function(){var e,h,g=I.extend(!0,{},I.fn.checkbox.settings,s),n=g.className,t=g.namespace,p=g.selector,r=g.error,i="."+t,o="module-"+t,f=I(this),a=I(this).children(p.label),k=I(this).children(p.input),m=k[0],c=!1,v=!1,l=f.data(o),d=this;h={initialize:function(){h.verbose("Initializing checkbox",g),h.create.label(),h.bind.events(),h.set.tabbable(),h.hide.input(),h.observeChanges(),h.instantiate(),h.setup()},instantiate:function(){h.verbose("Storing instance of module",h),l=h,f.data(o,h)},destroy:function(){h.verbose("Destroying module"),h.unbind.events(),h.show.input(),f.removeData(o)},fix:{reference:function(){f.is(p.input)&&(h.debug("Behavior called on <input> adjusting invoked element"),f=f.closest(p.checkbox),h.refresh())}},setup:function(){h.set.initialLoad(),h.is.indeterminate()?(h.debug("Initial value is indeterminate"),h.indeterminate()):h.is.checked()?(h.debug("Initial value is checked"),h.check()):(h.debug("Initial value is unchecked"),h.uncheck()),h.remove.initialLoad()},refresh:function(){a=f.children(p.label),k=f.children(p.input),m=k[0]},hide:{input:function(){h.verbose("Modifying <input> z-index to be unselectable"),k.addClass(n.hidden)}},show:{input:function(){h.verbose("Modifying <input> z-index to be selectable"),k.removeClass(n.hidden)}},observeChanges:function(){"MutationObserver"in E&&((e=new MutationObserver(function(e){h.debug("DOM tree modified, updating selector cache"),h.refresh()})).observe(d,{childList:!0,subtree:!0}),h.debug("Setting up mutation observer",e))},attachEvents:function(e,n){var t=I(e);n=I.isFunction(h[n])?h[n]:h.toggle,0<t.length?(h.debug("Attaching checkbox events to element",e,n),t.on("click"+i,n)):h.error(r.notFound)},preventDefaultOnInputTarget:function(){"undefined"!=typeof event&&null!==event&&I(event.target).is(p.input)&&(h.verbose("Preventing default check action after manual check action"),event.preventDefault())},event:{change:function(e){h.should.ignoreCallbacks()||g.onChange.call(m)},click:function(e){var n=I(e.target);n.is(p.input)?h.verbose("Using default check action on initialized checkbox"):n.is(p.link)?h.debug("Clicking link inside checkbox, skipping toggle"):(h.toggle(),k.focus(),e.preventDefault())},keydown:function(e){var n=e.which,t=13,i=32,o=27,a=37,c=38,r=39,l=40,d=h.get.radios(),s=d.index(f),u=d.length,b=!1;if(n==a||n==c?b=(0===s?u:s)-1:n!=r&&n!=l||(b=s===u-1?0:s+1),!h.should.ignoreCallbacks()&&!1!==b){if(!1===g.beforeUnchecked.apply(m))return h.verbose("Option not allowed to be unchecked, cancelling key navigation"),!1;if(!1===g.beforeChecked.apply(I(d[b]).children(p.input)[0]))return h.verbose("Next option should not allow check, cancelling key navigation"),!1}v=n==o?(h.verbose("Escape key pressed blurring field"),k.blur(),!0):!(e.ctrlKey||!(n==i||n==t&&g.enableEnterKey))&&(h.verbose("Enter/space key pressed, toggling checkbox"),h.toggle(),!0)},keyup:function(e){v&&e.preventDefault()}},check:function(){h.should.allowCheck()&&(h.debug("Checking checkbox",k),h.set.checked(),h.should.ignoreCallbacks()||(g.onChecked.call(m),h.trigger.change()),h.preventDefaultOnInputTarget())},uncheck:function(){h.should.allowUncheck()&&(h.debug("Unchecking checkbox"),h.set.unchecked(),h.should.ignoreCallbacks()||(g.onUnchecked.call(m),h.trigger.change()),h.preventDefaultOnInputTarget())},indeterminate:function(){h.should.allowIndeterminate()?h.debug("Checkbox is already indeterminate"):(h.debug("Making checkbox indeterminate"),h.set.indeterminate(),h.should.ignoreCallbacks()||(g.onIndeterminate.call(m),h.trigger.change()))},determinate:function(){h.should.allowDeterminate()?h.debug("Checkbox is already determinate"):(h.debug("Making checkbox determinate"),h.set.determinate(),h.should.ignoreCallbacks()||(g.onDeterminate.call(m),h.trigger.change()))},enable:function(){h.is.enabled()?h.debug("Checkbox is already enabled"):(h.debug("Enabling checkbox"),h.set.enabled(),h.should.ignoreCallbacks()||(g.onEnable.call(m),g.onEnabled.call(m),h.trigger.change()))},disable:function(){h.is.disabled()?h.debug("Checkbox is already disabled"):(h.debug("Disabling checkbox"),h.set.disabled(),h.should.ignoreCallbacks()||(g.onDisable.call(m),g.onDisabled.call(m),h.trigger.change()))},get:{radios:function(){var e=h.get.name();return I('input[name="'+e+'"]').closest(p.checkbox)},otherRadios:function(){return h.get.radios().not(f)},name:function(){return k.attr("name")}},is:{initialLoad:function(){return c},radio:function(){return k.hasClass(n.radio)||"radio"==k.attr("type")},indeterminate:function(){return k.prop("indeterminate")!==O&&k.prop("indeterminate")},checked:function(){return k.prop("checked")!==O&&k.prop("checked")},disabled:function(){return k.prop("disabled")!==O&&k.prop("disabled")},enabled:function(){return!h.is.disabled()},determinate:function(){return!h.is.indeterminate()},unchecked:function(){return!h.is.checked()}},should:{allowCheck:function(){return h.is.determinate()&&h.is.checked()&&!h.is.initialLoad()?(h.debug("Should not allow check, checkbox is already checked"),!1):!(!h.should.ignoreCallbacks()&&!1===g.beforeChecked.apply(m))||(h.debug("Should not allow check, beforeChecked cancelled"),!1)},allowUncheck:function(){return h.is.determinate()&&h.is.unchecked()&&!h.is.initialLoad()?(h.debug("Should not allow uncheck, checkbox is already unchecked"),!1):!(!h.should.ignoreCallbacks()&&!1===g.beforeUnchecked.apply(m))||(h.debug("Should not allow uncheck, beforeUnchecked cancelled"),!1)},allowIndeterminate:function(){return h.is.indeterminate()&&!h.is.initialLoad()?(h.debug("Should not allow indeterminate, checkbox is already indeterminate"),!1):!(!h.should.ignoreCallbacks()&&!1===g.beforeIndeterminate.apply(m))||(h.debug("Should not allow indeterminate, beforeIndeterminate cancelled"),!1)},allowDeterminate:function(){return h.is.determinate()&&!h.is.initialLoad()?(h.debug("Should not allow determinate, checkbox is already determinate"),!1):!(!h.should.ignoreCallbacks()&&!1===g.beforeDeterminate.apply(m))||(h.debug("Should not allow determinate, beforeDeterminate cancelled"),!1)},ignoreCallbacks:function(){return c&&!g.fireOnInit}},can:{change:function(){return!(f.hasClass(n.disabled)||f.hasClass(n.readOnly)||k.prop("disabled")||k.prop("readonly"))},uncheck:function(){return"boolean"==typeof g.uncheckable?g.uncheckable:!h.is.radio()}},set:{initialLoad:function(){c=!0},checked:function(){h.verbose("Setting class to checked"),f.removeClass(n.indeterminate).addClass(n.checked),h.is.radio()&&h.uncheckOthers(),h.is.indeterminate()||!h.is.checked()?(h.verbose("Setting state to checked",m),k.prop("indeterminate",!1).prop("checked",!0)):h.debug("Input is already checked, skipping input property change")},unchecked:function(){h.verbose("Removing checked class"),f.removeClass(n.indeterminate).removeClass(n.checked),h.is.indeterminate()||!h.is.unchecked()?(h.debug("Setting state to unchecked"),k.prop("indeterminate",!1).prop("checked",!1)):h.debug("Input is already unchecked")},indeterminate:function(){h.verbose("Setting class to indeterminate"),f.addClass(n.indeterminate),h.is.indeterminate()?h.debug("Input is already indeterminate, skipping input property change"):(h.debug("Setting state to indeterminate"),k.prop("indeterminate",!0))},determinate:function(){h.verbose("Removing indeterminate class"),f.removeClass(n.indeterminate),h.is.determinate()?h.debug("Input is already determinate, skipping input property change"):(h.debug("Setting state to determinate"),k.prop("indeterminate",!1))},disabled:function(){h.verbose("Setting class to disabled"),f.addClass(n.disabled),h.is.disabled()?h.debug("Input is already disabled, skipping input property change"):(h.debug("Setting state to disabled"),k.prop("disabled","disabled"))},enabled:function(){h.verbose("Removing disabled class"),f.removeClass(n.disabled),h.is.enabled()?h.debug("Input is already enabled, skipping input property change"):(h.debug("Setting state to enabled"),k.prop("disabled",!1))},tabbable:function(){h.verbose("Adding tabindex to checkbox"),k.attr("tabindex")===O&&k.attr("tabindex",0)}},remove:{initialLoad:function(){c=!1}},trigger:{change:function(){var e=k[0];if(e){var n=S.createEvent("HTMLEvents");h.verbose("Triggering native change event"),n.initEvent("change",!0,!1),e.dispatchEvent(n)}}},create:{label:function(){0<k.prevAll(p.label).length?(k.prev(p.label).detach().insertAfter(k),h.debug("Moving existing label",a)):h.has.label()||(a=I("<label>").insertAfter(k),h.debug("Creating label",a))}},has:{label:function(){return 0<a.length}},bind:{events:function(){h.verbose("Attaching checkbox events"),f.on("click"+i,h.event.click).on("change"+i,h.event.change).on("keydown"+i,p.input,h.event.keydown).on("keyup"+i,p.input,h.event.keyup)}},unbind:{events:function(){h.debug("Removing events"),f.off(i)}},uncheckOthers:function(){var e=h.get.otherRadios();h.debug("Unchecking other radios",e),e.removeClass(n.checked)},toggle:function(){h.can.change()?h.is.indeterminate()||h.is.unchecked()?(h.debug("Currently unchecked"),h.check()):h.is.checked()&&h.can.uncheck()&&(h.debug("Currently checked"),h.uncheck()):h.is.radio()||h.debug("Checkbox is read-only or disabled, ignoring toggle")},setting:function(e,n){if(h.debug("Changing setting",e,n),I.isPlainObject(e))I.extend(!0,g,e);else{if(n===O)return g[e];I.isPlainObject(g[e])?I.extend(!0,g[e],n):g[e]=n}},internal:function(e,n){if(I.isPlainObject(e))I.extend(!0,h,e);else{if(n===O)return h[e];h[e]=n}},debug:function(){!g.silent&&g.debug&&(g.performance?h.performance.log(arguments):(h.debug=Function.prototype.bind.call(console.info,console,g.name+":"),h.debug.apply(console,arguments)))},verbose:function(){!g.silent&&g.verbose&&g.debug&&(g.performance?h.performance.log(arguments):(h.verbose=Function.prototype.bind.call(console.info,console,g.name+":"),h.verbose.apply(console,arguments)))},error:function(){g.silent||(h.error=Function.prototype.bind.call(console.error,console,g.name+":"),h.error.apply(console,arguments))},performance:{log:function(e){var n,t;g.performance&&(t=(n=(new Date).getTime())-(y||n),y=n,C.push({Name:e[0],Arguments:[].slice.call(e,1)||"",Element:d,"Execution Time":t})),clearTimeout(h.performance.timer),h.performance.timer=setTimeout(h.performance.display,500)},display:function(){var e=g.name+":",t=0;y=!1,clearTimeout(h.performance.timer),I.each(C,function(e,n){t+=n["Execution Time"]}),e+=" "+t+"ms",b&&(e+=" '"+b+"'"),(console.group!==O||console.table!==O)&&0<C.length&&(console.groupCollapsed(e),console.table?console.table(C):I.each(C,function(e,n){console.log(n.Name+": "+n["Execution Time"]+"ms")}),console.groupEnd()),C=[]}},invoke:function(i,e,n){var o,a,t,c=l;return e=e||D,n=d||n,"string"==typeof i&&c!==O&&(i=i.split(/[\. ]/),o=i.length-1,I.each(i,function(e,n){var t=e!=o?n+i[e+1].charAt(0).toUpperCase()+i[e+1].slice(1):i;if(I.isPlainObject(c[t])&&e!=o)c=c[t];else{if(c[t]!==O)return a=c[t],!1;if(!I.isPlainObject(c[n])||e==o)return c[n]!==O?a=c[n]:h.error(r.method,i),!1;c=c[n]}})),I.isFunction(a)?t=a.apply(n,e):a!==O&&(t=a),Array.isArray(u)?u.push(t):u!==O?u=[u,t]:t!==O&&(u=t),a}},w?(l===O&&h.initialize(),h.invoke(x)):(l!==O&&l.invoke("destroy"),h.initialize())}),u!==O?u:this},I.fn.checkbox.settings={name:"Checkbox",namespace:"checkbox",silent:!1,debug:!1,verbose:!0,performance:!0,uncheckable:"auto",fireOnInit:!1,enableEnterKey:!0,onChange:function(){},beforeChecked:function(){},beforeUnchecked:function(){},beforeDeterminate:function(){},beforeIndeterminate:function(){},onChecked:function(){},onUnchecked:function(){},onDeterminate:function(){},onIndeterminate:function(){},onEnable:function(){},onDisable:function(){},onEnabled:function(){},onDisabled:function(){},className:{checked:"checked",indeterminate:"indeterminate",disabled:"disabled",hidden:"hidden",radio:"radio",readOnly:"read-only"},error:{method:"The method you called is not defined"},selector:{checkbox:".ui.checkbox",label:"label, .box",input:'input[type="checkbox"], input[type="radio"]',link:"a[href]"}}}(jQuery,window,document);
+ /*
+ * # Fomantic UI - 2.8.6
+ * https://github.com/fomantic/Fomantic-UI
+ * http://fomantic-ui.com/
+ *
+ * Copyright 2014 Contributors
+ * Released under the MIT license
+ * http://opensource.org/licenses/MIT
+ *
+ */
 !function(T,e,F,S){"use strict";T.isFunction=T.isFunction||function(e){return"function"==typeof e&&"number"!=typeof e.nodeType},e=void 0!==e&&e.Math==Math?e:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")(),T.fn.dimmer=function(p){var b,v=T(this),h=(new Date).getTime(),y=[],C=p,w="string"==typeof C,x=[].slice.call(arguments,1);return v.each(function(){var o,i,s,a=T.isPlainObject(p)?T.extend(!0,{},T.fn.dimmer.settings,p):T.extend({},T.fn.dimmer.settings),n=a.selector,e=a.namespace,t=a.className,d=a.error,r="."+e,m="module-"+e,c=v.selector||"",l="ontouchstart"in F.documentElement?"touchstart":"click",u=T(this),f=this,g=u.data(m);(s={preinitialize:function(){o=s.is.dimmer()?(i=u.parent(),u):(i=u,s.has.dimmer()?a.dimmerName?i.find(n.dimmer).filter("."+a.dimmerName):i.find(n.dimmer):s.create())},initialize:function(){s.debug("Initializing dimmer",a),s.bind.events(),s.set.dimmable(),s.instantiate()},instantiate:function(){s.verbose("Storing instance of module",s),g=s,u.data(m,g)},destroy:function(){s.verbose("Destroying previous module",o),s.unbind.events(),s.remove.variation(),i.off(r)},bind:{events:function(){"hover"==a.on?i.on("mouseenter"+r,s.show).on("mouseleave"+r,s.hide):"click"==a.on&&i.on(l+r,s.toggle),s.is.page()&&(s.debug("Setting as a page dimmer",i),s.set.pageDimmer()),s.is.closable()&&(s.verbose("Adding dimmer close event",o),i.on(l+r,n.dimmer,s.event.click))}},unbind:{events:function(){u.removeData(m),i.off(r)}},event:{click:function(e){s.verbose("Determining if event occured on dimmer",e),0!==o.find(e.target).length&&!T(e.target).is(n.content)||(s.hide(),e.stopImmediatePropagation())}},addContent:function(e){var i=T(e);s.debug("Add content to dimmer",i),i.parent()[0]!==o[0]&&i.detach().appendTo(o)},create:function(){var e=T(a.template.dimmer(a));return a.dimmerName&&(s.debug("Creating named dimmer",a.dimmerName),e.addClass(a.dimmerName)),e.appendTo(i),e},show:function(e){e=T.isFunction(e)?e:function(){},s.debug("Showing dimmer",o,a),s.set.variation(),s.is.dimmed()&&!s.is.animating()||!s.is.enabled()?s.debug("Dimmer is already shown or disabled"):(s.animate.show(e),a.onShow.call(f),a.onChange.call(f))},hide:function(e){e=T.isFunction(e)?e:function(){},s.is.dimmed()||s.is.animating()?(s.debug("Hiding dimmer",o),s.animate.hide(e),a.onHide.call(f),a.onChange.call(f)):s.debug("Dimmer is not visible")},toggle:function(){s.verbose("Toggling dimmer visibility",o),s.is.dimmed()?s.is.closable()&&s.hide():s.show()},animate:{show:function(e){e=T.isFunction(e)?e:function(){},a.useCSS&&T.fn.transition!==S&&o.transition("is supported")?(a.useFlex?(s.debug("Using flex dimmer"),s.remove.legacy()):(s.debug("Using legacy non-flex dimmer"),s.set.legacy()),"auto"!==a.opacity&&s.set.opacity(),o.transition({displayType:a.useFlex?"flex":"block",animation:a.transition+" in",queue:!1,duration:s.get.duration(),useFailSafe:!0,onStart:function(){s.set.dimmed()},onComplete:function(){s.set.active(),e()}})):(s.verbose("Showing dimmer animation with javascript"),s.set.dimmed(),"auto"==a.opacity&&(a.opacity=.8),o.stop().css({opacity:0,width:"100%",height:"100%"}).fadeTo(s.get.duration(),a.opacity,function(){o.removeAttr("style"),s.set.active(),e()}))},hide:function(e){e=T.isFunction(e)?e:function(){},a.useCSS&&T.fn.transition!==S&&o.transition("is supported")?(s.verbose("Hiding dimmer with css"),o.transition({displayType:a.useFlex?"flex":"block",animation:a.transition+" out",queue:!1,duration:s.get.duration(),useFailSafe:!0,onComplete:function(){s.remove.dimmed(),s.remove.variation(),s.remove.active(),e()}})):(s.verbose("Hiding dimmer with javascript"),o.stop().fadeOut(s.get.duration(),function(){s.remove.dimmed(),s.remove.active(),o.removeAttr("style"),e()}))}},get:{dimmer:function(){return o},duration:function(){return"object"==typeof a.duration?s.is.active()?a.duration.hide:a.duration.show:a.duration}},has:{dimmer:function(){return a.dimmerName?0<u.find(n.dimmer).filter("."+a.dimmerName).length:0<u.find(n.dimmer).length}},is:{active:function(){return o.hasClass(t.active)},animating:function(){return o.is(":animated")||o.hasClass(t.animating)},closable:function(){return"auto"==a.closable?"hover"!=a.on:a.closable},dimmer:function(){return u.hasClass(t.dimmer)},dimmable:function(){return u.hasClass(t.dimmable)},dimmed:function(){return i.hasClass(t.dimmed)},disabled:function(){return i.hasClass(t.disabled)},enabled:function(){return!s.is.disabled()},page:function(){return i.is("body")},pageDimmer:function(){return o.hasClass(t.pageDimmer)}},can:{show:function(){return!o.hasClass(t.disabled)}},set:{opacity:function(e){var i=o.css("background-color"),n=i.split(","),t=n&&3<=n.length;e=0===a.opacity?0:a.opacity||e,i=t?(n[2]=n[2].replace(")",""),n[3]=e+")",n.join(",")):"rgba(0, 0, 0, "+e+")",s.debug("Setting opacity to",e),o.css("background-color",i)},legacy:function(){o.addClass(t.legacy)},active:function(){o.addClass(t.active)},dimmable:function(){i.addClass(t.dimmable)},dimmed:function(){i.addClass(t.dimmed)},pageDimmer:function(){o.addClass(t.pageDimmer)},disabled:function(){o.addClass(t.disabled)},variation:function(e){(e=e||a.variation)&&o.addClass(e)}},remove:{active:function(){o.removeClass(t.active)},legacy:function(){o.removeClass(t.legacy)},dimmed:function(){i.removeClass(t.dimmed)},disabled:function(){o.removeClass(t.disabled)},variation:function(e){(e=e||a.variation)&&o.removeClass(e)}},setting:function(e,i){if(s.debug("Changing setting",e,i),T.isPlainObject(e))T.extend(!0,a,e);else{if(i===S)return a[e];T.isPlainObject(a[e])?T.extend(!0,a[e],i):a[e]=i}},internal:function(e,i){if(T.isPlainObject(e))T.extend(!0,s,e);else{if(i===S)return s[e];s[e]=i}},debug:function(){!a.silent&&a.debug&&(a.performance?s.performance.log(arguments):(s.debug=Function.prototype.bind.call(console.info,console,a.name+":"),s.debug.apply(console,arguments)))},verbose:function(){!a.silent&&a.verbose&&a.debug&&(a.performance?s.performance.log(arguments):(s.verbose=Function.prototype.bind.call(console.info,console,a.name+":"),s.verbose.apply(console,arguments)))},error:function(){a.silent||(s.error=Function.prototype.bind.call(console.error,console,a.name+":"),s.error.apply(console,arguments))},performance:{log:function(e){var i,n;a.performance&&(n=(i=(new Date).getTime())-(h||i),h=i,y.push({Name:e[0],Arguments:[].slice.call(e,1)||"",Element:f,"Execution Time":n})),clearTimeout(s.performance.timer),s.performance.timer=setTimeout(s.performance.display,500)},display:function(){var e=a.name+":",n=0;h=!1,clearTimeout(s.performance.timer),T.each(y,function(e,i){n+=i["Execution Time"]}),e+=" "+n+"ms",c&&(e+=" '"+c+"'"),1<v.length&&(e+=" ("+v.length+")"),(console.group!==S||console.table!==S)&&0<y.length&&(console.groupCollapsed(e),console.table?console.table(y):T.each(y,function(e,i){console.log(i.Name+": "+i["Execution Time"]+"ms")}),console.groupEnd()),y=[]}},invoke:function(t,e,i){var o,a,n,r=g;return e=e||x,i=f||i,"string"==typeof t&&r!==S&&(t=t.split(/[\. ]/),o=t.length-1,T.each(t,function(e,i){var n=e!=o?i+t[e+1].charAt(0).toUpperCase()+t[e+1].slice(1):t;if(T.isPlainObject(r[n])&&e!=o)r=r[n];else{if(r[n]!==S)return a=r[n],!1;if(!T.isPlainObject(r[i])||e==o)return r[i]!==S?a=r[i]:s.error(d.method,t),!1;r=r[i]}})),T.isFunction(a)?n=a.apply(i,e):a!==S&&(n=a),Array.isArray(b)?b.push(n):b!==S?b=[b,n]:n!==S&&(b=n),a}}).preinitialize(),w?(g===S&&s.initialize(),s.invoke(C)):(g!==S&&g.invoke("destroy"),s.initialize())}),b!==S?b:this},T.fn.dimmer.settings={name:"Dimmer",namespace:"dimmer",silent:!1,debug:!1,verbose:!1,performance:!0,useFlex:!0,dimmerName:!1,variation:!1,closable:"auto",useCSS:!0,transition:"fade",on:!1,opacity:"auto",duration:{show:500,hide:500},displayLoader:!1,loaderText:!1,loaderVariation:"",onChange:function(){},onShow:function(){},onHide:function(){},error:{method:"The method you called is not defined."},className:{active:"active",animating:"animating",dimmable:"dimmable",dimmed:"dimmed",dimmer:"dimmer",disabled:"disabled",hide:"hide",legacy:"legacy",pageDimmer:"page",show:"show",loader:"ui loader"},selector:{dimmer:"> .ui.dimmer",content:".ui.dimmer > .content, .ui.dimmer > .content > .center"},template:{dimmer:function(e){var i,n=T("<div/>").addClass("ui dimmer");return e.displayLoader&&(i=T("<div/>").addClass(e.className.loader).addClass(e.loaderVariation),e.loaderText&&(i.text(e.loaderText),i.addClass("text")),n.append(i)),n}}}}(jQuery,window,document);
  /*
  * # Fomantic UI - 2.8.6
@@ -265,6 +276,9 @@ jQuery(document).ready(function($) {
 
     $('.create-session-btn').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.start-now').click();
+
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
                 type: 'datetime',
                 ampm: false,
@@ -294,13 +308,89 @@ jQuery(document).ready(function($) {
             })
         ;
     });
+
+    $('.delete-session-btn').on('click', function () {
+        var result = confirm("Are you sure you want to remove this lesson?");
+        if (result) {
+
+            let id = $(this).attr('data-lesson-id');
+
+            var data = {
+                action: 'delete_session',
+                id: id
+            };
+    
+            jQuery.post( ajaxurl, data, function( response ){
+                showToast('Lesson deleted!', 'Lesson successfully removed');
+                $('#lesson_id_'+id).hide();
+            } );
+
+        }
+    });
+
+
+    $('.create-session-btn-schedule').on('click', function () {
+        $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.nextScreen').click();
+        $('#'+id).find('.play-now').addClass('hidden');
+        $('#'+id).find('.schedule').val('');
+        $('.ui.checkbox').checkbox();
+
+        $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
+            type: 'datetime',
+            ampm: false,
+            text: {
+                days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                today: 'Today',
+                now: 'Now',
+            },
+            firstDayOfWeek: 1,
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate() + '';
+                    if (day.length < 2) {
+                        day = '0' + day;
+                    }
+                    var month = (date.getMonth() + 1) + '';
+                    if (month.length < 2) {
+                        month = '0' + month;
+                    }
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+    });
+
+    
     $('.start-session .cancel').on('click', function () {
         $('.modal.ui.start-session').modal('hide');
     });
     $('.start-session .schedule-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
-        _this.removeClass('schedule-now');
+
+        const months= ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
+        const days= ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+        const form = _this.closest('.sessionForm');
+        const basicDate = form.find("[name=schedule]").val();
+        const [date, time] =  basicDate.split(' ');
+        const [dd, mm, yy] =  date.split('/');
+        const duration = parseInt(form.find("[name=access_duration]").val());
+
+        let  dateFrom = new Date(mm +" "+ dd + " " + yy + " " + time);
+        let  formatDateFrom = days[dateFrom.getDay()] +', '+months[dateFrom.getMonth()] +' '+ dateFrom.getDate();
+        let  dateUntil = addHoursToDate(dateFrom, duration);
+        let  formatDateUntil = days[dateUntil.getDay()] +', '+months[dateUntil.getMonth()] +' '+ dateUntil.getDate();
+
+        //_this.removeClass('schedule-now');
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -315,7 +405,13 @@ jQuery(document).ready(function($) {
                     sessionCode = newstr[4]
                     //$('#'+modal+'.start-session.modal .session-url .copy').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
-                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');
+                    $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
+                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');
+                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');             
+                    $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
+                    $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden').html(
+                        'Content Available from ' + formatDateFrom  + ' until ' + formatDateUntil
+                    );                
                     _this.attr('href', response.success).text('Go to session');
                     copySessionLink(modal);
                     //$('.modal.ui.start-session').modal('hide');
@@ -327,20 +423,41 @@ jQuery(document).ready(function($) {
             }
         });
     });
+    function addHoursToDate(date, hours) {
+        console.log(typeof (date.getHours()));
+        return new Date(new Date(date).setHours(date.getHours() + hours));
+      }
     $('.start-now').on('click', function () {
+        console.log('start now');
         let _this = $(this);
+        _this.closest('form').find('.nextScreen').css('display', 'none');
         let modal = getCreateSessionModalId(_this);
-        $("#scheduleDate").hide();
+        //$("#scheduleDate").hide();
         $("#schedule").val(formatDate(new Date()));
-        _this.removeClass('start-now');
+        
+        _this.closest('form').find('.nextScreen').css('display', 'none');
+        _this.closest('form').find('.sessionForm__code').removeClass('hidden');
+        _this.closest('form').find('.sessionForm__description').addClass('hidden');
+        _this.closest('form').find('.sessionShare .shareList').removeClass('hidden');             
+        _this.closest('form').find('.start-now').addClass('hidden');                
+        _this.closest('form').find('.play-now').removeClass('hidden');
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
             dataType : 'json',
-            data: $('#sessionForm').serialize() + "&action=create_session",
+            data: $(_this.closest('form')).serialize() + "&action=create_session",
             success: function (response) {
                 if (!response.error) {
-                    window.location.href = response.success
+                    console.log(response.success);
+                    let str = response.success
+                    let newstr = str.split('/')
+                    let sessionCode = newstr[4]
+                    
+                          
+                    _this.closest('form').find('.url').text(str);
+                    _this.closest('form').find('.lessonCode').text(sessionCode);
+                    _this.closest('form').find('.play-now').attr('href', str);
                 } else {
                     _this.addClass('start-now');
                     showToast('Error', response.error);
@@ -365,7 +482,7 @@ jQuery(document).ready(function($) {
         $('#'+modal+'.start-session .condition').toggle();
     });
 
-    $('.start-session .copy').on('click', function () {
+    $('.start-session .copy, .start-session .lti-copy').on('click', function () {
         let modal = getCreateSessionModalId($(this));
         copySessionLink(modal)
     });
@@ -432,7 +549,7 @@ jQuery(document).ready(function($) {
 
         $('.modal.movie-player').modal('show');
 
-        if (!$('#kalturaPlayer').data('loaded') || $(this).data('mode') !== 'advanced') {
+        if ($('#kalturaPlayer').data('loaded') !== $(this).data('movie-id') || $(this).data('mode') !== 'advanced') {
             requestPlayerWithMovieModal($(this));
         }
 
@@ -482,10 +599,11 @@ jQuery(document).ready(function($) {
                         // continue watching:
                         "mediaProxy.mediaPlayFrom": mediaPlayFrom,
                         "mediaProxy.mediaPlayTo": mediaPlayTo,
-                        "Kaltura.UseAppleAdaptive": true
+                        "Kaltura.UseAppleAdaptive": true,
+                        //"EmbedPlayer.EnableFullscreen": false,
                     },
                     'readyCallback': function( playerId ){
-                        $('#kalturaPlayer').data('loaded', true);
+                        $('#kalturaPlayer').data('loaded', data_obj.data('movie-id'));
                         window.kdp = document.getElementById( playerId );
 
                         setTimeout(function () {
@@ -494,18 +612,18 @@ jQuery(document).ready(function($) {
 
                         if (data_obj.data('mode') === 'advanced') {
                             window.kdp.kBind("doPause", function(){
-                                throttle(updateContinueWatchingList, 1000);
+                                throttle(updateContinueWatchingList(data_obj.data('movie-id')), 1000);
                             });
                             kdp.kBind ( "playerUpdatePlayhead.fullMovie" , function ( data , id ) {
                                 if(parseInt(data) % 60 === 0) { //call only if current player time multiple of 60
-                                    throttle(updateContinueWatchingList, 1000);
+                                    throttle(updateContinueWatchingList(data_obj.data('movie-id')), 1000);
                                 }
                             });
                             window.kdp.kBind("playerPlayEnd", function(){
 
                             });
                             $(window).on('beforeunload', function(){
-                                throttle(updateContinueWatchingList, 1000);
+                                throttle(updateContinueWatchingList(data_obj.data('movie-id')), 1000);
                                 return undefined;
                             });
                         }
@@ -561,7 +679,7 @@ jQuery(document).ready(function($) {
     });
     */
 
-    function updateContinueWatchingList() {
+    function updateContinueWatchingList(movie_id) {
         let curr_time = parseInt(window.kdp.evaluate("{video.player.currentTime}"));
         let duration = parseInt(window.kdp.evaluate("{duration}"));
         let wp_action = (curr_time < duration) ? 'update_continue_watching' : 'remove_from_continue_watching';
@@ -573,7 +691,7 @@ jQuery(document).ready(function($) {
                 dataType : 'json',
                 data: {
                     'action': wp_action,
-                    'post_id': $('.single-movie-page').data('movie-id'),
+                    'post_id': movie_id,
                     'time': curr_time,
                 },
                 success: function (response) {
@@ -812,6 +930,21 @@ jQuery(document).ready(function($) {
             success: function (response) {
                 console.log(response);
                 $('.sessions-list.modal .sessions-list-wrap').html(response);
+            }
+        });
+    });
+
+    $('.actions-more .unpublish-lesson-btn').on('click', function() {
+        $.ajax({
+            url: window.wpApiSettings.root + "ldlms/v1/sfwd-courses/" + $(this).attr('data-lesson-id') + "?_wpnonce=" + window.wpApiSettings.nonce,
+            type: 'POST',
+            dataType : 'json',
+            data: {
+                status: 'draft',
+                date_gmt: new Date().toISOString(),
+            },
+            success: function (response) {
+                window.location.reload();
             }
         });
     });

@@ -6,11 +6,12 @@
 
             <!-- Meta type: -->
             <template v-if="store.slide_type === 'meta'">
-                <template v-if="user_role === 'teacher'">
+                <template v-if="user_role === 'teacher' || (user_role === 'student' && student_movie_pc)">
                     <div class="aspect-ratio-box">
                         <div class="aspect-ratio-box-inside">
                             <div class="slide-meta-preview">
                                 <img :src="store.course_content.acf.cover_image_url" class="cover-image" />
+                                <div class="cover-gradient"></div>
                                 <div class="meta-details">
                                     <h1 class="lesson-name">{{store.course_content.title.rendered}}</h1>
                                     <p v-if="store.course_content.title.rendered" class="lesson-created-by">Lesson Created By: <span class="lesson-created-by-name">{{author}}</span></p>
@@ -27,7 +28,14 @@
                                         Grade: {{store.course_meta.grades.slice(0,3).join(', ')}}
                                         <template v-if="store.course_meta.grades.length > 3">...</template>
                                     </p>
+                                    <p class="lesson-terms movies-list" v-if="store.course_content && store.course_content.acf.participant_movies">
+                                        <svg class="movies-icon" width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2.125 0.5C1.09684 0.5 0.25 1.34684 0.25 2.375V12.375C0.25 13.4032 1.09684 14.25 2.125 14.25H15.875C16.9032 14.25 17.75 13.4032 17.75 12.375V2.375C17.75 1.34684 16.9032 0.5 15.875 0.5H2.125ZM2.125 1.75H15.875C16.2268 1.75 16.5 2.02316 16.5 2.375V12.375C16.5 12.7268 16.2268 13 15.875 13H2.125C1.77316 13 1.5 12.7268 1.5 12.375V2.375C1.5 2.02316 1.77316 1.75 2.125 1.75ZM2.75 3V4.25H4V3H2.75ZM14 3V4.25H15.25V3H14ZM2.75 5.5V6.75H4V5.5H2.75ZM14 5.5V6.75H15.25V5.5H14ZM2.75 8V9.25H4V8H2.75ZM14 8V9.25H15.25V8H14ZM2.75 10.5V11.75H4V10.5H2.75ZM14 10.5V11.75H15.25V10.5H14Z" fill="white"/>
+                                        </svg>
+                                        {{store.course_content.acf.participant_movies}}
+                                    </p>
                                     <p class="lesson-terms tags-list" v-if="store.course_meta && store.course_meta.tags.length">
+                                        <span class="tags-icon">#</span>
                                         {{store.course_meta.tags.slice(0,3).join(' ')}}
                                         <template v-if="store.course_meta.tags.length > 3">...</template>
                                     </p>
@@ -50,13 +58,18 @@
             <!-- Movie type: -->
             <template v-if="store.slide_type === 'movie'">
                 <template v-if="playerObject">
-                    <template v-if="user_role === 'teacher'">
+                    <template v-if="device === 'desktop'">
                         <video-player ref="videoPlayer"
+                                      v-if="user_role === 'teacher' || (user_role === 'student' && student_movie_pc)"
                                       class="player-full"
                                       :movieData="playerObject"
+                                      :showControls="user_role === 'teacher'"
+                                      @first_play="$refs.videoPlayer.playerOpenFullscreen()"
+                                      @played="sendMessage({'player_event' : 'play'})"
                                       @paused="checkForNextQuestion"
+                                      @seeked="checkQuestionAfterSeek"
                                       @duration_received="setMovieDuration">
-                            <div v-if="quizzes" class="questions-timeline">
+                            <div v-if="quizzes && user_role === 'teacher'" class="questions-timeline">
                                 <div v-if="store.active_movie_duration" class="question-marker"
                                      :style="'left:'+questionPosition(question.time)+'%'"
                                      v-for="(question, index) in quizzes"
@@ -64,14 +77,25 @@
                                     <div>{{index + 1}}</div>
                                 </div>
                             </div>
+                            <div class="selected-timeline" v-if="user_role === 'teacher'">
+                                <template v-if="store.active_movie_duration">
+                                    <div class="before-selected-part" :style="'width:'+questionPosition(parseInt(store.slide_content.acf.movie_slide.play_from))+'%'"></div>
+                                    <div class="selected-part" :style="'width:'+selectedWidth()+'%'"></div>
+                                    <div class="after-selected-part"></div>
+                                </template>
+                            </div>
                             <div class="quiz-content-movie" :class="{ 'with-content' : this.movieQuizShowing }"></div>
                             <div v-if="this.movieQuizShowing && user_role === 'teacher'" @click="loadNextSegment" class="next-segment" :class="{ 'with-content' : this.movieQuizShowing }">
                                 <div class="next-segment-btn">Continue watching</div>
                             </div>
+                            <div v-if="user_role === 'student'" class="mute-unmute-btn" @click="playerMuteUnmute()">
+                                <template v-if="studentPlayerMuted">Unmute</template>
+                                <template v-else>Mute</template>
+                            </div>
 
                         </video-player>
                     </template>
-                    <template v-if="user_role === 'student'">
+                    <template v-if="device === 'mobile' || (device === 'desktop' && user_role === 'student' && !student_movie_pc)">
                         <div v-show="movieQuizShowing" class="quiz-content-movie"></div>
                         <div v-show="!movieQuizShowing" class="slide-message">
                             <span>Please raise your eyes up to the screen</span>
@@ -85,7 +109,7 @@
 
             <!-- Text/Image type: -->
             <template v-if="store.slide_type === 'text_image'">
-                <template v-if="user_role === 'teacher'">
+                <template v-if="user_role === 'teacher' || (user_role === 'student' && student_movie_pc)">
                     <div class="aspect-ratio-box">
                         <div class="aspect-ratio-box-inside">
                             <template v-if="this.store.slide_content.acf.pre_defined_template === 'template1'">
@@ -133,16 +157,227 @@
                             <template v-if="this.store.slide_content.acf.pre_defined_template === 'template2'">
                                 <div class="slide-template-preview flex-builder">
                                     <div class="row h-30">
-                                        <div class="col max-w-50"></div>
+                                        <div class="col max-w-60 m-s text-title"
+                                            :style="{ backgroundColor: predefined_template.template1_text1.template1_text1_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text1.template1_text1_font,
+                                  fontSize: predefined_template.template1_text1.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text1.template1_text1_text_color,
+                                  fontWeight: predefined_template.template1_text1.template1_text1_font_weight,
+                                  textAlign: predefined_template.template1_text1.template1_text1_text_align,}"
+                                                    v-html="predefined_template.template1_text1.template1_text1_text">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row h-70">
-                                        <div class="col w-100"></div>
+                                        <div class="col m-s w-50 free-text"
+                                            :style="{backgroundColor: predefined_template.template1_text2.template1_text2_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text2.template1_text2_font,
+                                  fontSize: predefined_template.template1_text2.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text2.template1_text2_text_color,
+                                  fontWeight: predefined_template.template1_text2.template1_text2_font_weight,
+                                  textAlign: predefined_template.template1_text2.template1_text2_text_align,}"
+                                                    v-html="predefined_template.template1_text2.template1_text2_text"
+                                            ></div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="row h-50">
+                                                <div class="col w-50 media">
+                                                    <template>
+                                                        <img
+                                                                v-if="predefined_template.template1_media1.template1_media1_image"
+                                                                :src="predefined_template.template1_media1.template1_media1_image"
+                                                                style="width: 100%; height: 100%; object-fit: cover"
+                                                        />
+                                                    </template>
+                                                </div>
+                                                <div class="col w-50 media">
+                                                    <template>
+                                                        <img
+                                                                v-if="predefined_template.template1_media2.template1_media2_image"
+                                                                :src="predefined_template.template1_media2.template1_media2_image"
+                                                                style="width: 100%; height: 100%; object-fit: cover"
+                                                        />
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="row h-50">
+                                                <div class="col w-50 media">
+                                                    <template>
+                                                        <img
+                                                                v-if="predefined_template.template1_media3.template1_media3_image"
+                                                                :src="predefined_template.template1_media3.template1_media3_image"
+                                                                style="width: 100%; height: 100%; object-fit: cover"
+                                                        />
+                                                    </template>
+                                                </div>
+                                                <div class="col w-50 media">
+                                                    <template>
+                                                        <img
+                                                                v-if="predefined_template.template1_media4.template1_media4_image"
+                                                                :src="predefined_template.template1_media4.template1_media4_image"
+                                                                style="width: 100%; height: 100%; object-fit: cover"
+                                                        />
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </template>
                             <template v-if="this.store.slide_content.acf.pre_defined_template === 'template3'">
                                 <div class="slide-template-preview flex-builder">
-
+                                    <div class="row h-30">
+                                        <div class="col max-w-60 m-s text-title"
+                                            :style="{ backgroundColor: predefined_template.template1_text1.template1_text1_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text1.template1_text1_font,
+                                  fontSize: predefined_template.template1_text1.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text1.template1_text1_text_color,
+                                  fontWeight: predefined_template.template1_text1.template1_text1_font_weight,
+                                  textAlign: predefined_template.template1_text1.template1_text1_text_align,}"
+                                                    v-html="predefined_template.template1_text1.template1_text1_text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row h-70">
+                                        <div class="col m-s w-100 free-text"
+                                            :style="{backgroundColor: predefined_template.template1_text2.template1_text2_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text2.template1_text2_font,
+                                  fontSize: predefined_template.template1_text2.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text2.template1_text2_text_color,
+                                  fontWeight: predefined_template.template1_text2.template1_text2_font_weight,
+                                  textAlign: predefined_template.template1_text2.template1_text2_text_align,}"
+                                                    v-html="predefined_template.template1_text2.template1_text2_text"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-if="this.store.slide_content.acf.pre_defined_template === 'template6'">
+                                <div class="slide-template-preview flex-builder">
+                                    <div class="row h-30">
+                                        <div class="col w-100 m-s text-title"
+                                            :style="{ backgroundColor: predefined_template.template1_text1.template1_text1_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text1.template1_text1_font,
+                                  fontSize: predefined_template.template1_text1.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text1.template1_text1_text_color,
+                                  fontWeight: predefined_template.template1_text1.template1_text1_font_weight,
+                                  textAlign: predefined_template.template1_text1.template1_text1_text_align,}"
+                                                    v-html="predefined_template.template1_text1.template1_text1_text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row h-70">
+                                        <div class="col m-s w-50 free-text"
+                                            :style="{backgroundColor: predefined_template.template1_text2.template1_text2_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text2.template1_text2_font,
+                                  fontSize: predefined_template.template1_text2.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text2.template1_text2_text_color,
+                                  fontWeight: predefined_template.template1_text2.template1_text2_font_weight,
+                                  textAlign: predefined_template.template1_text2.template1_text2_text_align,}"
+                                                    v-html="predefined_template.template1_text2.template1_text2_text"
+                                            ></div>
+                                        </div>
+                                        <div class="w-50">
+                                            <div class="row h-50">
+                                                <div class="col w-100 free-text"
+                                                    :style="{backgroundColor: predefined_template.template1_text3.template1_text3_fill_color,}">
+                                                    <div class="formatted-text"
+                                                        :style="{ fontFamily: predefined_template.template1_text3.template1_text3_font,
+                                        fontSize: predefined_template.template1_text3.template1_text3_font_size,
+                                        lineHeight: '1.1em',
+                                        color: predefined_template.template1_text3.template1_text3_text_color,
+                                        fontWeight: predefined_template.template1_text3.template1_text3_font_weight,
+                                        textAlign: predefined_template.template1_text3.template1_text3_text_align,}"
+                                                            v-html="predefined_template.template1_text3.template1_text3_text"
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            <div class="row h-50">
+                                                <div class="col w-100 free-text"
+                                                    :style="{backgroundColor: predefined_template.template1_text4.template1_text4_fill_color,}">
+                                                    <div class="formatted-text"
+                                                        :style="{ fontFamily: predefined_template.template1_text4.template1_text4_font,
+                                        fontSize: predefined_template.template1_text4.template1_text4_font_size,
+                                        lineHeight: '1.1em',
+                                        color: predefined_template.template1_text4.template1_text4_text_color,
+                                        fontWeight: predefined_template.template1_text4.template1_text4_font_weight,
+                                        textAlign: predefined_template.template1_text4.template1_text4_text_align,}"
+                                                            v-html="predefined_template.template1_text4.template1_text4_text"
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-if="this.store.slide_content.acf.pre_defined_template === 'template7'">
+                                <div class="slide-template-preview flex-builder">
+                                    <div class="row h-30">
+                                        <div class="col w-100 m-s text-title"
+                                            :style="{ backgroundColor: predefined_template.template1_text1.template1_text1_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text1.template1_text1_font,
+                                  fontSize: predefined_template.template1_text1.template1_text1_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text1.template1_text1_text_color,
+                                  fontWeight: predefined_template.template1_text1.template1_text1_font_weight,
+                                  textAlign: predefined_template.template1_text1.template1_text1_text_align,}"
+                                                    v-html="predefined_template.template1_text1.template1_text1_text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row h-30">
+                                        <div class="col w-50 m-s free-text"
+                                            :style="{backgroundColor: predefined_template.template1_text3.template1_text3_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text3.template1_text3_font,
+                                  fontSize: predefined_template.template1_text3.template1_text3_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text3.template1_text3_text_color,
+                                  fontWeight: predefined_template.template1_text3.template1_text3_font_weight,
+                                  textAlign: predefined_template.template1_text3.template1_text3_text_align,}"
+                                                    v-html="predefined_template.template1_text3.template1_text3_text"
+                                            ></div>
+                                        </div>
+                                        <div class="col w-50 m-s free-text"
+                                            :style="{backgroundColor: predefined_template.template1_text4.template1_text4_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text4.template1_text4_font,
+                                  fontSize: predefined_template.template1_text4.template1_text4_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text4.template1_text4_text_color,
+                                  fontWeight: predefined_template.template1_text4.template1_text4_font_weight,
+                                  textAlign: predefined_template.template1_text4.template1_text4_text_align,}"
+                                                    v-html="predefined_template.template1_text4.template1_text4_text"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                    <div class="row h-40">
+                                        <div class="col m-s w-50 free-text"
+                                            :style="{backgroundColor: predefined_template.template1_text2.template1_text2_fill_color,}">
+                                            <div class="formatted-text"
+                                                :style="{ fontFamily: predefined_template.template1_text2.template1_text2_font,
+                                  fontSize: predefined_template.template1_text2.template1_text2_font_size,
+                                  lineHeight: '1.1em',
+                                  color: predefined_template.template1_text2.template1_text2_text_color,
+                                  fontWeight: predefined_template.template1_text2.template1_text2_font_weight,
+                                  textAlign: predefined_template.template1_text2.template1_text2_text_align,}"
+                                                    v-html="predefined_template.template1_text2.template1_text2_text"
+                                            ></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
                         </div>
@@ -170,6 +405,7 @@
 <script>
     import Template1 from "../LessonEditor/Shared/SlideTemplates/Template1";
     import VideoPlayer from "../LessonEditor/Shared/VideoPlayer";
+    import axios from "axios";
 
     export default {
         name: "Slideshow",
@@ -186,13 +422,14 @@
             user_role: String,
             device: String,
             current_slide: Number,
+            student_movie_pc: String,
         },
         computed: {
             store() {
                 return this.$store.state.LessonSlideshow;
             },
             predefined_template() {
-              return this.store.slide_content.acf[this.store.slide_content.acf.pre_defined_template];
+              return this.store.slide_content.acf.template1;
             },
         },
         data() {
@@ -203,9 +440,11 @@
                 nextQuizIndex: null,
                 movieQuizShowing: false,
                 lastQuestionLoaded: false,
+                studentPlayerMuted: true,
             }
         },
         mounted() {
+            this.updateLessonViewsCount();
 
             /* SESSION WEBSOCKETS CODE */
             var _this =this;
@@ -224,8 +463,24 @@
                 } else if (data.message.load_quiz) {
                     _this.getQuiz(data.message.load_quiz);
                     _this.movieQuizShowing = true;
+                    _this.$refs.videoPlayer.playerCloseFullscreen();
+                    _this.$refs.videoPlayer.playerPause();
                 } else if (data.message.hide_quiz) {
                     _this.movieQuizShowing = false;
+                    jQuery('.quiz-content-movie').html('');
+                    _this.$refs.videoPlayer.playerOpenFullscreen();
+                    _this.$refs.videoPlayer.playerPlay();
+                } else if (data.message.player_event) {
+                    switch (data.message.player_event) {
+                        case 'play':
+                            _this.$refs.videoPlayer.playerPlay();
+                            break;
+                        case 'pause':
+                            _this.$refs.videoPlayer.playerPause();
+                            break;
+                    }
+                } else if (data.message.player_seek) {
+                    _this.$refs.videoPlayer.playerDoSeek(parseInt(data.message.player_seek));
                 }
 
                 //alert(data.message);
@@ -233,7 +488,7 @@
             /* SESSION WEBSOCKETS CODE END */
 
             // Get course
-            axios.get('/ldlms/v1/sfwd-courses/'+this.course_id).then(res => {
+            axios.get('/academe/v1/sfwd-courses/'+this.course_id).then(res => {
                 this.store.course_content = res.data;
 
                 axios.get('/academe/v1/get-lesson-meta-terms?lesson_id='+this.course_id).then(res => {
@@ -243,7 +498,8 @@
             });
 
             // Get course slides
-            axios.get('/ldlms/v2/sfwd-courses/'+this.course_id+'/steps').then(res => {
+            axios.get('academe/v1/course-steps/'+this.course_id).then(res => {
+            //axios.get('/ldlms/v2/sfwd-courses/'+this.course_id+'/steps').then(res => {
                 console.log(res.data);
                 this.course_steps = res.data;
                 if (this.current_slide) {
@@ -253,14 +509,15 @@
                     this.getSlideContent(slides[0]);
                 }
             });
-
         },
         methods: {
             subscribe(channel) {
                 window.conn.send(JSON.stringify({command: "subscribe", channel: channel}));
             },
             sendMessage(msg) {
-                window.conn.send(JSON.stringify({command: "message", message: msg}));
+                if (this.user_role === 'teacher') {
+                    window.conn.send(JSON.stringify({command: "message", message: msg}));
+                }
             },
             goToSlide(slide_id) {
                 // Nullify before load next slide:
@@ -286,7 +543,8 @@
                 jQuery('.quiz-content').html('');
                 jQuery('.quiz-content-movie').html('');
                 // get current slide
-                axios.get('/ldlms/v1/sfwd-lessons/'+slide_id).then(res => {
+                const url_base = this.user_role === 'teacher' ? '/wp/v2/sfwd-lessons/' : '/academe/v1/sfwd-lessons/';
+                axios.get(url_base + slide_id).then(res => {
                     console.log("Slide content:");
                     console.log(res.data);
 
@@ -313,10 +571,14 @@
 
                                 // Trick to create not updatable copy of store object
                                 var tempPlayerObject = JSON.parse(JSON.stringify(this.store.slide_content.acf.movie_slide));
-                                // Set first question (quiz) point as mediaPlayTo
-                                if (tempPlayerObject.play_to != 0) {
-                                    tempPlayerObject.play_to = this.quizzes[0].time;
+
+                                if(this.user_role === 'teacher') {
+                                    // Set first question (quiz) point as mediaPlayTo
+                                    if (tempPlayerObject.play_to != 0) {
+                                        tempPlayerObject.play_to = this.quizzes[0].time;
+                                    }
                                 }
+
                                 this.playerObject = tempPlayerObject;
 
                                 // Set next quiz index
@@ -352,29 +614,62 @@
                 });
             },
             checkForNextQuestion(time) {
-                // Player last time paused:
-                if (parseInt(this.store.slide_content.acf.movie_slide.play_to) === time) {
-                    console.log("Player last time paused");
-                    return;
-                }
+                if (this.user_role === 'teacher') {
+                    // Player last time paused:
+                    if (parseInt(this.store.slide_content.acf.movie_slide.play_to) === time) {
+                        console.log("Player last time paused");
+                        this.sendMessage({'player_event' : 'pause'})
+                        return;
+                    }
 
-                // Check if paused exactly on quiz time & load current quiz:
-                console.log('player paused at ' + time + ' / curr quiz at ' + this.quizzes[this.nextQuizIndex].time);
-                if ( parseInt(this.quizzes[this.nextQuizIndex].time) === time) { //
-                    this.sendMessage({"load_quiz" : this.quizzes[this.nextQuizIndex].id});
-                    this.getQuiz(this.quizzes[this.nextQuizIndex].id);
-                    this.$refs.videoPlayer.playerCloseFullscreen();
+                    // Check if paused exactly on quiz time & load current quiz:
+                    console.log('player paused at ' + time + ' / curr quiz at ' + this.quizzes[this.nextQuizIndex].time);
+                    if ( parseInt(this.quizzes[this.nextQuizIndex].time) === time) { //
+                        this.sendMessage({"load_quiz" : this.quizzes[this.nextQuizIndex].id});
+                        this.getQuiz(this.quizzes[this.nextQuizIndex].id);
+                        this.$refs.videoPlayer.playerCloseFullscreen();
 
-                    // Update next quiz
-                    if (this.quizzes.length > this.nextQuizIndex+1) { // if next quiz exists (not last quiz already loaded)
-                        this.nextQuizIndex++;
-                        this.quizzes[this.nextQuizIndex].id;
-                        //this.$refs.videoPlayer.nextSegment(this.quizzes[this.nextQuizIndex].time)
-                    } else { // last question
-                        this.lastQuestionLoaded = true;
+                        // Update next quiz
+                        if (this.quizzes.length > this.nextQuizIndex+1) { // if next quiz exists (not last quiz already loaded)
+                            this.nextQuizIndex++;
+                            this.quizzes[this.nextQuizIndex].id;
+                            //this.$refs.videoPlayer.nextSegment(this.quizzes[this.nextQuizIndex].time)
+                        } else { // last question
+                            this.lastQuestionLoaded = true;
+                        }
+                    } else {
+                        this.sendMessage({'player_event' : 'pause'})
                     }
                 }
+            },
+            checkQuestionAfterSeek(seeked_time) {
+                let _this = this;
+                const quizzes_length = this.quizzes.length;
+                let next_index = quizzes_length - 1;
 
+                let i = 0;
+                while (i < quizzes_length) {
+                    if (this.quizzes[i].time > seeked_time) {
+                        next_index = i;
+                        break;
+                    }
+                    i++;
+                }
+                this.nextQuizIndex = next_index;
+
+                let next_stop = (seeked_time >= this.quizzes[quizzes_length-1].time)
+                    ? this.store.slide_content.acf.movie_slide.play_to
+                    : this.quizzes[this.nextQuizIndex].time;
+
+                this.$refs.videoPlayer.nextSegment(next_stop, seeked_time);
+                if (this.user_role === 'teacher') {
+                    this.sendMessage({"player_seek": seeked_time}); // seek for student too
+                }
+                this.quizzes.forEach((quiz, index) => {
+                    if (quiz.time > seeked_time) {
+                        next_index = index;
+                    }
+                });
             },
             loadNextSegment() {
                 this.movieQuizShowing = false; // hide overlap & control buttons
@@ -382,6 +677,7 @@
                     ? this.store.slide_content.acf.movie_slide.play_to
                     : this.quizzes[this.nextQuizIndex].time;
                 this.$refs.videoPlayer.nextSegment(next_stop); // change next stop in player
+                this.$refs.videoPlayer.playerOpenFullscreen(); // go back to full screen view
                 jQuery('.quiz-content-movie').html(''); // remove completed quiz content
 
                 this.sendMessage({"hide_quiz" : true}); // close previous completed quiz for students
@@ -389,9 +685,44 @@
             questionPosition(show_at) {
                 return parseInt(show_at) / this.store.active_movie_duration * 100;
             },
+            selectedWidth() {
+                const play_from = parseInt(this.store.slide_content.acf.movie_slide.play_from);
+                const play_to = parseInt(this.store.slide_content.acf.movie_slide.play_to)
+                    ? parseInt(this.store.slide_content.acf.movie_slide.play_to)
+                    : parseInt(this.store.active_movie_duration);
+                return this.questionPosition(play_to - play_from);
+            },
             setMovieDuration(duration) {
                 this.store.active_movie_duration = duration;
-            }
+            },
+            playerMuteUnmute() {
+                if (this.studentPlayerMuted) {
+                    this.$refs.videoPlayer.playerUnmute();
+                } else {
+                    this.$refs.videoPlayer.playerMute();
+                }
+                this.studentPlayerMuted = !this.studentPlayerMuted;
+            },
+            updateLessonViewsCount() {
+                var request = {
+                    action: 'pvc-check-post',
+                    pvc_nonce: pvcArgsFrontend.nonce,
+                    id: this.course_id,
+                };
+                jQuery.ajax( {
+                    url: pvcArgsFrontend.requestURL,
+                    type: 'post',
+                    async: true,
+                    cache: false,
+                    data: request
+                } ).done( function( response ) {
+                    // trigger pvcCheckPost event
+                    jQuery.event.trigger( {
+                        type: 'pvcCheckPost',
+                        detail: response
+                    } );
+                } );
+            },
         }
     }
 </script>
@@ -410,14 +741,6 @@
         justify-content: center;
         align-items: center;
         position: relative;
-    }
-    h1.lesson-title {
-        position: absolute;
-        top: 20px;
-        padding: 0 30px;
-        text-align: center;
-        text-transform: uppercase;
-        font-weight: 500;
     }
     .slide-nav {
         position: absolute;
@@ -518,6 +841,9 @@
         margin: 3%;
         background: rgba(196, 196, 196, 0.64);
     }
+    .flex-builder .col.m-s {
+        margin: 1.5%;
+    }
     .flex-builder .w-100 {
         width: 100%;
     }
@@ -583,6 +909,17 @@
         font-size: 10px;
         margin-top: 3px;
     }
+    .selected-timeline {
+        width: 100%;
+        height: 8px;
+        background: #8e8e8e;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .selected-timeline .selected-part {
+        height: 100%;
+        background: #f8da00;
+    }
 
     .cover-preview {
         display: flex;
@@ -596,6 +933,14 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+    .cover-gradient {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%);
     }
     .slide-meta-preview {
         position: relative;
@@ -636,22 +981,50 @@
         text-shadow: 0px 0px 15px black;
         margin-bottom: 20px;
     }
-    .lesson-terms {
-        margin-bottom: 5px;
-        font-size: 15px;
+    .lesson-terms.movies-list {
+        margin-top: 20px;
     }
-    .lesson-terms.tags-list {
+    .lesson-terms.tags-list, .lesson-terms.movies-list {
         color: #51ACFD;
-        margin-top: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .lesson-terms.tags-list .tags-icon {
+        font-size: 20px;
+        color: #FFFFFF;
+        margin-right: 8px;
+    }
+    .lesson-terms.movies-list .movies-icon {
+        margin-right: 5px;
     }
     .slide-content .slide-message img {
         max-width: 100%;
         height: 250px;
         margin-top: 20px;
     }
+    .mute-unmute-btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        border: 1px solid #FFFFFF;
+        padding: 3px 5px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    h1.lesson-title {
+        display: none;
+    }
+    .formatted-text {
+        width: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        white-space: pre-line;
+        word-break: break-word;
+    }
     @media screen and (max-width: 767px) {
         .slide-content {
             padding: 30px;
+            padding-top: 50px;
         }
         .slide-content .slide-message {
             font-size: 24px;
@@ -661,6 +1034,50 @@
             max-width: 100%;
             height: 120px;
             margin-top: 20px;
+        }
+        h1.lesson-title {
+            position: absolute;
+            display: block;
+            top: 20px;
+            padding: 0 30px;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .meta-details {
+            position: relative;
+            padding-left: 0;
+            padding-top: 20px;
+        }
+        .aspect-ratio-box {
+            aspect-ratio: auto;
+            background: rgba(0,0,0,0);
+            overflow-y: auto;
+        }
+        .cover-gradient {
+            display: none;
+        }
+        .meta-details .lesson-name {
+            font-size: 18px;
+        }
+        .meta-details .lesson-created-by,
+        .meta-details .lesson-created-by-name,
+        .meta-details .lesson-description,
+        .meta-details  .lesson-terms {
+            font-size: 16px;
+        }
+        .flex-builder .row {
+            flex-wrap: wrap;
+        }
+        .flex-builder .row .col {
+            width: 100%;
+            min-width: 100%;
+            flex: 1 1 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .aspect-ratio-box .slide-template-preview {
+            padding: 0;
         }
     }
 </style>

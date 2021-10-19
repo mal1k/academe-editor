@@ -1,6 +1,16 @@
-<?php if (!is_user_logged_in()) {
+<?php
+if (!is_user_logged_in()) {
+    $_SESSION['session'] = $post->post_name;
+    wp_redirect(home_url() . '/wp-login.php');
+}
+
+$custom_fields = get_fields($post->ID);
+
+//Disallow other teachers to view private lesson
+if (is_user_in_role('teacher') && $custom_fields['related_lesson']->post_status == 'private' && $custom_fields['related_lesson']->post_author != get_current_user_id()) {
     wp_redirect(home_url());
-} ?>
+}
+?>
 
 <?php get_header(); ?>
 
@@ -21,7 +31,7 @@
 <script src="/wp-includes/js/jquery/ui/sortable.min.js?ver=1.12.1"></script>
 <script src="/wp-content/plugins/sfwd-lms/includes/lib/wp-pro-quiz/js/jquery.ui.touch-punch.min.js?ver=0.2.2"></script>
 
-<?php $custom_fields = get_fields($post->ID);
+<?php
 $show_session_content = true; ?>
 
 <div id="app" class="main">
@@ -54,7 +64,8 @@ $show_session_content = true; ?>
             author="<?php echo the_author_meta( 'display_name' , $author ); ?>"
             device="<?php echo wp_is_mobile() ? 'mobile' : 'desktop'; ?>"
             :current_slide="<?php echo $custom_fields['current_slide'] ?? 0; ?>"
-            websocket_url="<?php echo WEBSOCKET_URL; ?>">
+            websocket_url="<?php echo WEBSOCKET_URL; ?>"
+            student_movie_pc="<?php echo $custom_fields['show_movie_on_students_pc'] ?? 0; ?>">
 
         </session-slideshow>
     <?php } ?>

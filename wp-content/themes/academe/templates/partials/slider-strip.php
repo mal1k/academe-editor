@@ -8,6 +8,8 @@
         $filter = true;
         $filter_action = $args['filter']['action'];
     }
+    $new_lesson_button = isset($args['new_lesson_button']);
+
 ?>
 <section class="slider-strip">
     <div class="strip-top">
@@ -36,8 +38,13 @@
     </div>
     <div class="swiper-container swiper-strip">
         <div class="swiper-wrapper">
-            <?php
-            if ($args['posts']) {
+            <?php if ($new_lesson_button) { ?>
+                <a href="/lesson-editor" class="swiper-slide movie-block create-new-lesson">
+                    <span class="plus-sign icon-wrap">+</span>
+                    <span class="action-text"><?php _e('Create new', 'academe-theme'); ?></span>
+                </a>
+            <?php } ?>
+            <?php if ($args['posts']) {
                 foreach ($args['posts'] as $post) {
                     setup_postdata($post);
                     get_template_part('templates/partials/movie-block', 'null');

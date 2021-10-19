@@ -11,7 +11,7 @@ function my_list($filter = true) {
     }
     if($query_posts) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => 'My List',
+            'title' => __('My Videos', 'academe-theme'),
             'filter' => [
                 'active' => $filter,
                 'post_type' => 'movie',
@@ -37,7 +37,7 @@ function continue_watching_list($filter = true) {
     }
     if($query_posts) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => 'Continue watching',
+            'title' => __('Continue watching', 'academe-theme'),
             'filter' => [
                 'active' => $filter,
                 'post_type' => 'movie',
@@ -87,44 +87,40 @@ function continue_editing_lesson_list() {
 
 /* Continue editing course list start */
 function continue_editing_course_list() {
-    $courses = ld_course_list(['post_status' => ['draft'], 'author__in' => [get_current_user_id()], 'array' => true]); ?>
-    <!--<section class="slider-strip">
+    $courses = ld_course_list(['post_status' => ['draft'], 'author__in' => [get_current_user_id()], 'orderby'  => ['date'=>'DESC'], 'array' => true]); ?>
+    <section class="slider-strip">
         <div class="strip-top">
-            <h2 class="strip-heading"><?php //_e('Continue editing2', 'academe-theme'); ?></h2>
+            <h2 class="strip-heading"><?php _e('Continue editing', 'academe-theme'); ?></h2>
         </div>
         <div class="swiper-container swiper-strip">
             <div class="swiper-wrapper">
-                <?php
-                /*if ($courses) {
+                <a href="/lesson-editor" class="swiper-slide movie-block create-new-lesson">
+                    <span class="plus-sign icon-wrap">+</span>
+                    <span class="action-text"><?php _e('Create new', 'academe-theme'); ?></span>
+                </a>
+                <?php if ($courses) {
                     global $post;
                     foreach ($courses as $post) {
                         setup_postdata($post);
                         get_template_part('templates/partials/movie-block', 'null');
                     }
                     wp_reset_postdata(); ?>
-                <?php }*/ ?>
-                <a href="/wp-admin/post-new.php?post_type=sfwd-courses" class="swiper-slide movie-block create-new-lesson">
-                    <div class="slide-info">
-                        <div class="icon-wrap"><?php //icon('blue-plus', 'icon-white'); ?></div>
-                        <span class="action-text"><?php //_e('Create new', 'academe-theme'); ?></span>
-                    </div>
-                </a>
+                <?php } ?>
             </div>
-            Add Arrows -->
-            <!--<div class="swiper-button-next"></div>
+            <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
-    </section>-->
+    </section>
     <?php
 }
 /* Continue editing lesson list end */
 
 /* My lessons list start */
 function my_lessons_list() {
-    $lessons = new WP_Query(['post_type' => 'sfwd-lessons','post_status' => 'publish', 'author__in' => [get_current_user_id()],'posts_per_page' => 20]);
+    $lessons = new WP_Query(['post_type' => 'sfwd-lessons','post_status' => ['publish', 'private'], 'author__in' => [get_current_user_id()],'posts_per_page' => 20]);
     if($lessons->posts) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => 'My lessons',
+            'title' => __('My lessons', 'academe-theme'),
             'filter' => [
                 'active' => true,
                 'post_type' => 'sfwd-lessons',
@@ -132,6 +128,7 @@ function my_lessons_list() {
                 'term' => NULL,
                 'action' => 'async_filter_my_lessons',
             ],
+            'new_lesson_button' => true,
             'posts' => $lessons->posts
         ]);
     }
@@ -143,10 +140,11 @@ function top_lessons_list($filter = true, $title = 'Top lessons') {
     $slides = get_field('top_lessons', 'option');
     if ($slides) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => $title,
+            'title' => __($title, 'academe-theme'),
             'filter' => [
                 'active' => $filter,
             ],
+            'new_lesson_button' => true,
             'posts' => $slides
         ]);
     }
@@ -155,10 +153,10 @@ function top_lessons_list($filter = true, $title = 'Top lessons') {
 
 /* My courses list start */
 function my_courses_list() {
-    $lessons = new WP_Query(['post_type' => 'sfwd-courses','post_status' => 'publish', 'author__in' => [get_current_user_id()],'posts_per_page' => 20]);
+    $lessons = new WP_Query(['post_type' => 'sfwd-courses','post_status' => ['publish', 'private'], 'author__in' => [get_current_user_id()],'posts_per_page' => 20]);
     if($lessons->posts) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => 'My lessons',
+            'title' => __('My lessons', 'academe-theme'),
             'filter' => [
                 'active' => true,
                 'post_type' => 'sfwd-courses',
@@ -166,6 +164,7 @@ function my_courses_list() {
                 'term' => NULL,
                 'action' => 'async_filter_my_courses',
             ],
+            'new_lesson_button' => true,
             'posts' => $lessons->posts
         ]);
     }
@@ -200,10 +199,11 @@ function top_courses_list($filter = true, $title = 'Top lessons') {
     $slides = get_field('top_courses', 'option');
     if ($slides) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => $title,
+            'title' => __($title, 'academe-theme'),
             'filter' => [
                 'active' => $filter,
             ],
+            'new_lesson_button' => true,
             'posts' => $slides
         ]);
     }
@@ -215,7 +215,7 @@ function recommended_movies_list($filter = true, $title = 'Recommended movies') 
     $slides = get_field('recommended_movies', 'option');
     if ($slides) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => $title,
+            'title' => __($title, 'academe-theme'),
             'filter' => [
                 'active' => $filter,
                 'post_type' => 'movie',
@@ -235,7 +235,7 @@ function popular_movies_list() {
     $query_posts = $query->posts;
     if ($query_posts) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => 'Popular movies',
+            'title' => __('Popular movies', 'academe-theme'),
             'filter' => [
                 'active' => true,
                 'post_type' => 'movie',
@@ -254,7 +254,7 @@ function recent_teacher_guides_list($filter = true, $title = 'New releases') {
     $teacher_guides = get_filtered_posts('teaching-guide');
     if($teacher_guides) {
         get_template_part('templates/partials/slider-strip', 'null', [
-            'title' => $title,
+            'title' => __($title, 'academe-theme'),
             'filter' => [
                 'active' => $filter,
                 'post_type' => 'teaching-guide',

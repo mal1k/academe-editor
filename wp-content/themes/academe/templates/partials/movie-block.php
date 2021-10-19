@@ -58,6 +58,9 @@
                 </div>
 
                 <div class="right-part">
+                    <?php if ($post->post_status == 'private') {
+                        icon('hide', 'visibility icon-24');
+                    } ?>
                     <?php if(is_user_logged_in()) {
                         the_my_list_button($post->ID, 'icon');
                     } ?>
@@ -72,9 +75,17 @@
                                 )
                             ]
                         ]); ?>
-                        <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>">
-                            <?php icon('element', 'icon-24'); ?>
-                        </a>
+
+                        <?php if ($post->post_status === 'draft') { ?>
+                            <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>">
+                                <?php icon('element', 'icon-24'); ?>
+                            </a>
+                        <?php } else { ?>
+                            <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>">
+                                <?php icon('element', 'icon-24'); ?>
+                            </a>
+                        <?php } ?>
+
                     <?php } else { ?>
                         <a href="<?php the_permalink(); ?>">
                             <?php icon('element', 'icon-24'); ?>
@@ -85,9 +96,17 @@
 
             </div>
             <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) { ?>
-                <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="watch">
-                    <div class="start-watch"><?php icon('play-rounded'); ?></div>
-                </a>
+
+
+                <?php if ($post->post_status === 'draft') { ?>
+                    <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="watch">
+                        <div class="start-watch"><?php icon('play-rounded'); ?></div>
+                    </a>
+                <?php } else { ?>
+                    <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="watch">
+                        <div class="start-watch"><?php icon('play-rounded'); ?></div>
+                    </a>
+                <?php } ?>
             <?php } else { ?>
             <a href="<?php the_permalink(); ?>" class="watch">
                 <div class="watch">
@@ -124,7 +143,7 @@
         <?php if ($post->post_type ==  'sfwd-courses') { ?>
             <img class="slide-image" src="<?php echo $custom_fields['cover_image_url']; ?>" />
         <?php } ?>
-        <div class="slide-label">
+        <div class="slide-label <?php echo $post->post_type; ?>">
             <?php icon($post->post_type); ?>
         </div>
         <?php if ($sponsored) { ?>
@@ -136,3 +155,4 @@
         <?php } ?>
     </div>
 <?php } ?>
+<?php wp_reset_query(); ?>

@@ -9,7 +9,7 @@
 
     $wp_query = new WP_Query([
         'post_type' => 'sfwd-courses',
-        'post_status' => 'publish',
+        'post_status' => ['publish', 'private'],
         'author__in' => [get_current_user_id()],
         'posts_per_page' => 10,
         'paged' => $paged

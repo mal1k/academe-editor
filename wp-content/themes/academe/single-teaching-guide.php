@@ -262,14 +262,16 @@
     </section>
     <div class="modal ui overlay movie-player">
         <?php icon('cross', 'close'); ?>
-        <?php $partner_id = get_field('partner_id', 'option'); ?>
-        <script src="https://cdnapisec.kaltura.com/p/<?php echo $partner_id; ?>/sp/253884200/embedIframeJs/uiconf_id/46602743/partner_id/<?php echo $partner_id; ?>"></script>
+        <?php $partner_id = get_field('partner_id', 'option'); 
+              $kaltura_player_id = get_field('kaltura_player_id', 'option');
+        ?>
+        <script src="https://cdnapisec.kaltura.com/p/<?php echo $partner_id; ?>/sp/253884200/embedIframeJs/uiconf_id/<?php echo $kaltura_player_id; ?>/partner_id/<?php echo $partner_id; ?>"></script>
         <div id="kalturaPlayer" style="height: 500px;">
 
         </div>
         <div class="movie-questions">
             <div class="movie-questions-content"></div>
-            <div class="hide-answers"><span>Hide/show answers</span></div>
+            <div class="hide-answers"><span><?php _e( 'Hide/show answers', 'academe' );?></span></div>
         </div>
 
     </div>

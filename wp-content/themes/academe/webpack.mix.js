@@ -16,6 +16,7 @@ mix.options({
 mix.styles([
     'assets/css/fomantic-ui/transition.min.css',
     'assets/css/fomantic-ui/dropdown.min.css',
+    'assets/css/fomantic-ui/checkbox.min.css',
     'assets/css/fomantic-ui/dimmer.min.css',
     'assets/css/fomantic-ui/modal.min.css',
     'assets/css/fomantic-ui/popup.min.css',
@@ -33,6 +34,7 @@ mix.styles([
 mix.scripts([
     'assets/js/fomantic-ui/transition.min.js',
     'assets/js/fomantic-ui/dropdown.min.js',
+    'assets/js/fomantic-ui/checkbox.min.js',
     'assets/js/fomantic-ui/dimmer.min.js',
     'assets/js/fomantic-ui/modal.min.js',
     'assets/js/fomantic-ui/popup.min.js',

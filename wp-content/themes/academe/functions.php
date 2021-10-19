@@ -29,6 +29,13 @@ if( function_exists('acf_add_options_page') ) {
     ));
 }
 
+function register_my_session() {
+    if( !session_id() ) {
+        session_start();
+    }
+}
+add_action('init', 'register_my_session');
+
 add_action( 'wp_enqueue_scripts', 'print_ajaxurl', 99 );
 function print_ajaxurl(){
     wp_localize_script( 'jquery', 'ajaxurl', admin_url('admin-ajax.php'));
@@ -214,9 +221,9 @@ function the_my_list_button($post_id, $type = 'text') {
     global $my_list;
     echo "<div class=\"my-list-button\" data-button-type=\"$type\" data-movie-id=\"$post_id\">";
     if ($type === 'text') {
-        echo (in_array($post_id, $my_list)) ? __('Remove from my list', 'academe-theme') : __('Add to my list', 'academe-theme');
+        echo (in_array($post_id, $my_list)) ? __('Remove from my videos', 'academe-theme') : __('Add to my videos', 'academe-theme');
     } else if ($type === 'icon') {
-        (in_array($post_id, $my_list)) ? icon('star', 'icon-24 icon-blue-stroke') : icon('star', 'icon-24');
+        (in_array($post_id, $my_list)) ? icon('star', 'icon-24 icon-blue-stroke icon-blue-fill') : icon('star', 'icon-24');
     }
     echo "</div>";
 }
@@ -256,6 +263,13 @@ function save_post_generate_session_slug( $post_id ) {
 function redirect_after_login($redirect_to, $request, $user) {
     if ( isset( $user->roles ) && is_array( $user->roles ) ) {
         // check for students and teachers
+
+        if ( $_SESSION['session'] != null ) {
+            $link = home_url() . '/sessions/' . $_SESSION['session'];
+            $_SESSION['session'] = null;
+            return $link;
+        }
+
         if (in_array( 'subscriber', $user->roles ) || in_array( 'wdm_instructor', $user->roles )) {
             return home_url();
         }
@@ -386,3 +400,10 @@ function my_login_logo() { ?>
     </style>
 <?php }
 add_action( 'login_enqueue_scripts', 'my_login_logo' );
+
+// remove "Private: " from titles
+function remove_private_prefix($title) {
+    $title = str_replace('Private: ', '', $title);
+    return $title;
+}
+add_filter('the_title', 'remove_private_prefix');

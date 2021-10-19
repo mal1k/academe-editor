@@ -49,9 +49,12 @@ const state = () => ({
   },
   first_session_created: false,
   loading: false, // set to true when you need to show a preloader
+  saving: false, // set to true while saving lesson (to prevent overlapping)
   author: null,
   first_creation: false,
   meta_fields_loaded: false,
+  status: 'auto-draft',
+  private: false,
 });
 
 // getters

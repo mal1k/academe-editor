@@ -94,23 +94,23 @@
             </div>
 
             <el-dialog title="Select image" :visible.sync="extended_search_pixabay_modal">
-            <el-input
-                    placeholder=""
-                    clearable
-                    v-model="suggestions_search"
-                    @input="debounceSuggestionsModal"
-                    style="width:100%; margin-bottom: 40px;">
-                    <i class="el-icon-search el-input__icon" slot="prefix"></i>
-            </el-input>
-            <div class="suggestions-list five-per-line">
-                <img v-for="image in pixabay_suggestions"
-                     :key="image.id"
-                     :src="image.preview"
-                     @click="store.slides[$parent.activeSlideIndex].fields[property_name] = image.full"
-                     :class="{'selected' : store.slides[$parent.activeSlideIndex].fields[property_name] === image.full}"
-                />
-            </div>
-        </el-dialog>
+                <el-input
+                        placeholder=""
+                        clearable
+                        v-model="suggestions_search"
+                        @input="debounceSuggestionsModal"
+                        style="width:100%; margin-bottom: 40px;">
+                        <i class="el-icon-search el-input__icon" slot="prefix"></i>
+                </el-input>
+                <div class="suggestions-list">
+                    <img v-for="image in pixabay_suggestions"
+                         :key="image.id"
+                         :src="image.preview"
+                         @click="store.slides[$parent.activeSlideIndex].fields[property_name] = image.full"
+                         :class="{'selected' : store.slides[$parent.activeSlideIndex].fields[property_name] === image.full}"
+                    />
+                </div>
+            </el-dialog>
 
         </div>
     </div>
@@ -330,25 +330,38 @@
     .suggestions-list {
         display: flex;
         flex-flow: row wrap;
-        justify-content: space-between;
+        justify-content: flex-start;
         /**/
         max-height: 420px;
-        overflow: auto;
+        overflow-y: auto;
         /**/
     }
     .suggestions-list img {
         height: 95px;
+        width: 145px;
         object-fit: cover;
         cursor: pointer;
         margin-bottom: 20px;
+        margin-right: 20px;
     }
     .suggestions-list img.selected {
         border: 2px solid #51ACFD;
     }
- .suggestions-list.three-per-line img {
+    .suggestions-list.three-per-line img {
         width: calc(100% / 3 - 7px);
     }
-    .suggestions-list.five-per-line img {
-        width: calc(100% / 5 - 7px);
+    /*.suggestions-list.five-per-line img {*/
+    /*    width: calc(100% / 5 - 7px);*/
+    /*}*/
+    .suggestions-list::-webkit-scrollbar-thumb {
+        border: 5px solid rgba(0, 0, 0, 0);
+        background-clip: padding-box;
+        -webkit-border-radius: 7px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .suggestions-list::-webkit-scrollbar {
+        width: 14px;
+        height: 18px;
     }
 </style>

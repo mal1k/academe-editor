@@ -163,6 +163,9 @@ jQuery(document).ready(function($) {
 
     $('.create-session-btn').on('click', function () {
         $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.start-now').click();
+
         $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
                 type: 'datetime',
                 ampm: false,
@@ -192,13 +195,89 @@ jQuery(document).ready(function($) {
             })
         ;
     });
+
+    $('.delete-session-btn').on('click', function () {
+        var result = confirm("Are you sure you want to remove this lesson?");
+        if (result) {
+
+            let id = $(this).attr('data-lesson-id');
+
+            var data = {
+                action: 'delete_session',
+                id: id
+            };
+    
+            jQuery.post( ajaxurl, data, function( response ){
+                showToast('Lesson deleted!', 'Lesson successfully removed');
+                $('#lesson_id_'+id).hide();
+            } );
+
+        }
+    });
+
+
+    $('.create-session-btn-schedule').on('click', function () {
+        $('.modal.ui.start-session#'+$(this).data('modal-id')).modal('show');
+        
+        let id = $(this).attr('data-modal-id');
+        $('#'+id).find('.nextScreen').click();
+        $('#'+id).find('.play-now').addClass('hidden');
+        $('#'+id).find('.schedule').val('');
+        $('.ui.checkbox').checkbox();
+
+        $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
+            type: 'datetime',
+            ampm: false,
+            text: {
+                days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                today: 'Today',
+                now: 'Now',
+            },
+            firstDayOfWeek: 1,
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate() + '';
+                    if (day.length < 2) {
+                        day = '0' + day;
+                    }
+                    var month = (date.getMonth() + 1) + '';
+                    if (month.length < 2) {
+                        month = '0' + month;
+                    }
+                    var year = date.getFullYear();
+                    return day + '/' + month + '/' + year;
+                }
+            }
+        });
+    });
+
+    
     $('.start-session .cancel').on('click', function () {
         $('.modal.ui.start-session').modal('hide');
     });
     $('.start-session .schedule-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
-        _this.removeClass('schedule-now');
+
+        const months= ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
+        const days= ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+        const form = _this.closest('.sessionForm');
+        const basicDate = form.find("[name=schedule]").val();
+        const [date, time] =  basicDate.split(' ');
+        const [dd, mm, yy] =  date.split('/');
+        const duration = parseInt(form.find("[name=access_duration]").val());
+
+        let  dateFrom = new Date(mm +" "+ dd + " " + yy + " " + time);
+        let  formatDateFrom = days[dateFrom.getDay()] +', '+months[dateFrom.getMonth()] +' '+ dateFrom.getDate();
+        let  dateUntil = addHoursToDate(dateFrom, duration);
+        let  formatDateUntil = days[dateUntil.getDay()] +', '+months[dateUntil.getMonth()] +' '+ dateUntil.getDate();
+
+        //_this.removeClass('schedule-now');
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -214,13 +293,12 @@ jQuery(document).ready(function($) {
                     //$('#'+modal+'.start-session.modal .session-url .copy').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .session-code .code').text(sessionCode);
                     $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
-                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');                
-                    $('#'+modal+'.start-session.modal .sessionShare .shareModalLink').removeClass('disabled');           
-                    $('#'+modal+'.start-session.modal .sessionShare .puzzleModalLink').removeClass('disabled');  
-                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');                
-                    $('#'+modal+'.start-session.modal .nextScreen').addClass('disabled');                
+                    $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');
+                    $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');             
                     $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
-                    $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden');                
+                    $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden').html(
+                        'Content Available from ' + formatDateFrom  + ' until ' + formatDateUntil
+                    );                
                     _this.attr('href', response.success).text('Go to session');
                     copySessionLink(modal);
                     //$('.modal.ui.start-session').modal('hide');
@@ -232,20 +310,41 @@ jQuery(document).ready(function($) {
             }
         });
     });
+    function addHoursToDate(date, hours) {
+        console.log(typeof (date.getHours()));
+        return new Date(new Date(date).setHours(date.getHours() + hours));
+      }
     $('.start-now').on('click', function () {
+        console.log('start now');
         let _this = $(this);
+        _this.closest('form').find('.nextScreen').css('display', 'none');
         let modal = getCreateSessionModalId(_this);
-        $("#scheduleDate").hide();
+        //$("#scheduleDate").hide();
         $("#schedule").val(formatDate(new Date()));
-        _this.removeClass('start-now');
+        
+        _this.closest('form').find('.nextScreen').css('display', 'none');
+        _this.closest('form').find('.sessionForm__code').removeClass('hidden');
+        _this.closest('form').find('.sessionForm__description').addClass('hidden');
+        _this.closest('form').find('.sessionShare .shareList').removeClass('hidden');             
+        _this.closest('form').find('.start-now').addClass('hidden');                
+        _this.closest('form').find('.play-now').removeClass('hidden');
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
             dataType : 'json',
-            data: $('#sessionForm').serialize() + "&action=create_session",
+            data: $(_this.closest('form')).serialize() + "&action=create_session",
             success: function (response) {
                 if (!response.error) {
-                    window.location.href = response.success
+                    console.log(response.success);
+                    let str = response.success
+                    let newstr = str.split('/')
+                    let sessionCode = newstr[4]
+                    
+                          
+                    _this.closest('form').find('.url').text(str);
+                    _this.closest('form').find('.lessonCode').text(sessionCode);
+                    _this.closest('form').find('.play-now').attr('href', str);
                 } else {
                     _this.addClass('start-now');
                     showToast('Error', response.error);
@@ -270,7 +369,7 @@ jQuery(document).ready(function($) {
         $('#'+modal+'.start-session .condition').toggle();
     });
 
-    $('.start-session .copy').on('click', function () {
+    $('.start-session .copy, .start-session .lti-copy').on('click', function () {
         let modal = getCreateSessionModalId($(this));
         copySessionLink(modal)
     });
@@ -337,7 +436,7 @@ jQuery(document).ready(function($) {
 
         $('.modal.movie-player').modal('show');
 
-        if (!$('#kalturaPlayer').data('loaded') || $(this).data('mode') !== 'advanced') {
+        if ($('#kalturaPlayer').data('loaded') !== $(this).data('movie-id') || $(this).data('mode') !== 'advanced') {
             requestPlayerWithMovieModal($(this));
         }
 
@@ -387,10 +486,11 @@ jQuery(document).ready(function($) {
                         // continue watching:
                         "mediaProxy.mediaPlayFrom": mediaPlayFrom,
                         "mediaProxy.mediaPlayTo": mediaPlayTo,
-                        "Kaltura.UseAppleAdaptive": true
+                        "Kaltura.UseAppleAdaptive": true,
+                        //"EmbedPlayer.EnableFullscreen": false,
                     },
                     'readyCallback': function( playerId ){
-                        $('#kalturaPlayer').data('loaded', true);
+                        $('#kalturaPlayer').data('loaded', data_obj.data('movie-id'));
                         window.kdp = document.getElementById( playerId );
 
                         setTimeout(function () {
@@ -399,18 +499,18 @@ jQuery(document).ready(function($) {
 
                         if (data_obj.data('mode') === 'advanced') {
                             window.kdp.kBind("doPause", function(){
-                                throttle(updateContinueWatchingList, 1000);
+                                throttle(updateContinueWatchingList(data_obj.data('movie-id')), 1000);
                             });
                             kdp.kBind ( "playerUpdatePlayhead.fullMovie" , function ( data , id ) {
                                 if(parseInt(data) % 60 === 0) { //call only if current player time multiple of 60
-                                    throttle(updateContinueWatchingList, 1000);
+                                    throttle(updateContinueWatchingList(data_obj.data('movie-id')), 1000);
                                 }
                             });
                             window.kdp.kBind("playerPlayEnd", function(){
 
                             });
                             $(window).on('beforeunload', function(){
-                                throttle(updateContinueWatchingList, 1000);
+                                throttle(updateContinueWatchingList(data_obj.data('movie-id')), 1000);
                                 return undefined;
                             });
                         }
@@ -466,7 +566,7 @@ jQuery(document).ready(function($) {
     });
     */
 
-    function updateContinueWatchingList() {
+    function updateContinueWatchingList(movie_id) {
         let curr_time = parseInt(window.kdp.evaluate("{video.player.currentTime}"));
         let duration = parseInt(window.kdp.evaluate("{duration}"));
         let wp_action = (curr_time < duration) ? 'update_continue_watching' : 'remove_from_continue_watching';
@@ -478,7 +578,7 @@ jQuery(document).ready(function($) {
                 dataType : 'json',
                 data: {
                     'action': wp_action,
-                    'post_id': $('.single-movie-page').data('movie-id'),
+                    'post_id': movie_id,
                     'time': curr_time,
                 },
                 success: function (response) {
@@ -717,6 +817,21 @@ jQuery(document).ready(function($) {
             success: function (response) {
                 console.log(response);
                 $('.sessions-list.modal .sessions-list-wrap').html(response);
+            }
+        });
+    });
+
+    $('.actions-more .unpublish-lesson-btn').on('click', function() {
+        $.ajax({
+            url: window.wpApiSettings.root + "ldlms/v1/sfwd-courses/" + $(this).attr('data-lesson-id') + "?_wpnonce=" + window.wpApiSettings.nonce,
+            type: 'POST',
+            dataType : 'json',
+            data: {
+                status: 'draft',
+                date_gmt: new Date().toISOString(),
+            },
+            success: function (response) {
+                window.location.reload();
             }
         });
     });

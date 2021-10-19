@@ -349,7 +349,7 @@ function create_taxonomy()
         "rest_controller_class" => "WP_REST_Terms_Controller",
         "show_in_quick_edit" => false,
     ];
-    register_taxonomy( "post_tag", [ "sfwd-lessons", "sfwd-courses", "movie", "teaching-guide" ], $args );
+    register_taxonomy( "post_tag", [ "sfwd-lessons", "sfwd-courses", "clip", "movie", "teaching-guide" ], $args );
 
 
 

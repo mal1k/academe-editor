@@ -1,0 +1,691 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Academe Theme\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-20 07:03+0000\n"
+"PO-Revision-Date: 2021-09-20 07:03+0000\n"
+"Last-Translator: Dev Admin\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
+"n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.3; wp-5.7.1\n"
+"X-Domain: academe-theme"
+
+#. Description of the theme
+msgid ""
+"A minimalistic boilerplate for WordPress theme development using Tailwind CSS"
+msgstr ""
+
+#: single-teaching-guide.php:74
+msgid "About"
+msgstr ""
+
+#. Name of the theme
+msgid "Academe Theme"
+msgstr ""
+
+#: templates/partials/filter-button.php:156
+#: templates/partials/my-lessons/student/session-row-block.php:70
+msgid "Active"
+msgstr ""
+
+#: includes/cpt.php:47
+msgid "Add New Session"
+msgstr ""
+
+#: includes/cpt.php:105
+msgid "Add New Teaching guide"
+msgstr ""
+
+#: functions.php:217 includes/ajax-handlers.php:292
+msgid "Add to my list"
+msgstr ""
+
+#: search.php:17
+msgid "Advanced<br> Search"
+msgstr ""
+
+#: archive-sfwd-lessons.php:30 archive-sfwd-courses.php:30
+msgid "All lessons"
+msgstr ""
+
+#: archive-movie.php:30
+msgid "All movies"
+msgstr ""
+
+#: includes/cpt.php:46
+msgid "All Sessions"
+msgstr ""
+
+#: includes/cpt.php:104
+msgid "All Teaching guides"
+msgstr ""
+
+#: archive-teaching-guide.php:28
+msgid "All teaching guides"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:108
+msgid "Allow students to watch movie on PC"
+msgstr ""
+
+#: single-session.php:41
+msgid "As a student, you must enter the lesson from your mobile phone!"
+msgstr ""
+
+#: single-session.php:32
+msgid "As a teacher, you must enter the lesson from your desktop!"
+msgstr ""
+
+#: single-teaching-guide.php:118
+msgid "CCSS"
+msgstr ""
+
+#: includes/cpt.php:269
+msgid "Choose from the most used faculties"
+msgstr ""
+
+#: includes/cpt.php:239
+msgid "Choose from the most used genres"
+msgstr ""
+
+#: includes/cpt.php:396
+msgid "Choose from the most used grades"
+msgstr ""
+
+#: includes/cpt.php:299
+msgid "Choose from the most used subjects"
+msgstr ""
+
+#: includes/cpt.php:331
+msgid "Choose from the most used tags"
+msgstr ""
+
+#: includes/cpt.php:364
+msgid "Choose from the most used topics"
+msgstr ""
+
+#: single-teaching-guide.php:35
+msgid "Class"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:116
+msgid "Confirm"
+msgstr ""
+
+#: templates/partials/my-lessons/student/session-row-block.php:90
+msgid "Continue"
+msgstr ""
+
+#: includes/user-lists.php:93
+msgid "Continue editing"
+msgstr ""
+
+#: page-my-movies.php:102
+msgid "Continue Watching"
+msgstr ""
+
+#: single-movie.php:39
+msgid "Create a Lesson"
+msgstr ""
+
+#: includes/user-lists.php:109
+msgid "Create new"
+msgstr ""
+
+#: single-teaching-guide.php:40
+msgid "Created by"
+msgstr ""
+
+#: templates/partials/big-slider.php:21
+msgid "Created By:"
+msgstr ""
+
+#: templates/partials/my-lessons/teacher/session-row-block.php:13
+msgid "Created by: "
+msgstr ""
+
+#: single-teaching-guide.php:44
+msgid "Created Date"
+msgstr ""
+
+#: single-movie.php:87
+msgid "Directed by"
+msgstr ""
+
+#: single-teaching-guide.php:77
+msgid "Download PDF"
+msgstr ""
+
+#: includes/cpt.php:48
+msgid "Edit Session"
+msgstr ""
+
+#: includes/cpt.php:106
+msgid "Edit Teaching guides"
+msgstr ""
+
+#. Name of the template
+#: header.php:103
+msgid "Enter the lesson"
+msgstr ""
+
+#: 404.php:4
+msgid "Error 404"
+msgstr ""
+
+#: templates/partials/filter-button.php:157
+#: templates/partials/my-lessons/student/session-row-block.php:74
+msgid "Expired"
+msgstr ""
+
+#: templates/partials/my-lessons/student/session-row-block.php:71
+msgid "Expires in"
+msgstr ""
+
+#: includes/cpt.php:267 includes/cpt.php:274
+msgid "Faculties"
+msgstr ""
+
+#: includes/cpt.php:268
+msgid "Faculty"
+msgstr ""
+
+#: search.php:26
+msgid "Fetching search results"
+msgstr ""
+
+#: archive-sfwd-lessons.php:7 archive-movie.php:7 archive-sfwd-courses.php:7
+msgid "Filtered results"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:84
+msgid "From:"
+msgstr ""
+
+#: includes/ajax-handlers.php:693
+msgid "Go to session"
+msgstr ""
+
+#: includes/cpt.php:394 includes/cpt.php:395 includes/cpt.php:401
+msgid "Grades"
+msgstr ""
+
+#. URI of the theme
+msgid "https://github.com/mishterk/wp-tailwindcss-theme-boilerplate"
+msgstr ""
+
+#: includes/cpt.php:57
+msgid "Insert into Session"
+msgstr ""
+
+#: includes/cpt.php:115
+msgid "Insert into Teaching guides"
+msgstr ""
+
+#: 404.php:5
+msgid "It looks like nothing was found at this location."
+msgstr ""
+
+#: templates/partials/my-lessons/student/session-row-block.php:82
+msgid "Join"
+msgstr ""
+
+#: page-my-movies.php:15
+msgid "Last Seen/Updated"
+msgstr ""
+
+#. Name of the template
+msgid "Lesson Editor"
+msgstr ""
+
+#: templates/partials/big-slider.php:123
+msgid "Lesson info"
+msgstr ""
+
+#: includes/ajax-handlers.php:669
+msgid "Lesson not found."
+msgstr ""
+
+#: header.php:26 archive-sfwd-courses.php:5
+msgid "Lessons"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:63
+msgid "Limit access to:"
+msgstr ""
+
+#: templates/partials/filter-button.php:154
+msgid "LIVE"
+msgstr ""
+
+#: templates/partials/my-lessons/student/session-row-block.php:63
+msgid "LIVE !"
+msgstr ""
+
+#: header.php:81
+msgid "Logout"
+msgstr ""
+
+#. Name of the template
+msgid "LTI"
+msgstr ""
+
+#: single-movie.php:108 templates/partials/movie-block-search.php:185
+#: templates/partials/movie-block-search.php:242
+msgid "more"
+msgstr ""
+
+#: templates/partials/big-slider.php:108
+msgid "More info"
+msgstr ""
+
+#: page-my-movies.php:18
+msgid "Most Popular"
+msgstr ""
+
+#: single-movie.php:23
+msgid "Movie"
+msgstr ""
+
+#: templates/partials/big-slider.php:119 templates/partials/movie-block.php:126
+#: templates/partials/movie-block-search.php:79
+msgid "Movie info"
+msgstr ""
+
+#: single-movie.php:90
+msgid "Movie Overview"
+msgstr ""
+
+#: header.php:23
+msgid "Movies"
+msgstr ""
+
+#: header.php:34 header.php:73
+msgid "My Lessons"
+msgstr ""
+
+#: header.php:35
+msgid "My Movies"
+msgstr ""
+
+#: header.php:78
+msgid "My Profile"
+msgstr ""
+
+#: page-my-movies.php:16
+msgid "Name"
+msgstr ""
+
+#: includes/cpt.php:49
+msgid "New Session"
+msgstr ""
+
+#: includes/cpt.php:107
+msgid "New Teaching guide"
+msgstr ""
+
+#: templates/partials/slider-strip.php:48
+msgid "No items found. Please try to use other filter parameters."
+msgstr ""
+
+#: archive-sfwd-lessons.php:41 archive-sfwd-courses.php:41
+msgid "No lessons found. Please try to use other filter parameters."
+msgstr ""
+
+#: archive-movie.php:41
+msgid "No movies found. Please try to use other filter parameters."
+msgstr ""
+
+#: includes/cpt.php:53
+msgid "No Sessions Found"
+msgstr ""
+
+#: includes/cpt.php:54
+msgid "No Sessions Found in Trash"
+msgstr ""
+
+#: includes/cpt.php:111
+msgid "No Teaching guides Found"
+msgstr ""
+
+#: includes/cpt.php:112
+msgid "No Teaching guides Found in Trash"
+msgstr ""
+
+#: archive-teaching-guide.php:39
+msgid "No teaching guides found. Please try to use other filter parameters."
+msgstr ""
+
+#: templates/partials/modals/create-session.php:97
+msgid "Note:"
+msgstr ""
+
+#: single-teaching-guide.php:109
+msgid "Notes To the Teacher"
+msgstr ""
+
+#: templates/partials/my-lessons/student/session-row-block.php:67
+msgid "Opens in"
+msgstr ""
+
+#: includes/cpt.php:55 includes/cpt.php:65
+msgid "Parent Session"
+msgstr ""
+
+#: includes/cpt.php:113 includes/cpt.php:123
+msgid "Parent Teaching guide"
+msgstr ""
+
+#: single-teaching-guide.php:93
+msgid "PLAY"
+msgstr ""
+
+#: page-my-movies.php:104 single-movie.php:10
+#: templates/partials/modals/create-session.php:34
+#: templates/partials/my-lessons/teacher/session-row-block.php:67
+msgid "Play Now"
+msgstr ""
+
+#: single-movie.php:17
+msgid "Present Now"
+msgstr ""
+
+#: templates/ir-instructor-profile.template.php:93
+msgid "Profile edit"
+msgstr ""
+
+#: single-movie.php:94
+msgid "Read more..."
+msgstr ""
+
+#: front-page.php:26
+msgid "Recent Teaching Guides"
+msgstr ""
+
+#: page-topics.php:81
+msgid "Recommended lessons"
+msgstr ""
+
+#: page-topics.php:83
+msgid "Recommended movies"
+msgstr ""
+
+#: single-teaching-guide.php:49 single-teaching-guide.php:113
+#: single-teaching-guide.php:208
+msgid "Referenced Movies"
+msgstr ""
+
+#: single-teaching-guide.php:110
+msgid "Reflection Questions"
+msgstr ""
+
+#: single-teaching-guide.php:111 single-teaching-guide.php:191
+msgid "Related Lessons"
+msgstr ""
+
+#: includes/ajax-handlers.php:524
+msgid "Related movies"
+msgstr ""
+
+#: single-teaching-guide.php:59 single-teaching-guide.php:115
+msgid "Related Topics"
+msgstr ""
+
+#: functions.php:217 includes/ajax-handlers.php:304
+msgid "Remove from my list"
+msgstr ""
+
+#: header.php:75
+msgid "Reports"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:64
+msgid "Schedule:"
+msgstr ""
+
+#: archive-teaching-guide.php:14 search.php:7 search.php:12
+msgid "Search"
+msgstr ""
+
+#: includes/cpt.php:52
+msgid "Search Sessions"
+msgstr ""
+
+#: includes/cpt.php:110
+msgid "Search Teaching guides"
+msgstr ""
+
+#: includes/cpt.php:270
+msgid "Separate faculties with commas"
+msgstr ""
+
+#: includes/cpt.php:240
+msgid "Separate genres with commas"
+msgstr ""
+
+#: includes/cpt.php:397
+msgid "Separate grades with commas"
+msgstr ""
+
+#: includes/cpt.php:300
+msgid "Separate subjects with commas"
+msgstr ""
+
+#: includes/cpt.php:332
+msgid "Separate tags with commas"
+msgstr ""
+
+#: includes/cpt.php:365
+msgid "Separate topics with commas"
+msgstr ""
+
+#: includes/cpt.php:44 includes/cpt.php:60
+msgid "Session"
+msgstr ""
+
+#: includes/cpt.php:56
+msgid "Session Archives"
+msgstr ""
+
+#: templates/partials/my-lessons/teacher/session-row-block.php:54
+#, php-format
+msgctxt "session count"
+msgid "%s session"
+msgid_plural "%s sessions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/cpt.php:61
+msgid "Session Published"
+msgstr ""
+
+#: includes/cpt.php:62
+msgid "Session reverted to draft"
+msgstr ""
+
+#: includes/cpt.php:63
+msgid "Session Scheduled"
+msgstr ""
+
+#: includes/cpt.php:64
+msgid "Session Updated"
+msgstr ""
+
+#: includes/cpt.php:43 includes/cpt.php:45 includes/cpt.php:69
+msgid "Sessions"
+msgstr ""
+
+#: includes/cpt.php:59
+msgid "Sessions Attributes"
+msgstr ""
+
+#: includes/cpt.php:58
+msgid "Sessions List"
+msgstr ""
+
+#: templates/partials/my-lessons/teacher/content.php:30
+msgid "sessions list"
+msgstr ""
+
+#: templates/partials/slider-strip.php:17
+msgid "Show all"
+msgstr ""
+
+#: includes/ajax-handlers.php:352 includes/ajax-handlers.php:405
+msgid "Something went wrong"
+msgstr ""
+
+#: page-my-movies.php:7
+msgid "Sort by:"
+msgstr ""
+
+#: templates/partials/big-slider.php:96 templates/partials/big-slider.php:101
+msgid "Start Lesson"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:33
+msgid "Start Now"
+msgstr ""
+
+#: includes/ajax-handlers.php:692
+msgid "Starts at "
+msgstr ""
+
+#: includes/cpt.php:298
+msgid "Subject"
+msgstr ""
+
+#: includes/cpt.php:297 includes/cpt.php:304
+msgid "Subjects"
+msgstr ""
+
+#: includes/cpt.php:330
+msgid "Tag"
+msgstr ""
+
+#: includes/cpt.php:329 includes/cpt.php:336
+msgid "Tags"
+msgstr ""
+
+#: templates/partials/my-lessons/student/session-row-block.php:24
+msgid "Teacher: "
+msgstr ""
+
+#: single-teaching-guide.php:98 includes/cpt.php:102 includes/cpt.php:118
+msgid "Teaching guide"
+msgstr ""
+
+#: includes/cpt.php:114
+msgid "Teaching guide Archives"
+msgstr ""
+
+#: includes/cpt.php:119
+msgid "Teaching guide Published"
+msgstr ""
+
+#: includes/cpt.php:120
+msgid "Teaching guide reverted to draft"
+msgstr ""
+
+#: includes/cpt.php:121
+msgid "Teaching guide Scheduled"
+msgstr ""
+
+#: includes/cpt.php:122
+msgid "Teaching guide Updated"
+msgstr ""
+
+#: header.php:25 includes/cpt.php:127
+msgid "Teaching Guides"
+msgstr ""
+
+#: includes/cpt.php:101 includes/cpt.php:103
+msgid "Teaching guides"
+msgstr ""
+
+#: includes/cpt.php:117
+msgid "Teaching guides Attributes"
+msgstr ""
+
+#: includes/cpt.php:116
+msgid "Teaching guides List"
+msgstr ""
+
+#: templates/partials/modals/create-session.php:32
+msgid "The lesson was scheduled"
+msgstr ""
+
+#: includes/ajax-handlers.php:459
+msgid "The search query is too small..."
+msgstr ""
+
+#: includes/cpt.php:363
+msgid "Topic"
+msgstr ""
+
+#: header.php:21 includes/cpt.php:362 includes/cpt.php:369
+msgid "Topics"
+msgstr ""
+
+#: page-my-movies.php:75
+msgid "unknown"
+msgstr ""
+
+#: templates/partials/filter-button.php:155
+#: templates/partials/my-lessons/student/session-row-block.php:66
+msgid "Upcoming"
+msgstr ""
+
+#: templates/ir-instructor-profile.template.php:129
+msgid "Update profile"
+msgstr ""
+
+#: templates/partials/big-slider.php:124
+msgid "View related Lessons"
+msgstr ""
+
+#: includes/cpt.php:50
+msgid "View Session"
+msgstr ""
+
+#: includes/cpt.php:51
+msgid "View Sessions"
+msgstr ""
+
+#: includes/cpt.php:108
+msgid "View Teaching guide"
+msgstr ""
+
+#: includes/cpt.php:109
+msgid "View Teaching guides"
+msgstr ""
+
+#: templates/partials/big-slider.php:120
+msgid "View trailer"
+msgstr ""
+
+#: single-teaching-guide.php:81
+msgid "Watch Movie"
+msgstr ""
+
+#: single-teaching-guide.php:85
+msgid "Watch Trailer"
+msgstr ""
+
+#. Author of the theme
+msgid "Webmind28"
+msgstr ""
+
+#: header.php:85
+msgid "You are not logged in"
+msgstr ""
+
+#: includes/ajax-handlers.php:664
+msgid "You have not entered the lesson code"
+msgstr ""

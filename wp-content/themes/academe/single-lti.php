@@ -39,6 +39,7 @@ global $wpdb;
     $kalturaPlayerID = get_field('kaltura_player_id', 'option');
 } else {
     $kalturaPlayerID = 46602743;
+
 }
 ?>
 <?php

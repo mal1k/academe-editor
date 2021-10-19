@@ -145,7 +145,7 @@
             :movie_data="movie"
           />
         </el-tab-pane>
-        <el-tab-pane label="My List" name="my-list">
+        <el-tab-pane label="My Videos" name="my-list">
           <!-- <div>My List ({{ searchFilter.length }} Movies)</div> -->
           <MovieItem
             v-for="movie in searchFilter"

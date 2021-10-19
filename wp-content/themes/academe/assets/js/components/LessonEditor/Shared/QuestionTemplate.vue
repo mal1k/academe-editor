@@ -96,7 +96,7 @@
   line-height: 37px;
   position: relative;
   overflow-y: auto;
-  word-break: break-all;
+  word-break: break-word;
  }
  .question-view__answer {
   padding: 30px 0 30px 30px;

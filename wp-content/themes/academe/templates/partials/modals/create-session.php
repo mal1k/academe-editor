@@ -13,78 +13,40 @@
             $post_ID = $wpdb->get_var( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type = 'movie' LIMIT 1" , $meta_key) );
             ?>
             <input type="hidden" name="related_item" class="related_item" value="<?php echo $post_ID; ?>" />
+            <input type="hidden" name="parent_item" class="parent_item" value="<?php echo $post->ID; ?>" />
             <div class="sessionForm__top">
                 <h3 class="sessionForm__title"><?php the_title(); ?></h3>
-                <span class="sessionForm__subtitle">A Lesson by Jurneys in Film</span>
+                <span class="sessionForm__subtitle"><?php _e( 'A Lesson by Jurneys in Film', 'academe' );?></span>
             </div>
             <div class="sessionForm__code">
-                <span class="sessionForm__title">Join with this lesson cODE</span>
+                <span class="sessionForm__title"><?php _e( 'Join with this lesson code', 'academe' );?></span>
                 <div class="session-code">
-                    <span class="code lessonCode" id="lessonCode">xxxxx</span>
+                    <span class="code lessonCode" id="lessonCode"></span>
                 </div>
-                <span class="note-text sessionTime hidden">Content Avail from Sun, July 21st until Tue, July 23rd</span>
+                <span class="note-text sessionTime hidden">Content Available from Sun, July 21st until Tue, July 23rd</span>
                 <div class="session-url" style="display: none">
                     <span class="url"></span>
                 </div>
                 <div class="flex-row items-center flex-center" style="margin-top: 60px;">
                     <div class="buttons">
-                        <a class="nextScreen primary-btn "style="margin: 0 10px;"><?php _e('Schedule', 'academe-theme'); ?></a>
-                        <a class="start-now primary-btn"><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <a class="nextScreen "style="margin: 0 10px;"><?php _e('The lesson was scheduled', 'academe-theme'); ?></a>
+                        <a class="start-now primary-btn " style="display: none"><?php _e('Start Now', 'academe-theme'); ?></a>
+                        <a class="play-now primary-btn "><?php _e('Play Now', 'academe-theme'); ?></a>
                     </div>
                 </div>
             </div>
             <div class="sessionForm__description hidden">
-                <div class="flex-row items-center">
-                    <div class="row-title"><?php _e('Type:', 'academe-theme'); ?></div>
-                    <div class="row-data">
-                        <input 
-                            class="primary-radio" 
-                            type="radio" name="session_type" 
-                            id="sessionSync_<?php echo $args['id']; ?>" 
-                            value="sync" checked
-                        />
-                        <label for="sessionSync_<?php echo $args['id']; ?>">
-                            <?php _e('Synchronous', 'academe-theme'); ?>
-                        </label>
-                        <input 
-                            class="primary-radio" 
-                            type="radio" 
-                            name="session_type" 
-                            id="sessionAsync_<?php echo $args['id']; ?>" 
-                            value="async" 
-                        />
-                        <label 
-                            class="session-type-label" 
-                            for="sessionAsync_<?php echo $args['id']; ?>">
-                            <?php _e('A-synchronous', 'academe-theme'); ?>
-                        </label>
-                    </div>
-                </div>
+                
 
                 <script type="text/javascript">
                     jQuery(document).ready((jQuery) => {
-                        jQuery(document).on('click', '.nextScreen:not(".disabled")', function(e) {
+                        jQuery(document).on('click', '.nextScreen', function(e) {
                             e.preventDefault;
-                            console.log(jQuery(this).closest('.sessionForm'))
                             const form = jQuery(this).closest('.sessionForm');
                             form.find('.sessionForm__code').addClass('hidden');
                             form.find('.sessionForm__description').removeClass('hidden');
                             form.find('.shareList').addClass('hidden');
                         })
-
-                        const asyncSessionHook = jQuery(".sessionAsync");
-                        const syncSessionHook = jQuery(".sessionSync");
-                        jQuery('input[type=radio][name=session_type]').change(function() {
-                            const form = jQuery(this).closest('.sessionForm');
-                            if (this.value == 'sync') {
-                                form.find('.scheduleDate').show();
-                                form.find('.schedule').val("");
-                            }
-                            else if (this.value == 'async') {
-                                form.find('.scheduleDate').hide();
-                                form.find('.schedule').val(formatDate(new Date()));
-                            }
-                        });
 
                         const formatDate = (input) => {
                             const day = input.getDate();
@@ -137,8 +99,18 @@
                         <textarea name="notes"></textarea>
                     </div>
                 </div>
+                <div class="flex-row">
+                    <div class="row-title"></div>
+                    <div class="row-data">
+                        <div class="ui inverted checked checkbox">
+                            <input type='hidden' value='0' name='show_movie_on_students_pc'>
+                            <input type="checkbox" name="show_movie_on_students_pc" checked="">
+                            <label><?php _e('Allow students to watch movie on PC', 'academe-theme'); ?></label>
+                        </div>
+                    </div>
+                </div>
                 <div class="flex-row items-center flex-end">
-                    <div class="cancel secondary-btn">Cancel</div>
+                    <div class="cancel secondary-btn"><?php _e( 'Cancel', 'academe' );?></div>
 
                     <div class="buttons">
                         <a class="schedule-now primary-btn scheduleBtn" id="scheduleBtn" style="margin:0 10px;"><?php _e('Confirm', 'academe-theme'); ?></a>
@@ -151,57 +123,33 @@
                 <div class="shareList">
                 <div class="horisontal-line"></div>
                     <div>
-                        <span class="note-text" style="margin-top:-10px">Sharing options</span>
+                        <span class="note-text" style="margin-top:-10px"><?php _e( 'Sharing options', 'academe' );?></span>
                     </div>
                     <div class="flex-row space-between">
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink shareModalLink disabled" id="shareModalLink" href=""><?php icon('copy-modal', 'copy'); ?><br>
-                            Copy link
+                            <span class="shareLink shareModalLink"><?php icon('copy-modal', 'copy'); ?><br>
+                            <?php _e( 'Copy link', 'academe' );?>
                             </span>
                         </div>
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink disabled" id="whatsAppModalLink" href=""><?php icon('whatsapp-modal'); ?><br>
-                            WhatsApp
+                            <span class="shareLink disabled"><?php icon('whatsapp-modal'); ?><br>
+                            <?php _e( 'WhatsApp', 'academe' );?>
                             </span>
                         </div>
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink disabled" id="emailModalLink" href=""><?php icon('email-modal'); ?><br>
-                            Email
+                            <span class="shareLink disabled"><?php icon('email-modal'); ?><br>
+                            <?php _e( 'Email', 'academe' );?>
                             </span>
                         </div>
                         <div style="margin: 0 10px; text-align:center">
-                            <span class="shareLink disabled puzzleModalLink" id="puzzleModalLink" href=""><?php icon('puzzle-modal'); ?><br>
-                            LTI
+                            <span class="shareLink puzzleModalLink"><?php icon('puzzle-modal', 'lti-copy'); ?><br>
+                            <?php _e( 'LTI', 'academe' );?>
                             </span>
                         </div>
-
-                        <script>
-                        jQuery('.puzzleModalLink:not(".disabled")').click(function(){
-                            event.preventDefault();                              
-                            const form = jQuery(this).closest('.sessionForm');
-                            const code = form.find('.lessonCode').text();
-                            const time = form.find('.schedule').val();
-                            const postID = form.find('.related_item').val();
-                            jQuery.ajax('<?php bloginfo('template_directory'); ?>/lti_create_code.php?code=' + code + '&id=' + postID + '&time=' + time,{
-                            type: 'POST',
-                            processData: false,
-                            contentType: false,
-                            dataType: 'json',
-                                success: (data)=>{
-                                    var copyText = "<?php echo get_home_url(); ?>/lti-movies?code=" + code;
-
-                                    navigator.clipboard.writeText(copyText).then(function() {
-                                        alert('Copied');
-                                    });
-
-                                }
-                            })  
-                        })
-                        </script>
 
                         <div style="margin-left: 25px;">
                             <span class="shareLink disabled" id="shareButtonLink" href=""><?php icon('share-modal'); ?><br>
-                            Share
+                            <?php _e( 'Share options', 'academe' );?>
                             </span>
                         </div>
                     </div>

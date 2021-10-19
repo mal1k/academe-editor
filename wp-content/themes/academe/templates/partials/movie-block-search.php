@@ -7,7 +7,7 @@
         <div class="slide-info">
             <div class="info-top">
                 <div class="title"><?php echo $post->post_title; ?></div>
-                <?php if( in_array($post->post_type, ['movie', 'teaching-guide']) ) { ?>
+                <?php if( in_array($post->post_type, ['movie', 'teaching-guide', 'sfwd-courses']) ) { ?>
                     <div class="tags">
                 <span class="tags-list">
                 <?php $tags = wp_get_post_tags($post->ID);
@@ -58,13 +58,45 @@
                 </div>
 
                 <div class="right-part">
+                    <?php if ($post->post_status == 'private') {
+                        icon('hide', 'visibility icon-24');
+                    } ?>
                     <?php icon('circle-down', 'icon-32 show-meta'); ?>
                 </div>
 
             </div>
-            <a href="<?php the_permalink(); ?>" class="watch">
-                <div class="start-watch"><?php icon('play-rounded'); ?></div>
-            </a>
+            <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) { ?>
+                <?php $wp_query = new WP_Query([
+                    'post_type' => 'session',
+                    'meta_query' => [
+                        array(
+                            'key' => 'related_lesson',
+                            'value' => $post->ID,
+                            'compare' => '=',
+                        )
+                    ]
+                ]); ?>
+                <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="watch">
+                    <div class="start-watch"><?php icon('play-rounded'); ?></div>
+                </a>
+            <?php } else if ($post->post_type ==  'clip') { ?>
+                <a href="#" class="watch">
+                    <div class="watch">
+                        <div class="start-watch start-movie-preview"
+                            onclick="return false;"
+                            data-movie-id="<?php echo $custom_fields['movie_id']->ID; ?>"
+                            data-mode="basic"
+                            data-play-from="<?php echo format_time_to_seconds($custom_fields['play_from']); ?>"
+                            data-play-to="<?php echo format_time_to_seconds($custom_fields['play_to']); ?>"
+                            style="position: relative; z-index: 1;">
+                            <?php icon('play-rounded'); ?></div>
+                    </div>
+                </a>
+            <?php } else { ?>
+                <a href="<?php the_permalink(); ?>" class="watch">
+                    <div class="start-watch"><?php icon('play-rounded'); ?></div>
+                </a>
+            <?php } ?>
         </div>
         <?php if (0) { ?>
         <div class="actions-more ui dropdown link item dark">
@@ -85,10 +117,11 @@
         <?php if ($post->post_type == 'movie') { ?>
             <img class="slide-image" src="<?php echo get_movie_thumbnail($custom_fields['kaltura_id'], 280, 175); ?>" />
         <?php } ?>
-        <?php if ( in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide']) ) { ?>
-            <?php if(has_post_thumbnail($post->ID)) { ?>
-                <img class="slide-image" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
-            <?php } ?>
+        <?php if ( in_array($post->post_type, ['sfwd-courses']) ) { ?>
+            <img class="slide-image" src="<?php echo $custom_fields['cover_image_url']; ?>" />
+        <?php } ?>
+        <?php if ( in_array($post->post_type, ['teaching-guide']) ) { ?>
+            <img class="slide-image" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
         <?php } ?>
         <?php if ($post->post_type == 'clip') { ?>
             <?php if(has_post_thumbnail($post->ID)) { ?>
@@ -101,7 +134,7 @@
                 <img class="slide-image" src="<?php echo get_movie_thumbnail($movie_kaltura_id, 280, 175, 45, $play_from); ?>" />
             <?php } ?>
         <?php } ?>
-        <div class="slide-label">
+        <div class="slide-label <?php echo $post->post_type; ?>">
             <?php icon($post->post_type); ?>
         </div>
         <?php if ($sponsored) { ?>
@@ -114,23 +147,50 @@
     </div>
     <div class="modal ui overlay post-meta-highlighted" data-movie-id="<?php echo $post->ID; ?>">
         <?php if ($post->post_type == 'movie') { ?>
-            <img class="thumbnail" src="<?php echo get_movie_thumbnail($custom_fields['kaltura_id'], 650, 350); ?>" />
+            <div class="cover-wrapper">
+                <img class="thumbnail" src="<?php echo get_movie_thumbnail($custom_fields['kaltura_id'], 650, 350); ?>" />
+                <div class="watch">
+                    <div class="start-watch start-movie-preview"
+                         data-movie-id="<?php echo $post->ID; ?>"
+                         onclick="return false;"
+                         data-mode="advanced"
+                         style="position: relative; z-index: 1;">
+                        <?php icon('play-rounded'); ?>
+                    </div>
+                </div>
+            </div>
         <?php } ?>
-        <?php if ( in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide']) ) { ?>
+        <?php if ( in_array($post->post_type, ['sfwd-courses']) ) { ?>
+            <img class="thumbnail" src="<?php echo $custom_fields['cover_image_url']; ?>" />
+        <?php } ?>
+        <?php if ( in_array($post->post_type, ['teaching-guide']) ) { ?>
             <?php if(has_post_thumbnail($post->ID)) { ?>
-                <img class="thumbnail" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
+                <img class="thumbnail" src="<?php echo get_the_post_thumbnail_url($post->ID, 'large'); ?>" />
             <?php } ?>
         <?php } ?>
+        
         <?php if ($post->post_type == 'clip') { ?>
-            <?php if(has_post_thumbnail($post->ID)) { ?>
-                <img class="thumbnail" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
-            <?php } else { ?>
-                <?php
-                $movie_kaltura_id = get_field('kaltura_id', $custom_fields['movie_id']);
-                $play_from = format_time_to_seconds($custom_fields['play_from']);
-                ?>
-                <img class="thumbnail" src="<?php echo get_movie_thumbnail($movie_kaltura_id, 650, 350, 45, $play_from); ?>" />
-            <?php } ?>
+            <div class="cover-wrapper">
+                <?php if(has_post_thumbnail($post->ID)) { ?>
+                    <img class="thumbnail" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
+                <?php } else { ?>
+                    <?php
+                    $movie_kaltura_id = get_field('kaltura_id', $custom_fields['movie_id']);
+                    $play_from = format_time_to_seconds($custom_fields['play_from']);
+                    ?>
+                    <img class="thumbnail" src="<?php echo get_movie_thumbnail($movie_kaltura_id, 650, 400, 45, $play_from); ?>" />
+                <?php } ?>
+                <div class="watch">
+                    <div class="start-watch start-movie-preview"
+                         onclick="return false;"
+                         data-movie-id="<?php echo $custom_fields['movie_id']->ID; ?>"
+                         data-mode="basic"
+                         data-play-from="<?php echo format_time_to_seconds($custom_fields['play_from']); ?>"
+                         data-play-to="<?php echo format_time_to_seconds($custom_fields['play_to']); ?>"
+                         style="position: relative; z-index: 1;">
+                        <?php icon('play-rounded'); ?></div>
+                </div>
+            </div>
         <?php } ?>
         <div class="meta-content">
             <?php icon('circle-down', 'close'); ?>

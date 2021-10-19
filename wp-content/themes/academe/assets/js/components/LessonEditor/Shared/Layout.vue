@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div class="header-placeholder"></div>
         <slot name="header"></slot>
         <slot name="editor"></slot>
     </div>
@@ -50,4 +51,40 @@
     .el-select-dropdown__item.is-disabled {
         opacity: .5;
     }
+    .el-button--medium {
+        padding: 7px 20px;
+    }
+    .el-message-box .el-button {
+        border-radius: 4px;
+        color: #FFFFFF;
+        padding: 7px 15px;
+    }
+    .el-message-box .el-button:hover {
+        background: rgba(0,0,0,0);
+        color: #51ACFD;
+        border-color: #51ACFD;
+    }
+    .el-message-box .el-button--primary:hover {
+        background: #51ACFD;
+        color: #FFFFFF;
+    }
+    .el-select__input {
+        color: #ffffff;
+    }
+    .el-tag.el-tag--info .el-tag__close {
+        color: #232323;
+    }
+    .el-checkbox.accept {
+        display: flex;
+    }
+    .el-checkbox.accept .el-checkbox__input {
+        margin-top: 4px;
+    }
+    .el-checkbox.accept .el-checkbox__label {
+        line-height: 22px;
+    }
+    .el-loading-mask {
+        z-index: 2010;
+    }
+
 </style>

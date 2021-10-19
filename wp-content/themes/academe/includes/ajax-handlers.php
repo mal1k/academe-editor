@@ -168,7 +168,7 @@ function async_filter_my_list() {
         $query_posts = [];
     }
     get_template_part('templates/partials/slider-strip', 'null', [
-        'title' => 'My List',
+        'title' => __('My Videos', 'academe-theme'),
         'filter' => [
             'active' => true,
             'post_type' => $_POST['post_type'],
@@ -205,7 +205,7 @@ function async_filter_continue_watching() {
         $query_posts = [];
     }
     get_template_part('templates/partials/slider-strip', 'null', [
-        'title' => 'Continue watching',
+        'title' => __('Continue watching', 'academe-theme'),
         'filter' => [
             'active' => true,
             'post_type' => $_POST['post_type'],
@@ -239,7 +239,7 @@ function request_kaltura_movie() {
     echo json_encode([
         'wid' => get_field('partner_id', 'option'),
         'ks' => $client->getKS(),
-        'uiconf_id' => 46602743,
+        'uiconf_id' => get_field('kaltura_player_id', 'option'),
         'start_from' => $start_from,
         'kaltura_id' => $kaltura_id,
     ]);
@@ -265,13 +265,13 @@ function update_continue_watching() {
                 }
                 break;
             case 'update_continue_watching' :
-                if (!$cw_list || !isset($cw_list[$_POST['post_id']]) || $cw_list[$_POST['post_id']]['time'] < $_POST['time']) {
+                //if (!$cw_list || !isset($cw_list[$_POST['post_id']]) || $cw_list[$_POST['post_id']]['time'] < $_POST['time']) {
                     $cw_list[$_POST['post_id']] = [
                         'upd' => time(),
                         'time' => $_POST['time']
                     ];
                     update_user_meta($user_id, 'continue_watching', json_encode($cw_list));
-                }
+                //}
                 break;
         }
     }
@@ -289,7 +289,7 @@ function update_my_list() {
             if (isset($my_list[$_POST['post_id']])) { //movie exists in list
                 unset($my_list[$_POST['post_id']]);
                 if ($_POST['button_type'] == 'text') {
-                    $return =  __('Add to my list', 'academe-theme');
+                    $return =  __('Add to my videos', 'academe-theme');
                 } else if ($_POST['button_type'] == 'icon') {
                     ob_start();
                     icon('star', 'icon-24');
@@ -301,10 +301,10 @@ function update_my_list() {
                     'upd' => time()
                 ];
                 if ($_POST['button_type'] == 'text') {
-                    $return =  __('Remove from my list', 'academe-theme');
+                    $return =  __('Remove from my videos', 'academe-theme');
                 } else if ($_POST['button_type'] == 'icon') {
                     ob_start();
-                    icon('star', 'icon-24 icon-blue-stroke');
+                    icon('star', 'icon-24 icon-blue-stroke icon-blue-fill');
                     $return = ob_get_clean();
                 }
             }
@@ -345,6 +345,8 @@ function create_lesson_session() {
             $session_ends = date( 'Y-m-d H:i:s', strtotime( $session_starts ) + 921600 ); // 3600 seconds = 1 hours
             update_field( "session_ends", $session_ends, $post_id ); //1 hour after session start
 
+            update_field( "show_movie_on_students_pc", true, $post_id ); // should the student be able to view movie on PC?
+
             echo json_encode(['success' => get_post_permalink($post_id)]);
         } else {
             echo json_encode(['error' => __('Something went wrong', 'academe-theme')]);
@@ -360,8 +362,11 @@ function create_session() {
     if (is_user_logged_in()) {
 
         if (!isset($_POST['schedule']) || empty($_POST['schedule'])) {
-            echo json_encode(['error' => __('Date/Time should be selected', 'academe-theme')]);
-            wp_die();
+            $_POST['schedule'] = current_time('d/m/Y H:i');
+        }
+
+        if (!isset($_POST['show_movie_on_students_pc']) || $_POST['show_movie_on_students_pc'] === 'on') {
+            $_POST['show_movie_on_students_pc'] = true;
         }
 
         $session_data = array(
@@ -376,7 +381,7 @@ function create_session() {
 
         if ($post_id) {
             update_field( "based_on", $_POST['based_on'], $post_id );
-            update_field( "related_".$_POST['based_on'], $_POST['related_item'], $post_id );
+            update_field( "related_".$_POST['based_on'], $_POST['parent_item'], $post_id );
             update_field( "session_type", $_POST['session_type'], $post_id );
 
             if ($_POST['session_type'] == 'async') {
@@ -393,6 +398,8 @@ function create_session() {
             $session_ends = $session_starts->add(new DateInterval('PT'.$shift.'H'));
             update_field( "session_ends", $session_ends->format('Y-m-d H:i:s'), $post_id ); //1 hour after session start
 
+            update_field( "show_movie_on_students_pc", $_POST['show_movie_on_students_pc'], $post_id ); // should the student be able to view movie on PC?
+
             echo json_encode(['success' => get_post_permalink($post_id)]);
         } else {
             echo json_encode(['error' => __('Something went wrong', 'academe-theme')]);
@@ -401,6 +408,48 @@ function create_session() {
     }
     wp_die();
 }
+
+
+add_action("wp_ajax_check_session" , "check_session");
+add_action('wp_ajax_nopriv_check_session', 'check_session');
+function check_session() {
+    if (is_user_logged_in()) {
+        $posts = get_posts(
+            [
+                'name'           => $_POST['post_name'],
+                'post_type'      => 'session',
+                'posts_per_page' => 1,
+                'post_status'    => 'publish',
+            ]
+        );
+    
+        if ( ! empty( $posts ) ) {
+            $post = $posts[0];
+            echo json_encode(['success' => home_url() . '/sessions/' . $post->post_name]);
+        } else {
+            echo json_encode(['error' => __('This code is invalid', 'academe-theme')]);
+        }
+
+    }
+    wp_die();
+}
+
+
+
+add_action("wp_ajax_delete_session" , "delete_session");
+add_action('wp_ajax_nopriv_delete_session', 'delete_session');
+function delete_session() {
+    if (is_user_logged_in()) {
+
+        $my_post = array();
+        $my_post['ID'] = $_POST['id'];
+        $my_post['post_status'] = 'trash';
+
+        echo json_encode(wp_update_post( wp_slash($my_post) ));
+    }
+    wp_die();
+}
+
 
 
 add_action("wp_ajax_load_more_sessions" , "load_more_sessions");
@@ -447,6 +496,7 @@ function load_more_sessions() {
 function fetch_search_results(){
     global $search_query;
     $search_query = $_GET['s'];
+    $user_id = get_current_user_id();
 
     if (!$search_query) { ?>
         <div class="container"><?php _e('The search query is too small...', 'academe-theme'); ?></div>
@@ -564,9 +614,9 @@ function fetch_search_results(){
     <?php }
 
     $types = [
-        'sfwd-courses' => 'Related lessons',
-        'teaching-guide' => 'Related teaching guides',
-        'clip' => 'Related clips'
+        'sfwd-courses' => __('Related lessons', 'academe-theme'),
+        'teaching-guide' => __('Related teaching guides', 'academe-theme'),
+        'clip' => __('Related clips', 'academe-theme')
     ];
 
     foreach ($types as $type => $heading) {
@@ -581,14 +631,14 @@ function fetch_search_results(){
         LEFT JOIN $wpdb->terms AS t ON (t.term_id = tt.term_id)
         LEFT JOIN $wpdb->postmeta as pm ON pm.post_id = p.ID
         WHERE p.post_type='$type'
-        AND p.post_status='publish'
+        AND (p.post_status='publish' OR p.post_status='private' AND p.post_author=".$user_id.")
         AND (
             p.post_title LIKE '%".$search_query."%' 
             OR p.post_content LIKE '%".$search_query."%' 
             OR pm.meta_value LIKE '%".$search_query."%' 
             OR (tt.taxonomy='post_tag' AND t.slug LIKE '%".$search_query."%')
         ) 
-        $filters_and_print GROUP BY p.ID";
+        $filters_and_print GROUP BY p.ID ORDER BY p.post_date DESC";
 
         $sql_result = $wpdb->get_results( $sql, OBJECT);
 
@@ -646,7 +696,7 @@ function update_session_current_slide() {
     if ($_GET['session_id'] && $_GET['slide_id']) {
         update_field('current_slide', $_GET['slide_id'], $_GET['session_id']);
     }
-    print_r(json_encode(['success' => 'Current slide updated!']));
+    print_r(json_encode(['success' => __('Current slide updated!', 'academe-theme')]));
 
     wp_die();
 }

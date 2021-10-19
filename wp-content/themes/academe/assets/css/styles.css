@@ -44,7 +44,13 @@ body {
 ul {
     list-style-type: none;
 }
+.header-placeholder {
+    height: 82px;
+    width: 100%;
+}
 header {
+    position: fixed;
+    top: 0;
     height: 82px;
     border: 2px solid #000;
     width: 100%;
@@ -52,6 +58,11 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 0 30px;
+    background: #131212;
+    z-index: 2000;
+}
+.page-template-page-lesson-editor header {
+    background: #232323;
 }
 header .left-part, header .right-part {
     display: flex;
@@ -72,7 +83,7 @@ header .left-part nav {
     font-weight: 600;
 }
 .top-menu .menu-item.link {
-    opacity: .5;
+    color: #888787;
     white-space: nowrap;
 }
 .top-menu .menu-item.link:hover, .top-menu .menu-item.link.active {
@@ -80,8 +91,11 @@ header .left-part nav {
 }
 
 .top-menu .menu-item.dropdown {
-    color: #51ACFD;
     white-space: nowrap;
+    color: #888787;
+}
+.top-menu .menu-item.dropdown.blue {
+    color: #51ACFD;
 }
 header .menu-btn {
     display: none;
@@ -264,6 +278,9 @@ header .create-lesson-btn span {
     left: -1px;
     border-radius: 0px;
 }
+.search .loading .text.loader {
+    color: #FFFFFF;
+}
 /* End Search */
 
 /* Movie/Lesson Slider  */
@@ -414,8 +431,6 @@ header .create-lesson-btn span {
     position: absolute;
     top: 30px;
     right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    border-left: 10px solid #51ACFD;
     display: flex;
     align-items: center;
     padding: 8px 12px;
@@ -727,12 +742,22 @@ header .create-lesson-btn span {
     position: absolute;
     top: 15px;
     right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    border-left: 4px solid #51ACFD;
     display: flex;
     align-items: center;
     padding: 4px 8px 4px 8px;
     transition: .3s;
+}
+.slide-label.movie {
+    background: #51ACFD;
+}
+.slide-label.clip {
+    background: #1457AE;
+}
+.slide-label.sfwd-courses, .slide-label.sfwd-lessons {
+    background: #F98C40;
+}
+.slide-label.teaching-guide {
+    background: #D04A07;
 }
 .movie-block .slide-label svg {
     height: 18px;
@@ -1606,7 +1631,6 @@ h2.section-heading {
 }
 .my-lessons-page .lesson-row .movie-actions {
     display: flex;
-    margin-top: 6px;
     margin-left: 60px;
 }
 .my-lessons-page .lesson-row .play-movie-btn {
@@ -1644,6 +1668,9 @@ h2.section-heading {
     white-space: nowrap;
     width: 120px;
     cursor: pointer;
+}
+.my-lessons-page .lesson-row .visibility {
+    margin: 0 40px;
 }
 .wrap-link {
     position: absolute;
@@ -2027,33 +2054,29 @@ h2.section-heading {
     margin-bottom: 5px;
 }
 .movie-block.create-new-lesson {
-    background: #222222;
-    border: 2px solid #000000;
     box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
     transition: .2s;
-}
-.movie-block.create-new-lesson:hover{
-    background: #000000;
+    width: 110px;
+    justify-content: center;
+    align-items: center;
+    background: rgb(72,72,72);
+    background: linear-gradient(0deg, rgba(18,18,18,1) 0%, rgba(72,72,72,1) 100%);
+    flex-direction: column;
+    cursor: pointer;
+    opacity: .9;
 }
 .movie-block.create-new-lesson .action-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+    color: rgba(255, 255, 255, .75);
     text-transform: uppercase;
 }
 .movie-block.create-new-lesson .icon-wrap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.movie-block.create-new-lesson .icon {
-    height: 40px;
-    width: 40px;
+    font-weight: 800;
+    font-size: 53px;
+    color: rgba(255, 255, 255, .85);
+    margin-bottom: 15px;
 }
 .two-strips {
     display: flex;
@@ -2329,6 +2352,9 @@ h2.section-heading {
     margin-top: 5px;
     color: #d3447f;
 }
+.ui.overlay.fullscreen.modal {
+    height:100%;
+}
 /* Enter the lesson (session) end */
 
 .sessions-list.modal {
@@ -2373,6 +2399,18 @@ h2.section-heading {
     cursor: pointer;
 }
 
+
+
+/* Fomantic UI elements fix */
+.ui.checkbox label {
+    line-height: 17px;
+}
+.ui.checkbox label:before,
+.ui.checkbox label:after {
+    box-sizing: border-box;
+}
+/* Fomantic UI elements fix end */
+
 /* Icons */
 .with-rotate {
     transition: .2s;
@@ -2392,13 +2430,19 @@ h2.section-heading {
 .icon-gray * {
     fill: #677986;
 }
+.icon-gray-stroke * {
+    stroke: #888787;
+}
 .icon-blue * {
     fill: #51ACFD;
 }
 .icon-blue-stroke * {
     stroke: #51ACFD;
+}
+.icon-blue-fill * {
     fill: #51ACFD;
 }
+
 .icon-32 {
     width: 32px;
     height: 32px;
@@ -2445,6 +2489,7 @@ footer {
 }
 .ui.dimmer {
     background: rgba(0,0,0,.8);
+    z-index: 2001;
 }
 .container {
     padding: 0 40px;
@@ -2499,6 +2544,9 @@ img.aligncenter { display: block; margin-left: auto; margin-right: auto; }
         font-size: 24px;
         line-height: 28px;
     }
+    .header-placeholder {
+        height: 44px;
+    }
 }
 .notification-btn.ui.dropdown .menu {
     color: #FFF;
@@ -2524,6 +2572,7 @@ span.highlighted {
     width: 100%;
     height: 230px;
     object-fit: cover;
+    display: block;
 }
 .post-meta-highlighted .meta-content {
     padding: 20px 80px 20px 30px;
@@ -2603,4 +2652,43 @@ span.highlighted {
 }
 .author-teacher #search {
     display: none;
-} 
+}
+.post-meta-highlighted .cover-wrapper {
+    position: relative;
+}
+.post-meta-highlighted .watch {
+     position: absolute;
+     top:0;
+     left: 0;
+     height: 100%;
+     width: 100%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     transition: .2s;
+     cursor: pointer;
+ }
+.post-meta-highlighted .start-watch {
+    background: #51ACFD;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 33px;
+    width: 33px;
+    border-radius: 20px;
+    transition: .2s;
+}
+.post-meta-highlighted .watch:hover .start-watch {
+    transform: scale(1.1);
+}
+.post-meta-highlighted .start-watch .icon {
+    height: 15px;
+    margin-left: 3px;
+}
+.movie-block .right-part .visibility {
+    cursor: auto;
+}
+.movie-block .right-part .icon.visibility:hover {
+    transform: none !important;
+}

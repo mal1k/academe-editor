@@ -1,5 +1,6 @@
 <?php
 
+
 function get_next_lesson_id( $object ) {
     return learndash_next_post_link('', 'id', get_post($object['id']));
 }
@@ -42,11 +43,11 @@ add_action( 'rest_api_init', function() {
             return [
                 'wid' => get_field('partner_id', 'option'),
                 'ks' => $client->getKS(),
-                'uiconf_id' => 46602743,
+                'uiconf_id' => get_field('kaltura_player_id', 'option'),
             ];
         }
     ]);
-
+    
     register_rest_route( 'academe/v1', '/get-movie-meta-by-kaltura', [
         'methods'  => 'GET',
         'callback' => function($data) {
@@ -81,7 +82,7 @@ add_action( 'rest_api_init', function() {
             $query_posts = [];
             
             if ($my_list) {
-                $query = new WP_Query(['post_type' => 'movie', 'post__in' => $my_list, 'orderby' => 'post__in', 'suppress_filters' => true]);
+                $query = new WP_Query(['post_type' => ['movie', 'clip'], 'post__in' => $my_list, 'orderby' => 'post__in', 'suppress_filters' => true]);
                 $query_posts = $query->posts;
             }
 
@@ -228,7 +229,7 @@ add_action( 'rest_api_init', function() {
 		'callback' => function() {
             $array = [];
             $taxonomyInfo = [];
-            $query = new WP_Query(['post_type' => 'movie', 'posts_per_page' => -1, 'orderby' => 'id', 'suppress_filters' => true]);
+            $query = new WP_Query(['post_type' => ['movie', 'clip'], 'posts_per_page' => -1, 'orderby' => 'id', 'suppress_filters' => true]);
             $query_posts = $query->posts;
             $i = 0;
 
@@ -289,7 +290,7 @@ add_action( 'rest_api_init', function() {
                 foreach ($quizzes as $quiz) {
                     $result[] = [
                         'id' => $quiz,
-                        'time' => get_field('show_at', $quiz)
+                        'time' => intval(get_field('show_at', $quiz))
                     ];
                 }
 
@@ -386,45 +387,126 @@ add_action( 'rest_api_init', function() {
             ];
         }
     ]);
+
+    $steps_controller = new LD_REST_Courses_Steps_Controller_V2();
+    register_rest_route( 'academe/v1', '/course-steps/(?P<id>[\d]+)', [
+        'methods'             => 'GET',
+        'callback'            => array( $steps_controller, 'get_course_steps' ),
+        'permission_callback' => 'get_course_steps_permissions_check_custom',
+        'args'                => $steps_controller->get_collection_params(),
+    ]);
+
+    $courses_controller = new LD_REST_Courses_Controller_V1();
+    register_rest_route( 'academe/v1', '/sfwd-courses/(?P<id>[\d]+)', [
+        'methods'             => 'GET',
+        'callback'            => array( $courses_controller, 'get_item' ),
+        'permission_callback' => 'get_course_permissions_check_custom',
+        'args'                => $courses_controller->get_collection_params(),
+    ]);
+
+    $lessons_controller = new LD_REST_Lessons_Controller_V1();
+    register_rest_route( 'academe/v1', '/sfwd-lessons/(?P<id>[\d]+)', [
+        'methods'             => 'GET',
+        'callback'            => array( $lessons_controller, 'get_item' ),
+        'permission_callback' => 'get_course_permissions_check_custom',
+        'args'                => $lessons_controller->get_collection_params(),
+    ]);
+
+    register_rest_route( 'academe/v1', '/update-lessons-order-params', [
+        'methods'  => 'POST',
+        'callback' => function($data) {
+            $parameters = $data->get_params();
+
+            $meta_values = get_post_meta( $parameters['post_id'], '_sfwd-courses', false );
+
+            $meta_values_new = $meta_values;
+            $meta_values_new[0]['sfwd-courses_course_lesson_orderby'] = 'menu_order';
+            $meta_values_new[0]['sfwd-courses_course_lesson_order'] = 'ASC';
+
+            update_post_meta($parameters['post_id'], '_sfwd-courses', $meta_values_new[0]);
+
+            return json_encode(['status' => 'success']);
+        }
+    ] );
 });
+
+function get_course_steps_permissions_check_custom() {
+    return true;
+}
+function get_course_permissions_check_custom($request) {
+    $allow = false;
+    if (is_user_logged_in()) {
+        $user_id = get_current_user_id();
+        $course = get_post($request['id']);
+        if (learndash_is_admin_user() || is_user_in_role('student') || is_user_in_role('teacher') && $user_id == $course->post_author) {
+            $allow = true;
+        }
+    }
+    return $allow;
+}
 
 function getMovieDataFromPost($movie_post) {
     $array = Array();
     $custom_fields = get_fields($movie_post->ID);
 
-    $array['kaltura_id'] = $custom_fields['kaltura_id'];
-    $array['image'] = get_movie_thumbnail($custom_fields['kaltura_id'], 280, 175);
     $array['title'] = $movie_post->post_title;
     $array['link'] = $movie_post->guid;
 
-    // duration
-    if (isset($custom_fields['duration'])) {
+    //duration in seconds
+    $array['duration'] = format_time_to_seconds($custom_fields['duration']);
 
-        //duration in seconds
-        $array['duration'] = format_time_to_seconds($custom_fields['duration']);
+    if ($movie_post->post_type === 'clip') {
+        $movie_kaltura_id = get_field('kaltura_id', $custom_fields['movie_id']->ID);
+        $array['kaltura_id'] = $movie_kaltura_id;
 
-        //duration human friendly
-        $duration = explode(":", $custom_fields['duration']);
-        $durationTime = (int)$duration[0].'h '. (int)$duration[1].'m';
-        $array['time'] = $durationTime;
+        $array['play_from'] = $custom_fields['play_from'] ?? '00:00:00';
+        $array['play_to'] = $custom_fields['play_to'] ?? '00:00:00';
+
+        $clip_duration = format_time_to_seconds($array['play_to']) - format_time_to_seconds($array['play_from']); // in seconds
+        $array['duration'] = gmdate("H:i:s", $clip_duration); //in timestring
+
+        $duration_arr = explode(":", $array['duration']);
+        if ((int)$duration_arr[0] == 0) {
+            $array['time'] = (int)$duration_arr[1].'m '. (int)$duration_arr[2].'s';
+        } else {
+            $array['time'] = (int)$duration_arr[0].'h '. (int)$duration_arr[1].'m';
+        }
+
+        if(has_post_thumbnail($movie_post->ID)) {
+            $array['image'] = get_the_post_thumbnail_url($movie_post->ID, 'medium');
+        } else {
+            $play_from = format_time_to_seconds($custom_fields['play_from']);
+            $array['image'] = get_movie_thumbnail(get_field('kaltura_id', $custom_fields['movie_id']->ID), 280, 175, 45, $play_from);
+        }
+    } else if ($movie_post->post_type === 'movie') {
+        $array['image'] = get_movie_thumbnail($custom_fields['kaltura_id'], 280, 175);
+        $array['kaltura_id'] = $custom_fields['kaltura_id'];
+        // duration
+        if (isset($custom_fields['duration'])) {
+            //duration human friendly
+            $duration = explode(":", $custom_fields['duration']);
+            $durationTime = (int)$duration[0].'h '. (int)$duration[1].'m';
+            $array['time'] = $durationTime;
+        }
     }
+
+
 
     
         // tags
-        if( in_array($movie_post->post_type, ['movie', 'teaching-guide']) ) {
-            $tags = wp_get_post_tags($movie_post->ID);
-            if ($tags) {
-                $tags_counter = -1;
-                $tags_string = '';
-                foreach ($tags as $tag) {
-                    if ($tags_counter) {
-                        $tags_string .= '#' . $tag->name . ', ';
-                        $tags_counter--;
-                        $array['tags'][] = array('tag'=>$tag->name);
-                    }
+        $tags = wp_get_post_tags($movie_post->ID);
+        if ($tags) {
+            $tags_counter = -1;
+            $tags_string = '';
+            foreach ($tags as $tag) {
+                if ($tags_counter) {
+                    $tags_string .= '#' . $tag->name . ', ';
+                    $tags_counter--;
+                    $array['tags'][] = array('tag'=>$tag->name);
                 }
-            } 
+            }
         }
+
         // year
             $array['year'] = $custom_fields['year'];
         // views
@@ -441,18 +523,22 @@ function getMovieDataFromPost($movie_post) {
         // content
             $content = get_separated_read_more_content($movie_post->post_content);
             $array['description'] = $content;
+            $array['post_type'] = $movie_post->post_type;
             
         return $array;
 }
 
         function movieImagesFromKaltura( WP_REST_Request $request ) {
             $kaltura_id = $request->get_param( 'id' );
-            $count = 3; // images amount
-            $time_step = 120; // in seconds
+            $count = 14; // images amount
+            $time_step = 182; // in seconds
 
+            $images[] = get_movie_thumbnail($kaltura_id, 1920, 1080, 50, 0);
+
+            $vid_sec = $time_step;
             for ( $i = 1; $i <= $count; $i++ ) {
-                $images[] = get_movie_thumbnail($kaltura_id, 1920, 1080, 50, $time_step);
-                $time_step += $time_step;
+                $images[] = get_movie_thumbnail($kaltura_id, 1920, 1080, 50, $vid_sec);
+                $vid_sec += $time_step;
             }
 
             return $images;

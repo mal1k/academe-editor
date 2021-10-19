@@ -1,96 +1,165 @@
 import axios from "axios";
 import store from './vuex-store';
+import { Notification } from 'element-ui';
+import helper from './helper';
 
 axios.defaults.baseURL = window.wpApiSettings.root;
 axios.defaults.headers.common["X-WP-Nonce"] = window.wpApiSettings.nonce;
 
 export default {
-    async initSave () {
 
+    initPublish() {
         let storage = store.state.LessonEditor;
-        console.log('lesson save initialized');
         storage.loading = true;
 
-        console.log(store.state.LessonEditor);
+        axios.post("/ldlms/v1/sfwd-courses/"+storage.lesson_id, {
+            status: storage.private ? 'private' : 'publish',
+            date_gmt: new Date().toISOString(),
+        }).then(res => {
+            storage.loading = false;
+            storage.status = storage.private ? 'private' : 'publish';
+        });
+    },
 
-        // Create session only on first save
-        if (!storage.first_session_created) {
-            console.log(ajaxurl + "?action=create_lesson_session");
+    initUnpublish() {
+        let storage = store.state.LessonEditor;
+        storage.loading = true;
 
-            const result = await fetch(ajaxurl + "?action=create_lesson_session", {
-                method: "POST",
-                body: JSON.stringify({lesson_id: store.state.LessonEditor.lesson_id})
-            });
+        axios.post("/ldlms/v1/sfwd-courses/"+storage.lesson_id, {
+            status: 'draft',
+            date_gmt: new Date().toISOString(),
+        }).then(res => {
+            storage.loading = false;
+            storage.status = 'draft';
+        });
+    },
 
-            const serverResp = await result.json();
-            if (!serverResp.error) {
-                const element = jQuery("#previewButton");
-                element.attr(
-                    "href",
-                    serverResp.success
-                );
-                storage.first_session_created = true;
-            } else {
-                alert(serverResp.error);
-            };
-        }
+    async initSave (params) {
+        let storage = store.state.LessonEditor;
+        let errors = this.validateFields();
+        if (!storage.saving || params.type === 'manual') {
+            if (!errors.length) {
+                console.log('lesson save initialized');
+                if (params.type === 'manual') {
+                    storage.loading = true;
+                }
+                storage.saving = true;
 
-        const saveCourse = this.saveCourseMeta();
-        // Update ACF fields:
-        saveCourse.then(function (results) {
-            // Old implementation (direct saving):
-            // axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
-            //     fields: {
-            //         cover_image_url: storage.meta.thumbnail,
-            //     }
-            // });
-            // New implementation (pixabay re-save locally):
-            axios.post("/academe/v1/save-image", {
-                post_id: storage.lesson_id,
-                field: 'cover_image_url',
-                url: storage.meta.thumbnail,
-            }).then(res => {
-                storage.loading = false; // seems all saved
-            });
-            // Save movie_id if created from movie:
-            if (storage.movie_id) {
-                axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
-                    fields: {
-                        movie_id: storage.movie_id,
+                console.log(store.state.LessonEditor);
+
+                // Create session only on first save
+                if (!storage.first_session_created) {
+                    console.log(ajaxurl + "?action=create_lesson_session");
+
+                    const result = await fetch(ajaxurl + "?action=create_lesson_session", {
+                        method: "POST",
+                        body: JSON.stringify({lesson_id: store.state.LessonEditor.lesson_id})
+                    });
+
+                    const serverResp = await result.json();
+                    if (!serverResp.error) {
+                        const element = jQuery("#previewButton");
+                        element.attr(
+                            "href",
+                            serverResp.success
+                        );
+                        storage.first_session_created = true;
+                    } else {
+                        alert(serverResp.error);
+                    }
+                }
+
+                const saveCourse = this.saveCourseMeta();
+                // Update ACF fields:
+                await saveCourse.then(async function (results) {
+                    // Old implementation (direct saving):
+                    // axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
+                    //     fields: {
+                    //         cover_image_url: storage.meta.thumbnail,
+                    //     }
+                    // });
+                    // New implementation (pixabay re-save locally):
+                    await axios.post("/academe/v1/update-lessons-order-params", {
+                        post_id: storage.lesson_id,
+                    });
+                    await axios.post("/academe/v1/save-image", {
+                        post_id: storage.lesson_id,
+                        field: 'cover_image_url',
+                        url: storage.meta.thumbnail,
+                    }).then(res => {
+
+                    });
+
+                    // Save movie_id if created from movie:
+                    if (storage.movie_id || helper.participantMovies()) {
+                        await axios.post("/acf/v3/sfwd-courses/"+storage.lesson_id, {
+                            fields: {
+                                movie_id: storage.movie_id ?? null,
+                                participant_movies: helper.participantMovies() ?? null,
+                            }
+                        });
                     }
                 });
+
+                let slides_ids = storage.slides.map(function(slide) {
+                    return slide.lesson_id;
+                });
+
+                // Does not work for unknown reasons (403)
+                // axios.post('/ldlms/v1/sfwd-courses/'+storage.lesson_id+'/steps', {
+                //     "t": {
+                //         "sfwd-lessons": slides_ids
+                //     }
+                // });
+
+                if(storage.slides.length) {
+                    await Promise.all(storage.slides.map(async (slide, index) => {
+                        await this.saveSlide(slide, index);
+                    })).then(() => {
+                        storage.loading = false; // seems all saved
+                        storage.saving = false;
+                    });
+                    // Old version without promises:
+                    // storage.slides.forEach(async (slide, index) => {
+                    //     await this.saveSlide(slide, index);
+                    // });
+                }
+            } else {
+                if (params.type === 'manual') {
+                    errors.forEach((error_message) => {
+                        setTimeout(function () { // fix notifications overlap
+                            Notification({
+                                type: 'error',
+                                title: 'Save error',
+                                message: error_message
+                            });
+                        }, 10);
+                    });
+                }
             }
-        });
-
-        let slides_ids = storage.slides.map(function(slide) {
-            return slide.lesson_id;
-        });
-
-        // Does not work for unknown reasons (403)
-        // axios.post('/ldlms/v1/sfwd-courses/'+storage.lesson_id+'/steps', {
-        //     "t": {
-        //         "sfwd-lessons": slides_ids
-        //     }
-        // });
-
-        if(storage.slides.length) {
-            storage.slides.forEach((slide, index) => {
-                this.saveSlide(slide, index);
-            });
         }
-
     },
     async saveCourseMeta() {
         let storage = store.state.LessonEditor;
-
+        let status;
+        switch (storage.status) {
+            case "publish":
+            case "private":
+                status = storage.private ? 'private' : 'publish';
+                break;
+            default:
+                status = 'draft';
+                break;
+        }
         try {
             const response = await axios.post("/ldlms/v1/sfwd-courses/"+storage.lesson_id, {
-                course_disable_lesson_progression: true,
                 course_price_type: 'open',
                 course_prerequisite_compare: 'ANY',
-                courses_expire_access: '',
-                courses_expire_access_days: 0,
-
+                course_disable_lesson_progression: true,
+                order_enabled: true,
+                orderby: 'menu_order',
+                order: 'ASC',
+                expire_access_days: 0,
                 title: storage.meta.title,
                 content: storage.meta.description,
 
@@ -100,18 +169,23 @@ export default {
                 topic: storage.meta.topics,
                 ptag: storage.meta.tags,
 
-                status: 'publish',
-
+                status: status,
             });
+            if (storage.status === 'auto-draft') {
+                storage.status = 'draft';
+            } else {
+                storage.status = status;
+            }
+
             return response.data;
         } catch (err) {
             console.error(`Failed to save course`, err);
         }
     },
-    saveSlide(slide, index) {
+    async saveSlide(slide, index) {
         let storage = store.state.LessonEditor;
 
-        axios.post("/ldlms/v1/sfwd-lessons/"+slide.lesson_id, {
+        await axios.post("/ldlms/v1/sfwd-lessons/"+slide.lesson_id, {
             menu_order: index + 1,
         });
 
@@ -121,7 +195,7 @@ export default {
 
         switch (slide.slide_type) {
             case "meta":
-                axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
+                await axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
                     fields: acf_fields
                 }).then( response => {
 
@@ -132,41 +206,83 @@ export default {
 
                 acf_fields.pre_defined_template = slide.template;
 
-                if (slide.template === 'template1') {
-                    acf_fields.template1 = {
-                        template1_text1: {
-                            template1_text1_fill_color: slide.fields.template1_text1_fill_color,
-                            template1_text1_font: slide.fields.template1_text1_font,
-                            template1_text1_font_size: slide.fields.template1_text1_font_size,
-                            template1_text1_font_weight: slide.fields.template1_text1_font_weight,
-                            template1_text1_text: slide.fields.template1_text1_text,
-                            template1_text1_text_align: slide.fields.template1_text1_text_align,
-                            template1_text1_text_color: slide.fields.template1_text1_text_color,
-                        },
-                        template1_text2: {
-                            template1_text2_fill_color: slide.fields.template1_text2_fill_color,
-                            template1_text2_font: slide.fields.template1_text2_font,
-                            template1_text2_font_size: slide.fields.template1_text2_font_size,
-                            template1_text2_font_weight: slide.fields.template1_text2_font_weight,
-                            template1_text2_text: slide.fields.template1_text2_text,
-                            template1_text2_text_align: slide.fields.template1_text2_text_align,
-                            template1_text2_text_color: slide.fields.template1_text2_text_color,
+                acf_fields.template1 = {
+                    template1_text1: {
+                        template1_text1_fill_color: slide.fields.template1_text1_fill_color,
+                        template1_text1_font: slide.fields.template1_text1_font,
+                        template1_text1_font_size: slide.fields.template1_text1_font_size,
+                        template1_text1_font_weight: slide.fields.template1_text1_font_weight,
+                        template1_text1_text: slide.fields.template1_text1_text,
+                        template1_text1_text_align: slide.fields.template1_text1_text_align,
+                        template1_text1_text_color: slide.fields.template1_text1_text_color,
+                    },
+                    template1_text2: {
+                        template1_text2_fill_color: slide.fields.template1_text2_fill_color,
+                        template1_text2_font: slide.fields.template1_text2_font,
+                        template1_text2_font_size: slide.fields.template1_text2_font_size,
+                        template1_text2_font_weight: slide.fields.template1_text2_font_weight,
+                        template1_text2_text: slide.fields.template1_text2_text,
+                        template1_text2_text_align: slide.fields.template1_text2_text_align,
+                        template1_text2_text_color: slide.fields.template1_text2_text_color,
 
-                        },
-                        // template1_media1: {
-                        //     template1_media1_image: slide.fields.template1_media1_image,
-                        // }
-                    };
+                    },
+                    template1_text3: {
+                        template1_text3_fill_color: slide.fields.template1_text3_fill_color,
+                        template1_text3_font: slide.fields.template1_text3_font,
+                        template1_text3_font_size: slide.fields.template1_text3_font_size,
+                        template1_text3_font_weight: slide.fields.template1_text3_font_weight,
+                        template1_text3_text: slide.fields.template1_text3_text,
+                        template1_text3_text_align: slide.fields.template1_text3_text_align,
+                        template1_text3_text_color: slide.fields.template1_text3_text_color,
 
-                    // Save image (ACF with local saving pixabay):
-                    axios.post("/academe/v1/save-image", {
+                    },
+                    template1_text4: {
+                        template1_text4_fill_color: slide.fields.template1_text4_fill_color,
+                        template1_text4_font: slide.fields.template1_text4_font,
+                        template1_text4_font_size: slide.fields.template1_text4_font_size,
+                        template1_text4_font_weight: slide.fields.template1_text4_font_weight,
+                        template1_text4_text: slide.fields.template1_text4_text,
+                        template1_text4_text_align: slide.fields.template1_text4_text_align,
+                        template1_text4_text_color: slide.fields.template1_text4_text_color,
+
+                    },
+                    // template1_media1: {
+                    //     template1_media1_image: slide.fields.template1_media1_image,
+                    // }
+                };
+
+                // Save image (ACF with local saving pixabay):
+                if (slide.fields.template1_media1_image) {
+                    await axios.post("/academe/v1/save-image", {
                         post_id: slide.lesson_id,
                         field: 'template1_template1_media1_template1_media1_image',
                         url: slide.fields.template1_media1_image,
                     });
                 }
+                if (slide.fields.template1_media2_image) {
+                    await axios.post("/academe/v1/save-image", {
+                        post_id: slide.lesson_id,
+                        field: 'template1_template1_media2_template1_media2_image',
+                        url: slide.fields.template1_media2_image,
+                    });
+                }
+                if (slide.fields.template1_media3_image) {
+                    await axios.post("/academe/v1/save-image", {
+                        post_id: slide.lesson_id,
+                        field: 'template1_template1_media3_template1_media3_image',
+                        url: slide.fields.template1_media3_image,
+                    });
+                }
+                if (slide.fields.template1_media4_image) {
+                    await axios.post("/academe/v1/save-image", {
+                        post_id: slide.lesson_id,
+                        field: 'template1_template1_media4_template1_media4_image',
+                        url: slide.fields.template1_media4_image,
+                    });
+                }
 
-                axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
+
+                await axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
                     fields: acf_fields
                 });
 
@@ -178,11 +294,12 @@ export default {
             case "movie":
                 acf_fields.movie_slide = {
                     kaltura_id: slide.fields.kaltura_id,
-                    play_from: slide.fields.play_from,
-                    play_to: slide.fields.play_to,
+                    play_from: helper.timeStringToSeconds(slide.fields.play_from),
+                    play_to: helper.timeStringToSeconds(slide.fields.play_to),
+                    post_type: (slide.fields.post_type !== "") ? slide.fields.post_type : 'movie',
                 };
 
-                axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
+                await axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
                     fields: acf_fields
                 }).then( response => {
                     // If slide has at least one question:
@@ -246,7 +363,7 @@ export default {
                 }
 
                 // Save question data (and answers)
-                axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
+                await axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
                     _quizId: newQuestion.quiz_id,
                     _question: newQuestion.description,
                     _answerData: answer_data,
@@ -255,20 +372,38 @@ export default {
                 });
 
                 // Update ACF fields (show at):
-                axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
+                await axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
                     fields: {
                         show_at: newQuestion.start_time,
                     }
                 });
 
                 // Update ACF fields for lesson (slide type):
-                axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
+                await axios.post("/acf/v3/sfwd-lessons/"+slide.lesson_id, {
                     fields: acf_fields
                 });
 
                 break;
         }
 
-    }
+    },
+
+    validateFields() {
+        let storage = store.state.LessonEditor;
+        let errorsList = [];
+        if (!storage.meta.title) {
+            errorsList.push('Title field must be filled!');
+        }
+        if (!storage.meta.thumbnail) {
+            errorsList.push('Thumbnail must be selected!');
+        }
+        if (!storage.meta.subjects.length) {
+            errorsList.push('Subject must be selected!');
+        }
+        if (!storage.meta.grades.length) {
+            errorsList.push('Grade must be selected!');
+        }
+        return errorsList;
+    },
 
 };

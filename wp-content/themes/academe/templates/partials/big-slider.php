@@ -11,13 +11,35 @@
                         <div class="swiper-slide"
                              style="background: linear-gradient(90deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 60%) no-repeat center / cover;">
                             <div class="slide-info">
-                                <div class="title-wrap">
+
+                            <?php 
+                            $wp_query = new WP_Query([
+                                'post_type' => 'session',
+                                'meta_query' => [
+                                    array(
+                                        'key' => 'related_lesson',
+                                        'value' => $post->ID,
+                                        'compare' => '=',
+                                    )
+                                ]
+                            ]);
+                            if ($post->post_type == 'sfwd-courses') {?>
+                            <div class="title-wrap">
+                                <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>"><div class="title"><?php the_title(); ?></div></a>
+                            </div>
+                            <?php }else{?>    
+
+                            <div class="title-wrap">
                                     <a href="<?php echo get_permalink(); ?>"><div class="title"><?php the_title(); ?></div></a>
-                                </div>
+                            </div>
+                            <?php }?>    
+
                                 <div class="created-by">
                                      <?php 
-                                     if ($post->post_type == 'teaching-guide') { echo 'Teachind Guide '; }
-                                     if ($post->post_type == 'sfwd-lessons') { echo 'Lesson '; }
+                                     if ($post->post_type == 'teaching-guide') { echo 'Teaching Guide '; }
+                                     //if ($post->post_type == 'sfwd-lessons') { echo 'Lesson '; }
+                                     if ($post->post_type == 'movie') { echo 'Movie '; }
+                                     if ($post->post_type == 'sfwd-courses') { echo 'Lesson '; }
                                       _e('Created By:', 'academe-theme'); ?>
                                     <span class="name"><?php the_author(); ?></span>
                                 </div>
@@ -146,7 +168,13 @@
                                             }
                                             echo rtrim($tags_string) . '...'; ?>
                                         </span>
-                                        <a class="tags-more" href="<?php the_permalink(); ?>">more</a>
+                                        <?php if ($post->post_type == 'sfwd-courses') { ?>
+                                            <a class="tags-more" href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>">
+                                                <?php _e('more', 'academe-theme'); ?>
+                                            </a>
+                                        <?php } else { ?>
+                                            <a class="tags-more" href="<?php the_permalink(); ?>"><?php _e('more', 'academe-theme'); ?></a>
+                                        <?php } ?>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -154,9 +182,13 @@
                                 <img class="slide-image" src="<?php echo get_movie_thumbnail($custom_fields['kaltura_id']); ?>" />
                             <?php } ?>
                             <?php if (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses', 'teaching-guide'])) { ?>
+                                <?php if(get_the_post_thumbnail_url()){?>
                                 <img class="slide-image" src="<?php echo get_the_post_thumbnail_url(); ?>" />
+                                <?php }else{?>
+                                <img class="slide-image" src="<?php echo $custom_fields['cover_image_url']; ?>" />
+                                <?php } ?>
                             <?php } ?>
-                            <div class="slide-label">
+                            <div class="slide-label <?php echo $post->post_type; ?>">
                                 <?php icon($post->post_type); ?>
                                 <?php $post_type = get_post_type_object($post->post_type); ?>
                                 <span class="title"><?php echo str_ireplace('course', 'lesson', $post_type->labels->singular_name); ?></span>
@@ -164,6 +196,7 @@
                         </div>
                     <?php }
                 }
+                wp_reset_query();
                 wp_reset_postdata(); ?>
             </div>
             <!-- Add Pagination -->

@@ -100,7 +100,7 @@
             </div>
             <div class="menu">
                 <div class="menu-body">
-                    <div class="item">Nothing here yet</div>
+                    <div class="item"><?php _e( 'Nothing here yet', 'academe-theme' );?></div>
                 </div>
             </div>
         </div>

@@ -59,17 +59,21 @@ export default {
           disableAlerts: "false",
           externalInterfaceDisabled: "false",
           //"autoPlay": "true",
-          //"autoMute": false,
+          "autoMute": !this.showControls,
           streamerType: "auto",
           localizationCode: "en_GB",
           leadWithHTML5: "true",
           streamSelector: { plugin: "true" },
+          //"EmbedPlayer.EnableFullscreen": true,
           // continue watching:
           "mediaProxy.mediaPlayFrom": this.movieData.play_from || 0,
           "mediaProxy.mediaPlayTo": this.movieData.play_to || 0,
           "Kaltura.UseAppleAdaptive": true,
+          // player controls:
           'controlBarContainer.plugin': this.showControls,
           'disableOnScreenClick': !this.showControls,
+          'playPauseBtn.plugin': this.showControls,
+          'largePlayBtn.plugin': this.showControls,
         },
         readyCallback: (playerId) => {
           this.loaded = true;
@@ -86,6 +90,9 @@ export default {
           this.kdp.kBind("playerPlayed", function () {
             _this.$emit('played', _this.playerCurrentTime());
           });
+          this.kdp.kBind("firstPlay", function () {
+            _this.$emit('first_play');
+          });
           this.kdp.kBind("userInitiatedSeek", function (event) {
             _this.$emit('seeked', Math.floor(JSON.stringify(event)));
           });
@@ -96,8 +103,14 @@ export default {
     playerCurrentTime() {
       return Math.floor(this.kdp.evaluate("{video.player.currentTime}"));
     },
+    playerUnmute() {
+      this.kdp.sendNotification("changeVolume", 0.6);
+    },
+    playerMute() {
+      this.kdp.sendNotification("changeVolume", 0);
+    },
     playerPlay() {
-      this.kdp.sendNotification('doPlay')
+      this.kdp.sendNotification('doPlay');
     },
     playerPause() {
       this.kdp.sendNotification('doPause')
@@ -108,10 +121,13 @@ export default {
     playerCloseFullscreen() {
       this.kdp.sendNotification('closeFullScreen')
     },
-    nextSegment(playTo) {
-      this.kdp.setKDPAttribute('mediaProxy', 'mediaPlayFrom', this.playerCurrentTime());
+    playerDoSeek(seeked_time) {
+      this.kdp.sendNotification('doSeek', seeked_time );
+    },
+    nextSegment(playTo, playFrom = this.playerCurrentTime()) {
+      this.kdp.setKDPAttribute('mediaProxy', 'mediaPlayFrom', playFrom);
       this.kdp.setKDPAttribute('mediaProxy', 'mediaPlayTo', playTo);
-      this.kdp.sendNotification("doSeek", this.playerCurrentTime() - 1);
+      this.kdp.sendNotification("doSeek", playFrom - 1);
       return false;
     }
 

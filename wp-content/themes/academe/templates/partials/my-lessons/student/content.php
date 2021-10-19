@@ -111,7 +111,7 @@ if (!isset($_GET['status']) || isset($_GET['status']) && $_GET['status'] == 'exp
     </div>
     <div class="container">
         <?php if ($loaded_expired) { ?>
-            <span class="primary-btn load-more-sessions" data-offset="<?php echo $loaded_expired; ?>">Load more</span>
+            <span class="primary-btn load-more-sessions" data-offset="<?php echo $loaded_expired; ?>"><?php _e('Load more', 'academe-theme'); ?></span>
         <?php } ?>
     </div>
 <?php } ?>

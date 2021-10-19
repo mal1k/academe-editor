@@ -1,15 +1,16 @@
 <template>
     <div>
-     
-      <div class="row-view">
-       <label>Start at</label>
-       <!--<input type="text" v-model="store.active_question.start_time" class="el-input--time el-input">-->
-       <input type="text" 
-              :value="start_time"
-              @input="changePlayTime($event.target.value)"
-              class="el-input--time el-input">
-          <p v-if="this.store.active_question.start_time_error" class="error-msg">Please select a time to display the question!</p>
-       
+       <div class="row-view">
+           <label>Start at</label>
+           <!--<input type="text" v-model="store.active_question.start_time" class="el-input--time el-input">-->
+           <the-mask type="tel"
+                  mask="##:##:##"
+                  :masked="true"
+                  v-model="store.active_question.start_time"
+                  placeholder="XX:XX:XX"
+                  class="el-input--time el-input" />
+              <p v-if="store.active_question.start_time_error" class="error-msg">Please select a time to display the question!</p>
+
        </div>
        <div class="row-view">
         <label>Question Type</label>
@@ -52,12 +53,12 @@
           <li class="answer"
               v-for="(answer, index) in store.active_question.answers"
               :key="index">
-            <input  type="text" 
-                    class="answer-text" 
+            <input  type="text"
+                    class="answer-text"
                     placeholder=" Answer..."
                     v-model="answer.text">
-            <input  type="radio" 
-                    class="answer-check" 
+            <input  type="radio"
+                    class="answer-check"
                     name="answer"
                     :value="index"
                     v-model="store.active_question.correctAnswerIndex">
@@ -235,10 +236,15 @@
 </template>
 
 <script>
+    import {mask, TheMask} from 'vue-the-mask';
     import axios from "axios";
+    import saveLessonService from "../../../save-lesson-service";
+    import helper from "../../../helper";
 
     export default {
         name: "Question",
+        directives: {mask},
+        components: {TheMask},
         props: {
             field: Object,
         },
@@ -269,117 +275,115 @@
             store() {
                 return this.$store.state.LessonEditor;
             },
-            start_time() {
-              const seconds = this.store.active_question.start_time || 0;
-              return this.secondsToTimeString(seconds);
+            activeSlideIndex() {
+                return this.store.slides
+                    .map((x) => x.lesson_id)
+                    .indexOf(this.store.active_slide_id);
             },
         },
         methods: {
-         toggleAdvanced(){
-          this.showAdvanced = !this.showAdvanced
-         },
+            autoSave() {
+                saveLessonService.initSave({
+                    'type': 'auto'
+                });
+            },
+            toggleAdvanced(){
+                this.showAdvanced = !this.showAdvanced
+            },
+            saveQuestion(action){ // action: create/update
+                let movie_start_time = helper.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_from);
+                let movie_end_time = helper.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_to) === 0
+                 ? parseInt(this.store.active_slide_movie_meta.duration)
+                 : helper.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_to);
 
-        changePlayTime(val) {
-          const match = val.match(/\d\d:\d\d:\d\d/);
-          if (!match) return;
-                console.log(val);
-              console.log(this.timeStringToSeconds(val));
-          this.store.active_question.start_time = this.timeStringToSeconds(val)
-        },
-        timeStringToSeconds(timeString) {
-          const [hh, mm, ss] = timeString.split(":");
-          const seconds = +hh * 60 * 60 + +mm * 60 + +ss;
-          return seconds;
-        },
-      secondsToTimeString(input) {
-          const sec_num = parseInt(input, 10);
-          let hours = Math.floor(sec_num / 3600);
-          let minutes = Math.floor((sec_num - hours * 3600) / 60);
-          let seconds = sec_num - hours * 3600 - minutes * 60;
+                if ( helper.timeStringToSeconds(this.store.active_question.start_time) >= movie_start_time
+                 && helper.timeStringToSeconds(this.store.active_question.start_time) <= movie_end_time ) {
 
-          if (hours < 10) {
-            hours = "0" + hours;
-          }
-          if (minutes < 10) {
-            minutes = "0" + minutes;
-          }
-          if (seconds < 10) {
-            seconds = "0" + seconds;
-          }
-          return hours + ":" + minutes + ":" + seconds;
-        },
+                    if (helper.timeStringToSeconds(this.store.active_question.start_time) === 0) {
+                        this.store.active_question.start_time_error = true;
+                    } else {
+                        this.store.active_question.start_time_error = false;
 
+                        let newQuestion = this.store.active_question;
 
-         saveQuestion(action){ // action: create/update
+                        // Prepare question data to save:
+                        var answer_data = [];
+                        var answer_type = "";
+                        switch (newQuestion.type) {
+                         case "Single Choice":
+                             answer_type = 'single';
+                             newQuestion.answers.forEach((answer, index) => {
+                                 let answer_params = {
+                                     _answer: answer.text,
+                                     _correct: index === newQuestion.correctAnswerIndex,
+                                     _graded: "1",
+                                     _gradedType: "text",
+                                     _gradingProgression: "not-graded-none",
+                                     _html: false,
+                                     _points: (index === newQuestion.correctAnswerIndex) ? parseInt(newQuestion.score) : 0,
+                                     _sortString: "",
+                                     _sortStringHtml: false,
+                                     _type: "answer",
+                                 };
+                                 answer_data.push(answer_params);
+                             });
+                             break;
+                         case "Open":
+                             answer_type = 'essay';
+                             let answer_params = {
+                                 _answer: "",
+                                 _correct: false,
+                                 _graded: "1",
+                                 _gradedType: "text",
+                                 _gradingProgression: "not-graded-none",
+                                 _html: false,
+                                 _points: parseInt(newQuestion.score),
+                                 _sortString: "",
+                                 _sortStringHtml: false,
+                                 _type: "answer",
+                             };
+                             answer_data.push(answer_params);
+                             break;
+                        }
 
-            if (this.store.active_question.start_time === 0 || this.store.active_question.start_time === "00:00:00") {
-                this.store.active_question.start_time_error = true;
-            } else {
-                this.store.active_question.start_time_error = false;
-
-                let newQuestion = this.store.active_question;
-
-                // Prepare question data to save:
-                var answer_data = [];
-                var answer_type = "";
-                switch (newQuestion.type) {
-                    case "Single Choice":
-                        answer_type = 'single';
-                        newQuestion.answers.forEach((answer, index) => {
-                            let answer_params = {
-                                _answer: answer.text,
-                                _correct: index === newQuestion.correctAnswerIndex,
-                                _graded: "1",
-                                _gradedType: "text",
-                                _gradingProgression: "not-graded-none",
-                                _html: false,
-                                _points: (index === newQuestion.correctAnswerIndex) ? parseInt(newQuestion.score) : 0,
-                                _sortString: "",
-                                _sortStringHtml: false,
-                                _type: "answer",
-                            };
-                            answer_data.push(answer_params);
+                        // Save question data (and answers)
+                        axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
+                         _quizId: newQuestion.quiz_id,
+                         _question: newQuestion.description,
+                         _answerData: answer_data,
+                         _answerType: answer_type,
+                         _points: parseInt(newQuestion.score),
                         });
-                        break;
-                    case "Open":
-                        answer_type = 'essay';
-                        let answer_params = {
-                            _answer: "",
-                            _correct: false,
-                            _graded: "1",
-                            _gradedType: "text",
-                            _gradingProgression: "not-graded-none",
-                            _html: false,
-                            _points: parseInt(newQuestion.score),
-                            _sortString: "",
-                            _sortStringHtml: false,
-                            _type: "answer",
-                        };
-                        answer_data.push(answer_params);
-                        break;
-                }
-
-                // Save question data (and answers)
-                axios.post("/ldlms/v1/sfwd-questions/"+newQuestion.question_id, {
-                    _quizId: newQuestion.quiz_id,
-                    _question: newQuestion.description,
-                    _answerData: answer_data,
-                    _answerType: answer_type,
-                    _points: parseInt(newQuestion.score),
-                });
-
-                // Update ACF fields (show at):
-                axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
-                    fields: {
-                        show_at: newQuestion.start_time,
+                        console.log(newQuestion.start_time);
+                        console.log(helper.timeStringToSeconds(newQuestion.start_time));
+                        // Update ACF fields (show at):
+                        axios.post("/acf/v3/sfwd-quiz/"+newQuestion.quiz_id, {
+                         fields: {
+                             show_at: helper.timeStringToSeconds(newQuestion.start_time),
+                         }
+                        }).then(() => {
+                         this.autoSave();
+                         this.$notify.success({
+                            title: 'Success',
+                            message: 'Question saved'
+                         });
+                        });
+                        if(action === 'create') {
+                         this.store.questions.push(newQuestion);
+                        }
+                        this.store.active_question = null;
                     }
-                });
-                if(action === 'create') {
-                    this.store.questions.push(newQuestion);
+
+                } else {
+                    this.$notify.error({
+                        title: 'Save question error',
+                        message: 'Please choose the time between the start and the end of the clip',
+                        duration: 2000,
+                    });
+                    return;
                 }
-                this.store.active_question = null;
-            }
-         },
+
+            },
          changeAnswers() {
            this.store.active_question.answers = [];
            this.store.active_question.checkedItems = [];
