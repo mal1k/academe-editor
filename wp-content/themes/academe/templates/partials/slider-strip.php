@@ -46,8 +46,20 @@
             <?php } ?>
             <?php if ($args['posts']) {
                 foreach ($args['posts'] as $post) {
-                    setup_postdata($post);
-                    get_template_part('templates/partials/movie-block', 'null');
+                    $user = get_userdata( $post->post_author );
+                    if ( in_array( 'jif', $user->roles ) ) {
+                        $post = get_post($post);
+                        setup_postdata($post);
+                        get_template_part('templates/partials/movie-block', 'null', ['jif'=>true]);
+                    }
+                }
+                foreach ($args['posts'] as $post) {
+                    $user = get_userdata( $post->post_author );
+                    if ( !in_array( 'jif', $user->roles ) ) {
+                        $post = get_post($post);
+                        setup_postdata($post);
+                        get_template_part('templates/partials/movie-block', 'null', ['jif'=>false]);
+                    }
                 }
                 wp_reset_postdata();
             } else { ?>
