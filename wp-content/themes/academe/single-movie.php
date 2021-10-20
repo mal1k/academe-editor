@@ -1,5 +1,19 @@
 <?php get_header(); ?>
 <?php $custom_fields = get_fields($post->ID);?>
+<?php 
+$kaltura_id = get_field('kaltura_id', $post->ID);
+
+$cc_args = array(
+    'posts_per_page'   => -1,
+    'post_type'        => 'teaching-guide',
+    'meta_key'         => 'main_movie',
+    'meta_value'       => $kaltura_id,
+    'orderby'   => 'ID',
+    'order' => 'DESC',
+);
+$teaching_guides = get_posts( $cc_args );
+$guideLink = get_permalink($teaching_guides[0]->ID);
+?>
 <main class="main single-movie-page" data-movie-id="<?php echo $post->ID; ?>">
     <section id="movieInfo">
         <div class="movie-poster">
@@ -107,6 +121,15 @@
             <?php if(count($tags) > 4) { ?>
                 <span class="tags-more clickable"><?php _e('more', 'academe-theme'); ?></span>
             <?php } ?>
+
+          <?php if ( !empty($teaching_guides) ) : ?>
+            <div style="position: absolute; text-align: center; max-width: 120px; right: 40px; margin-top: -50px;">
+                <a href="<?php echo $guideLink; ?>" class="create-lesson-btn" style="background-color: orange; border: 0;">
+                    Teaching Guide 
+                </a>
+            </div>
+            <?php endif; ?>
+
             </div>
         </div>
     </section>
@@ -118,7 +141,10 @@
     <?php $post_terms = get_the_terms( $post->ID, 'genre' );
     $post_term = $post_terms ? $post_terms[0]->term_id : NULL;
     $post_term_name = $post_terms ? $post_terms[0]->name : '';
-    $posts = get_filtered_posts('movie', 'genre', $post_term); ?>
+
+    $posts = get_filtered_posts('movie', 'genre', $post_term); 
+
+    ?>
     <?php get_template_part( 'templates/partials/slider-strip', 'null', [
         'title' => "More $post_term_name movies",
         'filter' => [
