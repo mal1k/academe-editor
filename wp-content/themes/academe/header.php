@@ -26,10 +26,40 @@ $unread = learndash_notifications_unread_count_by_user();
                     </div>
                 </span>
             <?php } ?>
+            <span class="menu-item dropdown ui dark w-200">
+                <?php _e('Grade', 'academe-theme'); ?>
+                <?php icon('chevron-bold', 'icon-gray-stroke with-rotate'); ?>
+                <div class="menu">
+                    <div class="menu-body">
+                        <a href="/elementary" class="item <?php link_is_active('elementary'); ?>">
+                            <?php _e('Elementary', 'academe-theme'); ?>
+                        </a>
+                        <a href="/middle-school" class="item <?php link_is_active('middle-school'); ?>">
+                            <?php _e('Middle School', 'academe-theme'); ?>
+                        </a>
+                        <a href="/high-school" class="item <?php link_is_active('high-school'); ?>">
+                            <?php _e('High School', 'academe-theme'); ?>
+                        </a>
+                    </div>
+                </div>
+            </span>
             <?php /*if(is_user_logged_in() && !is_user_in_role('student')) { ?>
                 <a href="/topics" class="menu-item link <?php link_is_active('topics'); ?>"><?php _e('Topics', 'academe-theme'); ?></a>
             <?php }*/ ?>
-            <a href="/movies" class="menu-item link <?php link_is_active('movies'); ?>"><?php _e('Movies', 'academe-theme'); ?></a>
+            <span class="menu-item dropdown ui dark w-200">
+                <?php _e('Movies', 'academe-theme'); ?>
+                <?php icon('chevron-bold', 'icon-gray-stroke with-rotate'); ?>
+                <div class="menu">
+                    <div class="menu-body">
+                        <a href="/movies" class="item <?php link_is_active('movies'); ?>">
+                            <?php _e('Movies', 'academe-theme'); ?>
+                        </a>
+                        <a href="/clips" class="item <?php link_is_active('clips'); ?>">
+                            <?php _e('Clips', 'academe-theme'); ?>
+                        </a>
+                    </div>
+                </div>
+            </span>
             <?php if(is_user_logged_in() && !is_user_in_role('student')) { ?>
                 <a href="/guides" class="menu-item link <?php link_is_active('guides'); ?>"><?php _e('Teaching Guides', 'academe-theme'); ?></a>
                 <a href="/courses" class="menu-item link <?php link_is_active('courses'); ?>"><?php _e('Lessons', 'academe-theme'); ?></a>
