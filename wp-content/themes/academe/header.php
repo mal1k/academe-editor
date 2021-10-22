@@ -31,13 +31,13 @@ $unread = learndash_notifications_unread_count_by_user();
                 <?php icon('chevron-bold', 'icon-gray-stroke with-rotate'); ?>
                 <div class="menu">
                     <div class="menu-body">
-                        <a href="/elementary" class="item <?php link_is_active('elementary'); ?>">
+                        <a href="/grade/elementary" class="item <?php link_is_active('elementary'); ?>">
                             <?php _e('Elementary', 'academe-theme'); ?>
                         </a>
-                        <a href="/middle-school" class="item <?php link_is_active('middle-school'); ?>">
+                        <a href="/grade/middle-school" class="item <?php link_is_active('middle-school'); ?>">
                             <?php _e('Middle School', 'academe-theme'); ?>
                         </a>
-                        <a href="/high-school" class="item <?php link_is_active('high-school'); ?>">
+                        <a href="/grade/high-school" class="item <?php link_is_active('high-school'); ?>">
                             <?php _e('High School', 'academe-theme'); ?>
                         </a>
                     </div>
