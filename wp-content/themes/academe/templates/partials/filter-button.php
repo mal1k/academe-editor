@@ -95,6 +95,26 @@
                     </div>
                 </div>
             <?php } ?>
+            <?php if (in_array('age', $args['filters'])) { ?>
+                <div class="filter-row-block">
+                    <div>Age</div>
+                    <div class="dropdown ui search movies-filter dark" data-post-type="movie" data-taxonomy="age">
+                        <input name="age" type="hidden" value="<?php echo (isset($_GET['age'])) ? $_GET['age'] : ''; ?>" >
+                        <span class="default text"><?php _e( 'All', 'academe-theme' );?></span>
+                        <?php icon('chevron-bold', 'with-rotate'); ?>
+                        <div class="menu">
+                            <div class="menu-body">
+                                <?php $terms = get_terms( 'age', [
+                                    'hide_empty' => true,
+                                ] );
+                                foreach ($terms as $term) { ?>
+                                    <div class="item" data-value="<?php echo $term->slug; ?>"><?php echo $term->name; ?></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
             <?php if (in_array('genre', $args['filters'])) { ?>
                 <div class="filter-row-block">
                     <div><?php _e( 'Genre', 'academe-theme' );?></div>
