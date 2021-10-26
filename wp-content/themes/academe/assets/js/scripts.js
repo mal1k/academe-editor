@@ -84,6 +84,7 @@ jQuery(document).ready(function($) {
                 if ($(this).hasClass('strip-filter')) {
                     let postType = $(this).data('post-type');
                     let taxonomy = $(this).data('taxonomy');
+                    let movie_id = $('#title_id').attr("movie_id");
                     let action = $(this).data('action');
                     let _this = $(this);
                     $.ajax({
@@ -95,6 +96,7 @@ jQuery(document).ready(function($) {
                             'post_type': postType,
                             'taxonomy': taxonomy,
                             'term': selectedTerm,
+                            'movie_id': movie_id,
                             'section_title': _this.closest('.strip-top').children('.strip-heading').text()
                         },
                         success: function (response) {

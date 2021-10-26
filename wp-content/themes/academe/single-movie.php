@@ -107,6 +107,11 @@ $guideLink = get_permalink($teaching_guides[0]->ID);
             <?php if($content[1]) { ?>
                 <div class="readmore"><?php _e('Read more...', 'academe-theme'); ?></div>
             <?php } ?>
+
+            <a href="#"><h1 style="margin: 20px 0 15px 0;">
+                Watch trailer
+            </h1></a>
+
             <div class="tags">
             <span class="tags-list">
                 <?php $tags = wp_get_post_tags($post->ID);
@@ -136,7 +141,11 @@ $guideLink = get_permalink($teaching_guides[0]->ID);
 
     <?php get_template_part( 'templates/partials/modals/create-session', 'null', ['id' => $cs_modal_id]); ?>
 
+    <?php my_movie_courses_list($post->ID, 'grade'); ?> 
     
+    <?php this_courses_list($post->ID); ?>
+
+    <?php this_clips_list($post->ID); ?>
 
     <?php $post_terms = get_the_terms( $post->ID, 'genre' );
     $post_term = $post_terms ? $post_terms[0]->term_id : NULL;

@@ -152,7 +152,7 @@ function top_lessons_list($filter = true, $title = 'Top lessons') {
 /* Top lessons list end */
 
 /* My courses list start */
-function my_courses_list() {
+function my_courses_list($filter = 'subject') {
     $lessons = new WP_Query(['post_type' => 'sfwd-courses','post_status' => ['publish', 'private'], 'author__in' => [get_current_user_id()],'posts_per_page' => 20]);
     if($lessons->posts) {
         get_template_part('templates/partials/slider-strip', 'null', [
@@ -160,7 +160,7 @@ function my_courses_list() {
             'filter' => [
                 'active' => true,
                 'post_type' => 'sfwd-courses',
-                'taxonomy' => 'subject',
+                'taxonomy' => $filter,
                 'term' => NULL,
                 'action' => 'async_filter_my_courses',
             ],
@@ -170,6 +170,42 @@ function my_courses_list() {
     }
 }
 /* My courses list end */
+
+/* My courses list start */
+function my_movie_courses_list($movie_id = 0, $filter = 'grade') {
+    $lessons = new WP_Query([
+        'post_type' => 'sfwd-courses',
+        'post_status' => 'publish',
+        'author' => get_current_user_id(),
+        'posts_per_page' => 20,
+        'meta_query' => array(
+            array(
+                'key' => 'movie_id',
+                'value' => $movie_id,
+                'compare' => '=',
+            )
+        )
+    ]);
+
+    if($lessons->posts) {
+        get_template_part('templates/partials/slider-strip', 'null', [
+            'title' => __('My lessons', 'academe-theme'),
+            'filter' => [
+                'active' => true,
+                'post_status' => 'publish',
+                'post_type' => 'sfwd-courses',
+                'taxonomy' => $filter,
+                'term' => NULL,
+                'movie_id' => 26699,
+                'action' => 'async_filter_my_movie_courses',
+            ],
+            'new_lesson_button' => true,
+            'posts' => $lessons->posts
+        ]);
+    }
+}
+/* My courses list end */
+
 
 /* Teacher's courses list start */
 function teachers_courses_list($teacher_id) {
@@ -209,6 +245,74 @@ function top_courses_list($filter = true, $title = 'Top lessons') {
     }
 }
 /* Top lessons list end */
+
+/* All lessons list start */
+function this_courses_list($movie_id = 0, $filter = 'grade', $title = 'Lessons') {
+    $courses = new WP_Query([
+        'post_type' => 'sfwd-courses',
+        'post_status' => 'publish',
+        'posts_per_page' => 20,
+        'meta_query' => array(
+            array(
+                'key' => 'movie_id',
+                'value' => $movie_id,
+                'compare' => '=',
+            )
+        )
+    ]);
+    $courses_posts = $courses->posts;
+    if($courses_posts) { ?>
+        <?php
+            get_template_part('templates/partials/slider-strip', 'null', [
+                'title' => $title,
+                'filter' => [
+                    'active' => true,
+                    'post_type' => 'sfwd-courses',
+                    'taxonomy' => $filter,
+                    'term' => NULL,
+                    'action' => 'async_filter_courses',
+                ],
+                'show_all_link' => '/courses',
+                'posts' => $courses_posts
+            ]); 
+        ?>
+    <?php }
+}
+/* All lessons list end */
+
+/* All Clips list start */
+function this_clips_list($movie_id = 0, $filter = 'topic', $title = 'Clips') {
+    $clip = new WP_Query([
+        'post_type' => 'clip',
+        'post_status' => 'publish',
+        'posts_per_page' => 20,
+        'meta_query' => array(
+            array(
+                'key' => 'movie_id',
+                'value' => $movie_id,
+                'compare' => '=',
+            )
+        )
+    ]);
+    $clip_posts = $clip->posts;
+    if($clip_posts) { ?>
+        <?php
+            get_template_part('templates/partials/slider-strip', 'null', [
+                'title' => $title,
+                'filter' => [
+                    'active' => true,
+                    'post_type' => 'clip',
+                    'taxonomy' => $filter,
+                    'term' => NULL,
+                    'action' => 'async_filter_clips',
+                ],
+                'show_all_link' => '/clips',
+                'posts' => $clip_posts
+            ]); 
+        ?>
+    <?php }
+}
+/* All Clips list end */
 
 /* Recommended movies list start */
 function recommended_movies_list($filter = true, $title = 'Recommended movies') {

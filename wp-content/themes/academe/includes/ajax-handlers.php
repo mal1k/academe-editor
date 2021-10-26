@@ -82,6 +82,123 @@ function async_filter_my_courses() {
     wp_die();
 }
 
+add_action("wp_ajax_async_filter_my_movie_courses" , "async_filter_my_movie_courses");
+add_action('wp_ajax_nopriv_async_filter_my_movie_courses', 'async_filter_my_movie_courses');
+function async_filter_my_movie_courses() {
+    $args = [
+        'post_type' => 'sfwd-courses',
+        'post_status' => 'publish',
+        'author' => get_current_user_id(),
+        'posts_per_page' => 20,
+        'meta_query' => array(
+            array(
+                'key' => 'movie_id',
+                'value' => $_POST['movie_id'],
+                'compare' => '=',
+            )
+        )
+    ];
+    
+    if ($_POST['taxonomy'] && $_POST['term']) {
+        $args['tax_query'] = [[
+            'taxonomy' => $_POST['taxonomy'],
+            'field' => 'term_id',
+            'terms'    => $_POST['term'],
+        ]];
+    }
+    
+    $courses = new WP_Query($args);
+    $courses_posts = $courses->posts;
+    get_template_part( 'templates/partials/slider-strip', 'null', [
+        'title' => $_POST['section_title'],
+        'filter' => [
+            'active' => true,
+            'post_type' => $_POST['post_type'],
+            'taxonomy' => $_POST['taxonomy'],
+            'term' => $_POST['term'],
+            'action' => $_POST['action'],
+        ],
+        'posts' => $courses_posts
+    ]);
+    wp_die();
+}
+
+add_action("wp_ajax_async_filter_courses" , "async_filter_courses");
+add_action('wp_ajax_nopriv_async_filter_courses', 'async_filter_courses');
+function async_filter_courses() {
+    $args = [
+        'post_type' => 'sfwd-courses',
+        'post_status' => 'publish',
+        'posts_per_page' => 15,
+        'meta_query' => array(
+            array(
+                'key' => 'movie_id',
+                'value' => $_POST['movie_id'],
+                'compare' => '=',
+            )
+        )
+    ];
+    if ($_POST['taxonomy'] && $_POST['term']) {
+        $args['tax_query'] = [[
+            'taxonomy' => $_POST['taxonomy'],
+            'field'    => 'id',
+            'terms'    => $_POST['term'],
+            'operator' => 'IN',
+        ]];
+    }
+    $courses = new WP_Query($args);
+    get_template_part( 'templates/partials/slider-strip', 'null', [
+        'title' => $_POST['section_title'],
+        'filter' => [
+            'active' => true,
+            'post_type' => $_POST['post_type'],
+            'taxonomy' => $_POST['taxonomy'],
+            'term' => $_POST['term'],
+            'action' => $_POST['action'],
+        ],
+        'posts' => $courses->posts
+    ]);
+    wp_die();
+}
+
+add_action("wp_ajax_async_filter_clips" , "async_filter_clips");
+add_action('wp_ajax_nopriv_async_filter_clips', 'async_filter_clips');
+function async_filter_clips() {
+    $args = [
+        'post_type' => 'clip',
+        'post_status' => 'publish',
+        'posts_per_page' => 15,
+        'meta_query' => array(
+            array(
+                'key' => 'movie_id',
+                'value' => $_POST['movie_id'],
+                'compare' => '=',
+            )
+        )
+    ];
+    if ($_POST['taxonomy'] && $_POST['term']) {
+        $args['tax_query'] = [[
+            'taxonomy' => $_POST['taxonomy'],
+            'field'    => 'id',
+            'terms'    => $_POST['term'],
+            'operator' => 'IN',
+        ]];
+    }
+    $courses = new WP_Query($args);
+    get_template_part( 'templates/partials/slider-strip', 'null', [
+        'title' => $_POST['section_title'],
+        'filter' => [
+            'active' => true,
+            'post_type' => $_POST['post_type'],
+            'taxonomy' => $_POST['taxonomy'],
+            'term' => $_POST['term'],
+            'action' => $_POST['action'],
+        ],
+        'posts' => $courses->posts
+    ]);
+    wp_die();
+}
+
 add_action("wp_ajax_async_filter_recommended_movies" , "async_filter_recommended_movies");
 add_action('wp_ajax_nopriv_async_filter_recommended_movies', 'async_filter_recommended_movies');
 function async_filter_recommended_movies() {
