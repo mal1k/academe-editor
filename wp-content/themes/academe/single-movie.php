@@ -14,6 +14,13 @@ $cc_args = array(
 $teaching_guides = get_posts( $cc_args );
 $guideLink = get_permalink($teaching_guides[0]->ID);
 ?>
+
+<style>
+    .icon-three-dots > div {
+        background: #f98c40;
+    }
+</style>
+
 <main class="main single-movie-page" data-movie-id="<?php echo $post->ID; ?>">
     <section id="movieInfo">
         <div class="movie-poster">

@@ -14,6 +14,13 @@ $cc_args = array(
 $teaching_guides = get_posts( $cc_args );
 $guideLink = get_permalink($teaching_guides[0]->ID);
 $movie_fields = get_fields($custom_fields['movie_id']->ID); ?>
+
+<style>
+    .icon-three-dots > div {
+        background: #f98c40;
+    }
+</style>
+
 <main class="main single-movie-page" data-movie-id="<?php echo $custom_fields['movie_id']->ID; ?>">
     <section id="movieInfo">
         <div class="movie-poster">
@@ -123,7 +130,7 @@ $movie_fields = get_fields($custom_fields['movie_id']->ID); ?>
             <a href="#"><h1 style="margin: 20px 0 15px 0;">
                 Watch trailer
             </h1></a>
-            
+
             <div class="tags">
             <span class="tags-list">
                 <?php $tags = wp_get_post_tags($custom_fields['movie_id']->ID);
