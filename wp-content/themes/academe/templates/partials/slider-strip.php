@@ -1,3 +1,11 @@
+<style>
+    .created_by {
+        display: none; 
+    }
+    .swiper-slide:hover .created_by{
+        display: block;
+    }
+</style>
 <?php
     $filter = false;
     if(isset($args['filter']) && $args['filter']['active']) {
