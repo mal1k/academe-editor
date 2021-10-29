@@ -69,31 +69,32 @@
                 <?php } ?>
             </div>
 
-            <div class="info-subtitle"><?php _e('About', 'academe-theme'); ?></div>
+            <div class="info-subtitle"><?php _e('Lesson Objectives', 'academe-theme'); ?></div>
             <div class="overview"><?php echo $post->post_content; ?></div>
 
             <?php if ($custom_fields['teacher_guide_type'] == 'movie') { ?>
+                <?php $tg_topics = get_the_terms($post->ID, 'topic');
+                if ($tg_topics) { ?>
                 <div class="text-blue">
                     <svg width="18" height="15" viewBox="0 0 18 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2.125 0.5C1.09684 0.5 0.25 1.34684 0.25 2.375V12.375C0.25 13.4032 1.09684 14.25 2.125 14.25H15.875C16.9032 14.25 17.75 13.4032 17.75 12.375V2.375C17.75 1.34684 16.9032 0.5 15.875 0.5H2.125ZM2.125 1.75H15.875C16.2268 1.75 16.5 2.02316 16.5 2.375V12.375C16.5 12.7268 16.2268 13 15.875 13H2.125C1.77316 13 1.5 12.7268 1.5 12.375V2.375C1.5 2.02316 1.77316 1.75 2.125 1.75ZM2.75 3V4.25H4V3H2.75ZM14 3V4.25H15.25V3H14ZM2.75 5.5V6.75H4V5.5H2.75ZM14 5.5V6.75H15.25V5.5H14ZM2.75 8V9.25H4V8H2.75ZM14 8V9.25H15.25V8H14ZM2.75 10.5V11.75H4V10.5H2.75ZM14 10.5V11.75H15.25V10.5H14Z" fill="white"/>
                     </svg>
-                    <?php $tg_topics = get_the_terms($post->ID, 'topic');
-                    if ($tg_topics) {
-                        $tg_topics_output = [];
+                    <?php $tg_topics_output = [];
                         foreach ($tg_topics as $topic) {
                             $tg_topics_output[] = $topic->name;
                         }
-                        echo implode(', ', $tg_topics_output);
-                    } ?>
+                        echo implode(', ', $tg_topics_output); ?>
                 </div>
+                <?php } ?>
             <?php } ?>
 
+            <?php $tags = wp_get_post_tags($post->ID); ?>
+            <?php if ($tags) { ?>
             <div class="tags">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10.4 8.78H13.1V10.6H10.18L9.76 14H7.94L8.36 10.6H4.98L4.56 14H2.74L3.16 10.6H0.46V8.78H3.38L3.84 5.22H1.14V3.4H4.06L4.48 -9.53674e-07H6.3L5.88 3.4H9.24L9.66 -9.53674e-07H11.48L11.06 3.4H13.74L13.76 5.22H10.84L10.4 8.78ZM8.58 8.78L9.02 5.22H5.66L5.2 8.78H8.58Z" fill="white"/>
                 </svg> 
-                <?php $tags = wp_get_post_tags($post->ID); ?>
-                <?php if ($tags) { ?>
+                
                     <span class="tags-list" style="font-size: 16px; font-weight: 400;">
                         <?php $tags_counter = 3;
                         $tags_string = '';
@@ -107,8 +108,8 @@
                         }
                         echo rtrim($tags_string); ?>
                     </span>
-                <?php } ?>
             </div>
+            <?php } ?>
 
 
 

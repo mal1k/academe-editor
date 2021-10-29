@@ -11,7 +11,7 @@
       {{question_data.description}}
      </div>
      <div class="question-view__answer">
-      <textarea class="question-view__textarea" rows="10" placeholder="Your Answer..."></textarea>
+      <textarea class="question-view__textarea" rows="4" placeholder="Your Answer..."></textarea>
      </div>
     </div>
     <div class="question-view__body" v-if="question_data.type === 'Single Choice' || question_data.type === 'True / False' || question_data.type === 'Poll'">
@@ -72,7 +72,7 @@
   padding: 25px 26px 33px 39px;
   width: 75%;
   height: 75%;
-  background: rgba(81, 172, 253, 0.8);
+  /*background: rgba(81, 172, 253, 0.8);*/
   position: relative;
  }
  .question-view__close {
@@ -83,11 +83,13 @@
  }
  .question-view__body {
   display: flex;
+  flex-direction: column;
   height: 100%;
+  align-items: center;
+  justify-content: center;
  }
  .question-view__text {
-  padding: 30px 45px 30px 0;
-  width: 50%;
+  width: 80%;
   display: flex;
   align-items: center;
   color: #fff;
@@ -95,19 +97,17 @@
   font-size: 28px;
   line-height: 37px;
   position: relative;
-  overflow-y: auto;
   word-break: break-word;
+  margin-bottom: 20px;
  }
  .question-view__answer {
-  padding: 30px 0 30px 30px;
-  width: 50%;
+  width: 80%;
   display: flex;
   align-items: center;
   color: #fff;
   font-weight: bold;
   font-size: 28px;
   line-height: 37px;
-  border-left: 3px solid #fff;
   position: relative;
   overflow-y: auto;
  }
@@ -152,8 +152,10 @@
   font-size: 23px;
   line-height: 28px;
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid #FFFFFF;
+  background: rgba(0, 104, 178, 0.9);
+  opacity: 0.9;
+  border-radius: 12px;
+  border: none;
   resize: none;
  }
  .question-view__textarea::-webkit-input-placeholder {

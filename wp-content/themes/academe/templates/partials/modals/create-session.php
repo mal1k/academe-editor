@@ -6,7 +6,7 @@
         <form id="sessionForm" class="sessionForm" onsubmit="event.prevent.default">
 
             <input type="hidden" name="session_title" value="<?php the_title(); ?>" />
-            <input type="hidden" name="based_on" class="based_on" value="<?php echo str_replace('sfwd-courses', 'lesson', $post->post_type); ?>" />
+            <input type="hidden" name="based_on" class="based_on" value="<?php echo str_replace(['sfwd-courses', 'clip'], ['lesson', 'movie'], $post->post_type); ?>" />
             <?php 
             $meta_key = $post->post_name; 
             global $wpdb;
@@ -16,7 +16,9 @@
             <input type="hidden" name="parent_item" class="parent_item" value="<?php echo $post->ID; ?>" />
             <div class="sessionForm__top">
                 <h3 class="sessionForm__title"><?php the_title(); ?></h3>
-                <span class="sessionForm__subtitle"><?php _e( 'A Lesson by Jurneys in Film', 'academe' );?></span>
+                <?php if ($post->post_type === 'sfwd-courses') { ?>
+                    <span class="sessionForm__subtitle"><?php _e( 'A Lesson by Jurneys in Film', 'academe' );?></span>
+                <?php } ?>
             </div>
             <div class="sessionForm__code">
                 <span class="sessionForm__title"><?php _e( 'Join with this lesson code', 'academe' );?></span>
@@ -29,7 +31,12 @@
                 </div>
                 <div class="flex-row items-center flex-center" style="margin-top: 60px;">
                     <div class="buttons">
-                        <a class="nextScreen "style="margin: 0 10px;"><?php _e('The lesson was scheduled', 'academe-theme'); ?></a>
+                        <?php if ($post->post_type === 'sfwd-courses') { ?>
+                            <a class="nextScreen "style="margin: 0 10px;"><?php _e('The lesson was scheduled', 'academe-theme'); ?></a>
+                        <?php } ?>
+                        <?php if (in_array($post->post_type, ['movie', 'clip'])) { ?>
+                            <a class="nextScreen "style="margin: 0 10px;"><?php _e('The session was created', 'academe-theme'); ?></a>
+                        <?php } ?>
                         <a class="start-now primary-btn " style="display: none"><?php _e('Start Now', 'academe-theme'); ?></a>
                         <a class="play-now primary-btn "><?php _e('Play Now', 'academe-theme'); ?></a>
                     </div>
@@ -59,6 +66,7 @@
                     });
                 </script>
 
+                <?php if ($post->post_type === 'sfwd-courses') { ?>
                 <div class="flex-row items-center scheduleDate" id="scheduleDate">
                     <div class="row-title condition async"><?php _e('Limit access to:', 'academe-theme'); ?></div>
                     <div class="row-title condition sync"><?php _e('Schedule:', 'academe-theme'); ?></div>
@@ -93,12 +101,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-row">
+                <?php } ?>
+                <?php if (in_array($post->post_type, ['movie', 'clip'])) { ?>
+                    <div class="flex-row items-center">
+                        <div class="row-title"><?php _e('Class:', 'academe-theme'); ?></div>
+                        <div class="row-data">
+                            <input type="text" name="class"></input>
+                        </div>
+                    </div>
+                <?php } ?>
+                <div class="flex-row items-center">
                     <div class="row-title"><?php _e('Note:', 'academe-theme'); ?></div>
                     <div class="row-data">
                         <textarea name="notes"></textarea>
                     </div>
                 </div>
+                <?php if ($post->post_type === 'sfwd-courses') { ?>
                 <div class="flex-row">
                     <div class="row-title"></div>
                     <div class="row-data">
@@ -109,6 +127,7 @@
                         </div>
                     </div>
                 </div>
+                <?php } ?>
                 <div class="flex-row items-center flex-end">
                     <div class="cancel secondary-btn"><?php _e( 'Cancel', 'academe' );?></div>
 

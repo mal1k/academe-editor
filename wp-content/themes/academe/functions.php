@@ -52,47 +52,6 @@ function connect_session_frontend_only() {
 }
 // END BAD CODE (API REQUEST WITH 0.5s HANDLING)
 
-add_action( 'init', 'create_taxonomy_age' );
-function create_taxonomy_age(){
-	// список параметров: wp-kama.ru/function/get_taxonomy_labels
-	register_taxonomy( 'age', [ 'movie' ], [
-		'label'                 => '', // определяется параметром $labels->name
-		'labels'                => [
-			'name'              => 'Ages',
-			'singular_name'     => 'Age',
-			'search_items'      => 'Search Ages',
-			'all_items'         => 'All Ages',
-			'view_item '        => 'View Age',
-			'parent_item'       => 'Parent Age',
-			'parent_item_colon' => 'Parent Age:',
-			'edit_item'         => 'Edit Age',
-			'update_item'       => 'Update Age',
-			'add_new_item'      => 'Add New Age',
-			'new_item_name'     => 'New Age Name',
-			'menu_name'         => 'Age',
-		],
-		'description'           => '', // описание таксономии
-		'public'                => true,
-		'publicly_queryable'    => null,
-		'show_in_nav_menus'     => true,
-		'show_ui'               => true,
-		'show_in_menu'          => true,
-		'show_tagcloud'         => true,
-		'show_in_quick_edit'    => null,
-		'hierarchical'          => true,
-
-		'rewrite'               => true,
-		//'query_var'             => $taxonomy, // название параметра запроса
-		'capabilities'          => array(),
-		'meta_box_cb'           => null, // html метабокса. callback: `post_categories_meta_box` или `post_tags_meta_box`. false — метабокс отключен.
-		'show_admin_column'     => false, // авто-создание колонки таксы в таблице ассоциированного типа записи. (с версии 3.5)
-		'show_in_rest'          => true, // добавить в REST API
-		'rest_base'             => null, // $taxonomy
-		// '_builtin'              => false,
-		//'update_count_callback' => '_update_post_term_count',
-	] );
-}
-
 function get_filtered_posts($post_type, $taxonomy = '', $terms = []) {
     $args = [
         'post_type' => $post_type,
@@ -449,6 +408,62 @@ function remove_private_prefix($title) {
 }
 add_filter('the_title', 'remove_private_prefix');
 
+function calculate_clip_duration ($from = '00:00:00', $to = '00:00:00') {
+    $from = $from ?? '00:00:00';
+    $to = $to ?? '00:00:00';
+
+    $clip_duration = format_time_to_seconds($to) - format_time_to_seconds($from); // in seconds
+    $duration = gmdate("H:i:s", $clip_duration); //in timestring
+
+    $duration_arr = explode(":", $duration);
+    if ((int)$duration_arr[0] == 0) {
+       $time = (int)$duration_arr[1].'m '. (int)$duration_arr[2].'s';
+    } else {
+        $time = (int)$duration_arr[0].'h '. (int)$duration_arr[1].'m';
+    }
+    return $time;
+}
+
+add_action( 'init', 'create_taxonomy_age' );
+function create_taxonomy_age(){
+	register_taxonomy( 'age', [ 'movie' ], [
+		'label'                 => '', 
+		'labels'                => [
+			'name'              => 'Ages',
+			'singular_name'     => 'Age',
+			'search_items'      => 'Search Ages',
+			'all_items'         => 'All Ages',
+			'view_item '        => 'View Age',
+			'parent_item'       => 'Parent Age',
+			'parent_item_colon' => 'Parent Age:',
+			'edit_item'         => 'Edit Age',
+			'update_item'       => 'Update Age',
+			'add_new_item'      => 'Add New Age',
+			'new_item_name'     => 'New Age Name',
+			'menu_name'         => 'Age',
+		],
+		'description'           => '',
+		'public'                => true,
+		'publicly_queryable'    => null,
+		'show_in_nav_menus'     => true,
+		'show_ui'               => true,
+		'show_in_menu'          => true,
+		'show_tagcloud'         => true,
+		'show_in_quick_edit'    => null,
+		'hierarchical'          => true,
+
+		'rewrite'               => true,
+		'capabilities'          => array(),
+		'meta_box_cb'           => null, 
+		'show_admin_column'     => false, 
+		'show_in_rest'          => true, 
+		'rest_base'             => null, 
+	] );
+}
+
+
+add_filter('the_title', 'remove_private_prefix');
+
 add_action('add_meta_boxes', 'myplugin_add_custom_box');
 function myplugin_add_custom_box(){
 	$screens = array( 'movie' );
@@ -464,7 +479,7 @@ function jquery_for_age_block( $post, $meta ){
         jQuery(document).on('change', '[aria-label="Grades"] .components-checkbox-control__input', function() { 
             checkGrades();
         });
-        
+
         function checkGrades() {
             if ( jQuery('[aria-label="Grades"] .components-checkbox-control__input:checked').length > 0 ) {
                 jQuery('[aria-label="Ages"]').closest('.components-panel__body').show();

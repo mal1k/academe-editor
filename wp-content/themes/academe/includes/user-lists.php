@@ -171,7 +171,6 @@ function my_courses_list($filter = 'subject') {
 }
 /* My courses list end */
 
-/* My courses list start */
 function my_movie_courses_list($movie_id = 0, $filter = 'grade') {
     $lessons = new WP_Query([
         'post_type' => 'sfwd-courses',
@@ -196,7 +195,7 @@ function my_movie_courses_list($movie_id = 0, $filter = 'grade') {
                 'post_type' => 'sfwd-courses',
                 'taxonomy' => $filter,
                 'term' => NULL,
-                'movie_id' => 26699,
+                'movie_id' => $movie_id,
                 'action' => 'async_filter_my_movie_courses',
             ],
             'new_lesson_button' => true,

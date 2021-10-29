@@ -30,10 +30,32 @@
             <h2 class="section-heading"><?php _e("All lessons", "academe-theme"); ?></h2>
             <?php if ( have_posts() ) { ?>
                 <div class="movie-blocks">
-                    <?php while ( have_posts() ) : ?>
-                        <?php the_post(); ?>
-                        <?php get_template_part('templates/partials/movie-block', 'null'); ?>
-                    <?php endwhile; ?>
+                <?php 
+                    while ( have_posts() ) : ?>
+                        <?php the_post();
+
+                            $user = get_userdata( $post->post_author );
+                            if ( in_array( 'jif', $user->roles ) ) {
+                                $post = get_post($post);
+                                setup_postdata($post);
+                                get_template_part('templates/partials/movie-block', 'null', ['jif'=>true]);
+                            }
+
+                        wp_reset_postdata();
+                    endwhile;
+
+                    while ( have_posts() ) : ?>
+                        <?php the_post();
+
+                            $user = get_userdata( $post->post_author );
+                            if ( !in_array( 'jif', $user->roles ) ) {
+                                $post = get_post($post);
+                                setup_postdata($post);
+                                get_template_part('templates/partials/movie-block', 'null', ['jif'=>false]);
+                            }
+
+                        wp_reset_postdata();
+                    endwhile; ?>
                 </div>
                 <?php numeric_posts_nav(); ?>
             <?php } else { ?>

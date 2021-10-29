@@ -248,7 +248,7 @@ export default {
         //filters callback
     checkContainsTags(movie) {
       if (typeof movie['tags'] !== "undefined" && this.store.advanced_search.tags != null) {
-        let movie_tag_list = movie.tags.map(el => el.tag);
+        let movie_tag_list = movie.tags.map(el => el.name);
         return movie_tag_list.length - movie_tag_list.filter(tag => this.store.advanced_search.tags.indexOf(tag) < 0).length === this.store.advanced_search.tags.length
       } else if (typeof movie['tags'] === "undefined" && this.store.advanced_search.tags != null) {
         return false

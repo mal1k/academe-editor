@@ -80,17 +80,22 @@
                     <div class="start-watch"><?php icon('play-rounded'); ?></div>
                 </a>
             <?php } else if ($post->post_type ==  'clip') { ?>
-                <a href="#" class="watch">
-                    <div class="watch">
-                        <div class="start-watch start-movie-preview"
-                            onclick="return false;"
-                            data-movie-id="<?php echo $custom_fields['movie_id']->ID; ?>"
-                            data-mode="basic"
-                            data-play-from="<?php echo format_time_to_seconds($custom_fields['play_from']); ?>"
-                            data-play-to="<?php echo format_time_to_seconds($custom_fields['play_to']); ?>"
-                            style="position: relative; z-index: 1;">
-                            <?php icon('play-rounded'); ?></div>
-                    </div>
+                <?php if (0) { //Player modal (disabled) ?>
+                    <a href="#" class="watch">
+                        <div class="watch">
+                            <div class="start-watch start-movie-preview"
+                                onclick="return false;"
+                                data-movie-id="<?php echo $custom_fields['movie_id']->ID; ?>"
+                                data-mode="basic"
+                                data-play-from="<?php echo format_time_to_seconds($custom_fields['play_from']); ?>"
+                                data-play-to="<?php echo format_time_to_seconds($custom_fields['play_to']); ?>"
+                                style="position: relative; z-index: 1;">
+                                <?php icon('play-rounded'); ?></div>
+                        </div>
+                    </a>
+                <?php } ?>
+                <a href="<?php the_permalink(); ?>" class="watch">
+                    <div class="start-watch"><?php icon('play-rounded'); ?></div>
                 </a>
             <?php } else { ?>
                 <a href="<?php the_permalink(); ?>" class="watch">

@@ -95,6 +95,7 @@
                     </div>
                 </div>
             <?php } ?>
+
             <?php if (in_array('age', $args['filters'])) { ?>
                 <div class="filter-row-block">
                     <div>Age</div>
@@ -115,6 +116,7 @@
                     </div>
                 </div>
             <?php } ?>
+
             <?php if (in_array('genre', $args['filters'])) { ?>
                 <div class="filter-row-block">
                     <div><?php _e( 'Genre', 'academe-theme' );?></div>

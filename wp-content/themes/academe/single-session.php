@@ -55,19 +55,33 @@ $show_session_content = true; ?>
     <?php } ?>
 
     <?php if ($show_session_content) {
-        $author = get_post_field( 'post_author', $custom_fields['related_lesson']->ID ) ?>
-        <session-slideshow
-            :course_id="<?php echo $custom_fields['related_lesson']->ID; ?>"
-            :session_id="<?php global $post; echo $post->ID; ?>"
-            session_code="<?php global $post; echo $post->post_name; ?>"
-            user_role="<?php echo is_user_in_role('student') ? 'student' : 'teacher'; ?>"
-            author="<?php echo the_author_meta( 'display_name' , $author ); ?>"
-            device="<?php echo wp_is_mobile() ? 'mobile' : 'desktop'; ?>"
-            :current_slide="<?php echo $custom_fields['current_slide'] ?? 0; ?>"
-            websocket_url="<?php echo WEBSOCKET_URL; ?>"
-            student_movie_pc="<?php echo $custom_fields['show_movie_on_students_pc'] ?? 0; ?>">
-
-        </session-slideshow>
+        $author = get_post_field( 'post_author', $custom_fields['related_lesson']->ID );
+        if ($custom_fields['based_on'] == "lesson") { ?>
+            <session-slideshow
+                :course_id="<?php echo $custom_fields['related_lesson']->ID; ?>"
+                :session_id="<?php global $post; echo $post->ID; ?>"
+                session_code="<?php global $post; echo $post->post_name; ?>"
+                user_role="<?php echo is_user_in_role('teacher') ? 'teacher' : 'student'; ?>"
+                author="<?php echo the_author_meta( 'display_name' , $author ); ?>"
+                device="<?php echo wp_is_mobile() ? 'mobile' : 'desktop'; ?>"
+                :current_slide="<?php echo isset($custom_fields['current_slide']) && $custom_fields['current_slide'] ? $custom_fields['current_slide'] : 0; ?>"
+                websocket_url="<?php echo WEBSOCKET_URL; ?>"
+                student_movie_pc="<?php echo $custom_fields['show_movie_on_students_pc'] ?? 0; ?>"
+                :session_fields='<?php echo json_encode($custom_fields); ?>'>
+            </session-slideshow>
+        <?php }
+        if ($custom_fields['based_on'] == "movie") { ?>
+            <session-movie-presentation
+                :movie_id="<?php echo $custom_fields['related_movie']->ID; ?>"
+                :session_id="<?php global $post; echo $post->ID; ?>"
+                post_type="<?php echo $custom_fields['related_movie']->post_type; ?>"
+                session_code="<?php global $post; echo $post->post_name; ?>"
+                user_role="<?php echo is_user_in_role('teacher') ? 'teacher' : 'student'; ?>"
+                device="<?php echo wp_is_mobile() ? 'mobile' : 'desktop'; ?>"
+                websocket_url="<?php echo WEBSOCKET_URL; ?>"
+                student_movie_pc="<?php echo $custom_fields['show_movie_on_students_pc'] ?? 0; ?>">
+            </session-movie-presentation>
+        <?php } ?>
     <?php } ?>
 
 </div>

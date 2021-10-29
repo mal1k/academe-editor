@@ -32,13 +32,38 @@ class Session implements MessageComponentInterface {
 
         switch ($data['command']) {
             case "subscribe":
-                $this->subscriptions[$from->resourceId] = $data['channel'];
+                $msg = $data['message'];
+                $this->subscriptions[$from->resourceId] = $msg;
+                if($msg['role'] == 'student') {
+                    $teacher_status = $this->checkTeacherStatus($msg['channel']);
+                    $this->users[$from->resourceId]->send(
+                        json_encode([
+                            "message" => [
+                                'teacher_online' => $teacher_status,
+                            ]
+                        ])
+                    );
+                }
+                if($msg['role'] == 'teacher') {
+                    foreach ($this->subscriptions as $id => $subscription) {
+                        if ($subscription['channel'] == $msg['channel'] && $id != $from->resourceId) {
+                            $this->users[$id]->send(
+                                json_encode([
+                                    "message" => [
+                                        'teacher_online' => true,
+                                    ]
+                                ])
+                            );
+                        }
+                    }
+                }
+
                 break;
             case "message":
                 if (isset($this->subscriptions[$from->resourceId])) {
                     $target = $this->subscriptions[$from->resourceId];
-                    foreach ($this->subscriptions as $id => $channel) {
-                        if ($channel == $target && $id != $from->resourceId) {
+                    foreach ($this->subscriptions as $id => $subscription) {
+                        if ($subscription['channel'] == $target['channel'] && $id != $from->resourceId) {
                             $this->users[$id]->send(
                                 json_encode([
                                     "message" => $data['message']
@@ -60,7 +85,25 @@ class Session implements MessageComponentInterface {
 
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
+        $user = $this->subscriptions[$conn->resourceId];
         $this->clients->detach($conn);
+        unset($this->users[$conn->resourceId]);
+        unset($this->subscriptions[$conn->resourceId]);
+
+        if ($user['role'] == 'teacher') {
+            $teacher_status = $this->checkTeacherStatus($user['channel']);
+            foreach ($this->subscriptions as $id => $subscription) {
+                if ($subscription['channel'] == $user['channel'] && $id != $conn->resourceId) {
+                    $this->users[$id]->send(
+                        json_encode([
+                            "message" => [
+                                'teacher_online' => $teacher_status,
+                            ]
+                        ])
+                    );
+                }
+            }
+        }
 
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
@@ -69,5 +112,20 @@ class Session implements MessageComponentInterface {
         echo "An error has occurred: {$e->getMessage()}\n";
 
         $conn->close();
+    }
+
+    private function checkTeacherStatus($channel) {
+        $teacher_online = false;
+        //filter subscriptions in current channel
+        $subscriptions = array_filter($this->subscriptions, function($subscription) use ($channel) {
+            return $subscription['channel'] === $channel;
+        });
+        foreach ($subscriptions as $subscription) {
+            if ($subscription['role'] == 'teacher') {
+                $teacher_online = true;
+                break;
+            }
+        }
+        return $teacher_online;
     }
 }

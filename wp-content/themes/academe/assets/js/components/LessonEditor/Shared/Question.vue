@@ -291,10 +291,12 @@
                 this.showAdvanced = !this.showAdvanced
             },
             saveQuestion(action){ // action: create/update
-                let movie_start_time = helper.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_from);
-                let movie_end_time = helper.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_to) === 0
+                let play_from = this.store.slides[this.activeSlideIndex].fields.play_from ?? '00:00:00';
+                let play_to = this.store.slides[this.activeSlideIndex].fields.play_to ?? '00:00:00';
+                let movie_start_time = helper.timeStringToSeconds(play_from);
+                let movie_end_time = helper.timeStringToSeconds(play_to) === 0
                  ? parseInt(this.store.active_slide_movie_meta.duration)
-                 : helper.timeStringToSeconds(this.store.slides[this.activeSlideIndex].fields.play_to);
+                 : helper.timeStringToSeconds(play_to);
 
                 if ( helper.timeStringToSeconds(this.store.active_question.start_time) >= movie_start_time
                  && helper.timeStringToSeconds(this.store.active_question.start_time) <= movie_end_time ) {

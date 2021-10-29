@@ -996,10 +996,15 @@ h2.section-heading {
     top: 30px;
     right: 0;
     background: rgba(0, 0, 0, 0.8);
-    border-left: 10px solid #51ACFD;
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 6px 11px;
+}
+#movieInfo .movie-poster .poster-label.movie {
+     background: #51ACFD;
+}
+#movieInfo .movie-poster .poster-label.clip {
+    background: #1457AE;
 }
 #movieInfo .movie-poster .poster-label .title {
     margin: 0 10px;
@@ -1007,6 +1012,21 @@ h2.section-heading {
     font-size: 20px;
     font-weight: 600;
     letter-spacing: 0.175px;
+}
+#movieInfo .movie-poster-actions {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#movieInfo .movie-poster-actions .icon {
+    margin: 10px;
+    cursor: pointer;
+    display: block;
 }
 #movieInfo .movie-info {
     padding: 40px 0 0 40px;
@@ -1060,23 +1080,39 @@ h2.section-heading {
     background: #C4C4C4;
     margin: 0 10px;
 }
-#movieInfo .create-lesson-btn {
-    border: 1px solid #51ACFD;
-    border-radius: 3px;
-    padding: 8px 15px;
+#movieInfo .create-lesson-btn-wrap {
     display: flex;
     align-items: center;
+    margin-bottom: 30px;
+}
+#movieInfo .create-lesson-btn,
+#movieInfo .teaching-guide-btn {
+    border-radius: 3px;
+    padding: 3px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: .2s;
-    background: #51ACFD;
     color: #FFFFFF;
-    font-weight: 600;
+    min-width: 160px;
 }
-#movieInfo .create-lesson-btn span {
+#movieInfo .create-lesson-btn span,
+#movieInfo .teaching-guide-btn span {
     color: #FFFFFF;
-    margin-left: 8px;
-    line-height: 17px;
+    margin: 0 10px;
+    line-height: 21px;
     white-space: nowrap;
+    font-weight: 400;
+    text-align: center;
+}
+#movieInfo .create-lesson-btn{
+    border: 1px solid #F98C40;
+    background: #F98C40;
+}
+#movieInfo .teaching-guide-btn {
+    border: 1px solid #D04A07;
+    background: #D04A07;
 }
 
 #movieInfo .create-lesson-btn svg {
@@ -1084,7 +1120,9 @@ h2.section-heading {
 }
 #movieInfo .movie-actions {
     display: flex;
-    margin-top: 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
 }
 .icon-three-dots {
     display: flex;
@@ -1102,6 +1140,12 @@ h2.section-heading {
     background: #51ACFD;
     border-radius: 2px;
     margin: 1.5px;
+}
+#movieInfo .movie-actions .icon-three-dots > div {
+    background: #F98C40;
+}
+#movieInfo .movie-actions .icon-three-dots{
+    margin-left: 0;
 }
 .actions-more .simplefavorite-button.active{
     opacity: 1;
@@ -1231,6 +1275,14 @@ h2.section-heading {
     border: 1px solid #FFFFFF;
     border-radius: 8px;
     background: #333333;
+    color: #FFFFFF;
+    padding: 8px;
+}
+.start-session.modal .flex-row .row-data input {
+    width: 180px;
+    background: #333333;
+    border: 1px solid #FFFFFF;
+    border-radius: 8px;
     color: #FFFFFF;
     padding: 8px;
 }
@@ -1399,6 +1451,11 @@ h2.section-heading {
     padding: 5px;
     border-radius: 30px;
     transition: .2s;
+}
+.modal.movie-player.sized {
+    height: 540px !important;
+    width: 980px !important;
+    max-width: calc(100% - 40px);
 }
 #kalturaPlayer {
     height: 100%;
@@ -1848,20 +1905,6 @@ h2.section-heading {
 #guideInfo .action-buttons .blue-btn {
     color: #FFFFFF;
     background: #51ACFD;
-    padding: 10px;
-    border-radius: 3px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 35px;
-    cursor: pointer;
-    margin-right: 20px;
-    font-size: 14px;
-}
-
-#guideInfo .action-buttons .orange-btn {
-    color: #FFFFFF;
-    background: #d44724;
     padding: 10px;
     border-radius: 3px;
     display: flex;
@@ -2706,3 +2749,18 @@ span.highlighted {
 .movie-block .right-part .icon.visibility:hover {
     transform: none !important;
 }
+
+#guideInfo .action-buttons .orange-btn {
+    color: #FFFFFF;
+    background: #d44724;
+    padding: 10px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    cursor: pointer;
+    margin-right: 20px;
+    font-size: 14px;
+}
+

@@ -18,6 +18,7 @@ Vue.component('editor-meta', require('./components/LessonEditor/Meta.vue').defau
 Vue.component('editor-slides', require('./components/LessonEditor/Slides.vue').default);
 
 Vue.component('session-slideshow', require('./components/Session/Slideshow.vue').default);
+Vue.component('session-movie-presentation', require('./components/Session/MoviePresentation.vue').default);
 
 const app = new Vue({
     el: '#app',

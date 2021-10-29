@@ -26,6 +26,7 @@ $unread = learndash_notifications_unread_count_by_user();
                     </div>
                 </span>
             <?php } ?>
+
             <span class="menu-item dropdown ui dark w-200">
                 <?php _e('Grade', 'academe-theme'); ?>
                 <?php icon('chevron-bold', 'icon-gray-stroke with-rotate'); ?>
@@ -43,9 +44,7 @@ $unread = learndash_notifications_unread_count_by_user();
                     </div>
                 </div>
             </span>
-            <?php /*if(is_user_logged_in() && !is_user_in_role('student')) { ?>
-                <a href="/topics" class="menu-item link <?php link_is_active('topics'); ?>"><?php _e('Topics', 'academe-theme'); ?></a>
-            <?php }*/ ?>
+
             <span class="menu-item dropdown ui dark w-200">
                 <?php _e('Movies', 'academe-theme'); ?>
                 <?php icon('chevron-bold', 'icon-gray-stroke with-rotate'); ?>
@@ -60,6 +59,10 @@ $unread = learndash_notifications_unread_count_by_user();
                     </div>
                 </div>
             </span>
+
+            <?php /*if(is_user_logged_in() && !is_user_in_role('student')) { ?>
+                <a href="/topics" class="menu-item link <?php link_is_active('topics'); ?>"><?php _e('Topics', 'academe-theme'); ?></a>
+            <?php }*/ ?>
             <?php if(is_user_logged_in() && !is_user_in_role('student')) { ?>
                 <a href="/guides" class="menu-item link <?php link_is_active('guides'); ?>"><?php _e('Teaching Guides', 'academe-theme'); ?></a>
                 <a href="/courses" class="menu-item link <?php link_is_active('courses'); ?>"><?php _e('Lessons', 'academe-theme'); ?></a>

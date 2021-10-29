@@ -283,19 +283,20 @@
             loadMovieMeta() {
                 var _this = this;
                 setTimeout(function(){
-                    if (_this.store.movie_id && _this.store.first_creation) {
-                        axios.get('/wp/v2/movie/'+_this.store.movie_id+'?_wpnonce=' + wpApiSettings.nonce ).then(res => {
+                    if ((_this.store.movie_id || _this.store.clip_id) && _this.store.first_creation) {
+                        let post_id = _this.store.movie_id ?? _this.store.clip_id;
+                        axios.get('/academe/v1/movies/'+post_id+'?_wpnonce=' + wpApiSettings.nonce ).then(res => {
                             // Asked to remove:
                             // _this.store.meta.title = res.data.title.rendered;
                             // _this.store.meta.description = jQuery(res.data.content.rendered).text();
 
                             // This image is hardcoded. Please change it:
-                            _this.store.meta.thumbnail = 'https://cdnapisec.kaltura.com/p/2538842/thumbnail/entry_id/'+res.data.acf.kaltura_id+'/width/1920/height/1080/quality/45';
+                            _this.store.meta.thumbnail = 'https://cdnapisec.kaltura.com/p/2538842/thumbnail/entry_id/'+res.data.kaltura_id+'/width/1920/height/1080/quality/45';
                             // Add here tags, subjects, topics, faculties, grades
-                            _this.store.meta.subjects = res.data.subject;
-                            _this.store.meta.topics = res.data.topic;
-                            _this.store.meta.grades = res.data.grade;
-                            _this.store.meta.tags = res.data.ptag;
+                            _this.store.meta.subjects = res.data.subjects ? res.data.subjects.map(term => term.term_id) : [];
+                            _this.store.meta.topics = res.data.topics ? res.data.topics.map(term => term.term_id) : [];
+                            _this.store.meta.grades = res.data.grades ? res.data.grades.map(term => term.term_id) : [];
+                            _this.store.meta.tags = res.data.tags ? res.data.tags.map(term => term.term_id) : [];
 
                             // Load tags names (to not show only ID):
                             axios.get('/wp/v2/ptag?per_page=100&orderby=count&order=desc&include=' + _this.store.meta.tags.join(',') + '&_wpnonce=' + wpApiSettings.nonce).then(res => {

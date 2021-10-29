@@ -168,34 +168,34 @@ jQuery(document).ready(function($) {
         let id = $(this).attr('data-modal-id');
         $('#'+id).find('.start-now').click();
 
-        $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
-                type: 'datetime',
-                ampm: false,
-                text: {
-                    days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    today: 'Today',
-                    now: 'Now',
-                },
-                firstDayOfWeek: 1,
-                formatter: {
-                    date: function (date, settings) {
-                        if (!date) return '';
-                        var day = date.getDate() + '';
-                        if (day.length < 2) {
-                            day = '0' + day;
-                        }
-                        var month = (date.getMonth() + 1) + '';
-                        if (month.length < 2) {
-                            month = '0' + month;
-                        }
-                        var year = date.getFullYear();
-                        return day + '/' + month + '/' + year;
-                    }
-                }
-            })
-        ;
+        // $('#'+$(this).data('modal-id')+' .datetime-selector').calendar({
+        //         type: 'datetime',
+        //         ampm: false,
+        //         text: {
+        //             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        //             months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        //             monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        //             today: 'Today',
+        //             now: 'Now',
+        //         },
+        //         firstDayOfWeek: 1,
+        //         formatter: {
+        //             date: function (date, settings) {
+        //                 if (!date) return '';
+        //                 var day = date.getDate() + '';
+        //                 if (day.length < 2) {
+        //                     day = '0' + day;
+        //                 }
+        //                 var month = (date.getMonth() + 1) + '';
+        //                 if (month.length < 2) {
+        //                     month = '0' + month;
+        //                 }
+        //                 var year = date.getFullYear();
+        //                 return day + '/' + month + '/' + year;
+        //             }
+        //         }
+        //     })
+        // ;
     });
 
     $('.delete-session-btn').on('click', function () {
@@ -263,22 +263,24 @@ jQuery(document).ready(function($) {
     $('.start-session .schedule-now').on('click', function () {
         let _this = $(this);
         let modal = getCreateSessionModalId(_this);
-
-        const months= ["January","February","March","April","May","June","July",
-            "August","September","October","November","December"];
-        const days= ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-
         const form = _this.closest('.sessionForm');
-        const basicDate = form.find("[name=schedule]").val();
-        const [date, time] =  basicDate.split(' ');
-        const [dd, mm, yy] =  date.split('/');
-        const duration = parseInt(form.find("[name=access_duration]").val());
+        const post_type = form.find("[name=based_on]").val();
 
-        let  dateFrom = new Date(mm +" "+ dd + " " + yy + " " + time);
-        let  formatDateFrom = days[dateFrom.getDay()] +', '+months[dateFrom.getMonth()] +' '+ dateFrom.getDate();
-        let  dateUntil = addHoursToDate(dateFrom, duration);
-        let  formatDateUntil = days[dateUntil.getDay()] +', '+months[dateUntil.getMonth()] +' '+ dateUntil.getDate();
+        if (post_type === 'lesson') { // do not evaluate if creating from movie
+            const months = ["January", "February", "March", "April", "May", "June", "July",
+                "August", "September", "October", "November", "December"];
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+            const basicDate = form.find("[name=schedule]").val();
+            const [date, time] = basicDate.split(' ');
+            const [dd, mm, yy] = date.split('/');
+            const duration = parseInt(form.find("[name=access_duration]").val());
+
+            let dateFrom = new Date(mm + " " + dd + " " + yy + " " + time);
+            let formatDateFrom = days[dateFrom.getDay()] + ', ' + months[dateFrom.getMonth()] + ' ' + dateFrom.getDate();
+            let dateUntil = addHoursToDate(dateFrom, duration);
+            let formatDateUntil = days[dateUntil.getDay()] + ', ' + months[dateUntil.getMonth()] + ' ' + dateUntil.getDate();
+        }
         //_this.removeClass('schedule-now');
         $.ajax({
             url: ajaxurl,
@@ -297,10 +299,12 @@ jQuery(document).ready(function($) {
                     $('#'+modal+'.start-session.modal .sessionForm__code').removeClass('hidden');
                     $('#'+modal+'.start-session.modal .sessionForm__description').addClass('hidden');
                     $('#'+modal+'.start-session.modal .sessionShare .shareList').removeClass('hidden');             
-                    $('#'+modal+'.start-session.modal .start-now').addClass('hidden');                
-                    $('#'+modal+'.start-session.modal .sessionTime').removeClass('hidden').html(
-                        'Content Available from ' + formatDateFrom  + ' until ' + formatDateUntil
-                    );                
+                    $('#'+modal+'.start-session.modal .start-now').addClass('hidden');
+                    if (post_type === 'lesson') { // do not show if creating from movie
+                        $('#' + modal + '.start-session.modal .sessionTime').removeClass('hidden').html(
+                            'Content Available from ' + formatDateFrom + ' until ' + formatDateUntil
+                        );
+                    }
                     _this.attr('href', response.success).text('Go to session');
                     copySessionLink(modal);
                     //$('.modal.ui.start-session').modal('hide');
@@ -489,7 +493,7 @@ jQuery(document).ready(function($) {
                         "mediaProxy.mediaPlayFrom": mediaPlayFrom,
                         "mediaProxy.mediaPlayTo": mediaPlayTo,
                         "Kaltura.UseAppleAdaptive": true,
-                        //"EmbedPlayer.EnableFullscreen": false,
+                        "EmbedPlayer.EnableFullscreen": false, //disable fullscreen mode (and hide button)
                     },
                     'readyCallback': function( playerId ){
                         $('#kalturaPlayer').data('loaded', data_obj.data('movie-id'));

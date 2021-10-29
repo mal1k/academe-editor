@@ -6,6 +6,7 @@
         display: block;
     }
 </style>
+
 <?php
     $filter = false;
     if(isset($args['filter']) && $args['filter']['active']) {
@@ -54,24 +55,20 @@
             <?php } ?>
             <?php if ($args['posts']) {
                 foreach ($args['posts'] as $post) {
-                //   if ( $post->post_type == 'sfwd-courses' ):
                     $user = get_userdata( $post->post_author );
                     if ( in_array( 'jif', $user->roles ) ) {
                         $post = get_post($post);
                         setup_postdata($post);
                         get_template_part('templates/partials/movie-block', 'null', ['jif'=>true]);
                     }
-                //   endif;
                 }
                 foreach ($args['posts'] as $post) {
-                //   if ( $post->post_type == 'sfwd-courses' ):
                     $user = get_userdata( $post->post_author );
                     if ( !in_array( 'jif', $user->roles ) ) {
                         $post = get_post($post);
                         setup_postdata($post);
                         get_template_part('templates/partials/movie-block', 'null', ['jif'=>false]);
                     }
-                //   endif;
                 }
                 wp_reset_postdata();
             } else { ?>

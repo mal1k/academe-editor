@@ -28,6 +28,13 @@ add_action( 'rest_api_init', function() {
             'schema' => null,
         ]
     );
+    register_rest_field('sfwd-courses', 'default_cover', [
+            'get_callback' => function() {
+                return get_site_url(null, '/wp-content/themes/academe/assets/img/lesson-cover.jpg');
+            },
+            'schema' => null,
+        ]
+    );
 
     require_once ACADEME_THEME_DIR . 'includes/lesson-slide-templates.php';
     register_rest_route( 'academe/v1', '/slide-templates', [
@@ -66,7 +73,7 @@ add_action( 'rest_api_init', function() {
 
     register_rest_route( 'academe/v1', '/movies/(?P<id>\d+)', [
         'methods'  => 'GET',
-        'callback' => function() {
+        'callback' => function($request) {
             $movie_id = $request->get_param( 'id' );
             $post = get_post($movie_id);
             return getMovieDataFromPost($post);
@@ -489,9 +496,6 @@ function getMovieDataFromPost($movie_post) {
             $array['time'] = $durationTime;
         }
     }
-
-
-
     
         // tags
         $tags = wp_get_post_tags($movie_post->ID);
@@ -502,9 +506,10 @@ function getMovieDataFromPost($movie_post) {
                 if ($tags_counter) {
                     $tags_string .= '#' . $tag->name . ', ';
                     $tags_counter--;
-                    $array['tags'][] = array('tag'=>$tag->name);
+//                    $array['tags'][] = array('tag'=>$tag->name);
                 }
             }
+            $array['tags'] = $tags;
         }
 
         // year
@@ -512,12 +517,31 @@ function getMovieDataFromPost($movie_post) {
         // views
             $array['views'] = pvc_get_post_views();
         // genres
-            $genres = wp_get_post_terms($movie_post->ID, 'genre', ['fields' => 'names']);
+            $genres = wp_get_post_terms($movie_post->ID, 'genre');
             if ($genres) {
-                foreach ($genres as $genre) {
-                    $array['genres'][] = array('genre'=>$genre);
-                }
+                $array['genres'] = $genres;
+//                foreach ($genres as $genre) {
+//                    $array['genres'][] = array('genre'=>$genre);
+//                }
             }
+        // topics
+        $topics = wp_get_post_terms($movie_post->ID, 'topic');
+        if ($topics) {
+            $array['topics'] = $topics;
+//            foreach ($topics as $topic) {
+//                $array['topics'][] = array('topic'=>$topic);
+//            }
+        }
+        // grades
+        $grades = wp_get_post_terms($movie_post->ID, 'grade');
+        if ($grades) {
+            $array['grades'] = $grades;
+        }
+        // subjects
+        $subjects = wp_get_post_terms($movie_post->ID, 'subject');
+        if ($subjects) {
+            $array['subjects'] = $subjects;
+        }
         // director
             $array['director'] = $custom_fields['director'];
         // content

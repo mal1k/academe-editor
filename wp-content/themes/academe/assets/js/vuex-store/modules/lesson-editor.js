@@ -34,6 +34,7 @@ const state = () => ({
   my_movies: null,
   all_movies: null,
   movie: null,
+  clip: null,
   kaltura_config: null,
   active_question: null,
   view_question: null,

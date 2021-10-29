@@ -1,27 +1,21 @@
-<?php $custom_fields = get_fields($post->ID); ?>
+<?php $custom_fields = get_fields($post->ID);  ?>
 
 <?php $sponsored =  (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses']) && $custom_fields['sponsored']) ? true : false ?>
 
 <?php if ($post->post_type != 'movie' || isset($custom_fields['kaltura_id'])) { ?>
-    <div class="swiper-slide movie-block <?php echo $sponsored ? 'sponsored' : ''; ?>" data-movie-id="<?php echo $post->ID; ?>" 
-        style="
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 11.29%, rgba(0, 0, 0, 0) 100%) no-repeat center / cover;
-            <?php if ( $args['jif'] ) echo 'border: 1px solid blue;'; ?>
-        ">
+    <div class="swiper-slide movie-block <?php echo $sponsored ? 'sponsored' : ''; ?>" data-movie-id="<?php echo $post->ID; ?>" style="background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 11.29%, rgba(0, 0, 0, 0) 100%) no-repeat center / cover; <?php if ( $args['jif'] ) echo 'border: 1px solid blue;'; ?>">
         <div class="slide-info">
             <div class="info-top">
                 <div class="title"><?php echo $post->post_title; ?></div>
-                
+                <?php //if( in_array($post->post_type, ['movie', 'teaching-guide']) ) { ?>
+
                 <?php if ( $post->post_type == 'sfwd-courses' ) : ?>
                     <div class="created_by" style="font-size: 12px; color: white;">
                         <?php 
                         $user = get_userdata( $post->post_author );
                         echo 'Created By: ' . $user->display_name; ?></div>
-                <?php endif; ?>
+                <?php endif; ?>    
 
-                <?php 
-                    // if( in_array($post->post_type, ['movie', 'teaching-guide']) ) { 
-                ?>
                     <div class="tags">
                 <span class="tags-list" style="font-size: 11px;">
                 <?php $tags = wp_get_post_tags($post->ID);
@@ -40,9 +34,7 @@
                 } ?>
                 </span>
                     </div>
-                <?php 
-                    // } 
-                ?>
+                <?php //} ?>
             </div>
             <div class="meta">
                 <div class="left-part">
@@ -96,12 +88,11 @@
                             <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>">
                                 <?php icon('element', 'icon-24'); ?>
                             </a>
-                        <?php } elseif ($post->post_type == 'sfwd-courses') { ?>
+                        <?php } elseif ($post->post_type == 'sfwd-courses') { ?>    
                             <a href="<?php echo $post->guid; ?>">
                                 <?php icon('element', 'icon-24'); ?>
                             </a>
-                        <?php } 
-                        else { ?>
+                        <?php } else { ?>
                             <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>">
                                 <?php icon('element', 'icon-24'); ?>
                             </a>
@@ -123,13 +114,13 @@
                     <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="watch">
                         <div class="start-watch"><?php icon('play-rounded'); ?></div>
                     </a>
-                <?php } 
-                elseif ( $post->post_type == 'sfwd-courses') { ?>
+
+                    <?php }elseif ( $post->post_type == 'sfwd-courses') { ?>
                     <a href="<?php echo get_permalink(); ?>" class="watch">
                         <div class="start-watch"><?php icon('play-rounded'); ?></div>
-                    </a>
-                <?php }
-                else { ?>
+                    </a>    
+
+                <?php } else { ?>
                     <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="watch">
                         <div class="start-watch"><?php icon('play-rounded'); ?></div>
                     </a>
@@ -167,13 +158,15 @@
                 <img class="slide-image" src="<?php echo get_the_post_thumbnail_url($post->ID, 'medium'); ?>" />
             <?php } ?>
         <?php } ?>
-        <?php if ($post->post_type == 'sfwd-courses') { ?>
+        <?php if ($post->post_type ==  'sfwd-courses') { ?>
             <img class="slide-image" src="<?php echo $custom_fields['cover_image_url']; ?>" />
         <?php } ?>
+
         <?php if ($post->post_type == 'clip') { ?>
             <?php $movie_fields = get_fields($custom_fields['movie_id']->ID); ?>
             <img class="slide-image" src="<?php echo get_movie_thumbnail($movie_fields['kaltura_id'], 280, 175); ?>" />
         <?php } ?>
+
         <div class="slide-label <?php echo $post->post_type; ?>">
             <?php icon($post->post_type); ?>
         </div>

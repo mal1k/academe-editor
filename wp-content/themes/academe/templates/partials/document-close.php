@@ -12,8 +12,8 @@ if (empty($partner_id)) {
     <script src="<?php echo get_template_directory_uri() . '/build/app.js'; ?>"></script>
 <?php } else { ?>
 
-    <?php if (is_user_logged_in()) { ?>
-        <div class="modal ui overlay fullscreen movie-player" style="<?php echo (is_admin_bar_showing()) ? 'margin-top: 32px; height: calc(100% - 32px);' : ''; ?>">
+    <?php if (is_user_logged_in() && !is_singular('teaching-guide')) { ?>
+        <div class="modal ui overlay movie-player sized">
             <?php icon('cross', 'close'); ?>
             <div id="kalturaPlayer">
 

@@ -25,6 +25,7 @@ $current_user = wp_get_current_user();
                 <lesson-editor v-slot="editor"
                                :post="<?php echo $lesson_id; ?>"
                                :movie="<?php echo $_GET['movie_id'] ?? 'null'; ?>"
+                               :clip="<?php echo $_GET['clip_id'] ?? 'null'; ?>"
                                author="<?php echo $current_user->user_firstname . ' ' . $current_user->user_lastname; ?>">
 
                 </lesson-editor>

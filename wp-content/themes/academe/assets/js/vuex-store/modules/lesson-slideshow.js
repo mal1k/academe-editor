@@ -9,7 +9,7 @@ const state = () => ({
     next_slide: null,
     prev_slide: null,
     active_movie_duration: null,
-
+    teacher_online: false,
 });
 
 // getters

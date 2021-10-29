@@ -300,8 +300,8 @@ do_action( 'ir_action_profile_start', $author_data );
                             <span data-id="irp-courses">
                                 <?php
                                 echo esc_html_x(
-                                    \LearnDash_Custom_Label::get_label( 'lessons' ),
-                                    'placeholder: Lessons',
+                                    \LearnDash_Custom_Label::get_label( 'courses' ),
+                                    'placeholder: Courses',
                                     'wdm_instructor_role'
                                 );
                                 ?>
@@ -327,8 +327,8 @@ do_action( 'ir_action_profile_start', $author_data );
                                 <h3 class="irp-hidden-lg irp-title">
                                     <?php
                                     echo esc_html_x(
-                                        \LearnDash_Custom_Label::get_label( 'lessons' ),
-                                        'placeholder: Lessons',
+                                        \LearnDash_Custom_Label::get_label( 'courses' ),
+                                        'placeholder: Courses',
                                         'wdm_instructor_role'
                                     );
                                     ?>

@@ -172,6 +172,9 @@ function wptp_create_post_type()
         'has_archive' => true,
         'public' => true,
         'rewrite' => array('slug' => 'clips'),
+        "show_in_rest" => true,
+        "rest_base" => "",
+        "rest_controller_class" => "WP_REST_Posts_Controller",
         'hierarchical' => false,
         'menu_position' => 7,
         'supports' => array(

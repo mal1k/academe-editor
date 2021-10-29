@@ -49,7 +49,6 @@ export default {
 
                 // Create session only on first save
                 if (!storage.first_session_created) {
-                    console.log(ajaxurl + "?action=create_lesson_session");
 
                     const result = await fetch(ajaxurl + "?action=create_lesson_session", {
                         method: "POST",

@@ -22,6 +22,11 @@
                 required: false,
                 default: null
             },
+            clip: {
+                type: Number,
+                required: false,
+                default: null
+            },
             author: String,
         },
         data() {
@@ -32,6 +37,7 @@
         mounted() {
             this.store.lesson_id = this.post;
             this.store.movie_id = this.movie;
+            this.store.clip_id = this.clip;
             this.store.author = this.author;
 
             this.updateQueryString();
@@ -73,6 +79,10 @@
 
                 if (params.has('movie_id')) {
                     params.delete('movie_id');
+                }
+
+                if (params.has('clip_id')) {
+                    params.delete('clip_id');
                 }
 
                 if (!params.has('lesson_id')) {

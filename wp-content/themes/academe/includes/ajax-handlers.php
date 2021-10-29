@@ -98,7 +98,7 @@ function async_filter_my_movie_courses() {
             )
         )
     ];
-    
+
     if ($_POST['taxonomy'] && $_POST['term']) {
         $args['tax_query'] = [[
             'taxonomy' => $_POST['taxonomy'],
@@ -106,7 +106,7 @@ function async_filter_my_movie_courses() {
             'terms'    => $_POST['term'],
         ]];
     }
-    
+
     $courses = new WP_Query($args);
     $courses_posts = $courses->posts;
     get_template_part( 'templates/partials/slider-strip', 'null', [
@@ -500,6 +500,9 @@ function create_session() {
             update_field( "based_on", $_POST['based_on'], $post_id );
             update_field( "related_".$_POST['based_on'], $_POST['parent_item'], $post_id );
             update_field( "session_type", $_POST['session_type'], $post_id );
+            if (isset($_POST['class'])) {
+                update_field( "class", $_POST['class'], $post_id );
+            }
 
             if ($_POST['session_type'] == 'async') {
                 update_field( "access_duration", $_POST['access_duration'], $post_id );
@@ -507,13 +510,20 @@ function create_session() {
             } else {
                 $shift = 1;
             }
+            if ($_POST['schedule']) {
+                $tz = new DateTimeZone(get_option('timezone_string'));
+                $session_starts = DateTime::createFromFormat('d/m/Y G:i', $_POST['schedule'], $tz);
+                update_field( "session_starts", $session_starts->format('Y-m-d H:i:s'), $post_id );
 
-            $tz = new DateTimeZone(get_option('timezone_string'));
-            $session_starts = DateTime::createFromFormat('d/m/Y G:i', $_POST['schedule'], $tz);
-            update_field( "session_starts", $session_starts->format('Y-m-d H:i:s'), $post_id );
+                $session_ends = $session_starts->add(new DateInterval('PT'.$shift.'H'));
+                update_field( "session_ends", $session_ends->format('Y-m-d H:i:s'), $post_id ); //1 hour after session start
+            } else {
+                $session_starts = current_time('Y-m-d H:i:s');
+                update_field( "session_starts", $session_starts, $post_id );
 
-            $session_ends = $session_starts->add(new DateInterval('PT'.$shift.'H'));
-            update_field( "session_ends", $session_ends->format('Y-m-d H:i:s'), $post_id ); //1 hour after session start
+                $session_ends = date( 'Y-m-d H:i:s', strtotime( $session_starts ) + 921600 ); // 3600 seconds = 1 hours
+                update_field( "session_ends", $session_ends, $post_id ); //1 hour after session start
+            }
 
             update_field( "show_movie_on_students_pc", $_POST['show_movie_on_students_pc'], $post_id ); // should the student be able to view movie on PC?
 

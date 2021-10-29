@@ -86,7 +86,7 @@
     </div>
 
     <div class="slide-content">
-      <div class="aspect-ratio-box">
+      <div class="aspect-ratio-box" :class="{'default-cover' : activeSlide && (activeSlide.slide_type === 'meta' || activeSlide.slide_type === 'text_image' || activeSlide.slide_type === 'question')}">
         <div class="aspect-ratio-box-inside">
           <template v-if="activeSlide">
             <template v-if="activeSlide.template === 'template0'">
@@ -1154,6 +1154,7 @@ export default {
         },
       });
       this.activeSlide.movie_meta = movieMeta;
+      this.store.active_slide_movie_meta = movieMeta;
       // Hide search movies panel
       this.isReplaceMovie = false;
       this.autoSave();
@@ -1539,7 +1540,9 @@ export default {
       let _this = this;
       this.addSlide(new_slide).then(function (response) {
           if(_this.store.movie_id) {
-              _this.createMovieSlide();
+              _this.createMovieSlide(_this.store.movie_id);
+          } else if(_this.store.clip_id) {
+              _this.createMovieSlide(_this.store.clip_id);
           } else {
               _this.store.loading = false;
               _this.changeActiveSlide(_this.store.slides[0]);
@@ -1547,7 +1550,7 @@ export default {
       });
 
     },
-    createMovieSlide() {
+    createMovieSlide(post_id) {
       let _this = this;
       const new_slide = {
           slide_type: "movie",
@@ -1555,15 +1558,18 @@ export default {
       };
 
       this.addSlide(new_slide).then(function (response) {
-          axios.get('/wp/v2/movie/' + _this.store.movie_id).then(res => {
+          axios.get('/academe/v1/movies/' + post_id).then(res => {
               _this.$store.commit("LessonEditor/updateSlideFields", {
                   id: _this.store.slides[_this.store.slides.length - 1].lesson_id,
                   fields: {
-                      kaltura_id: res.data.acf.kaltura_id,
-                      play_from: null,
-                      play_to: null,
+                      kaltura_id: res.data.kaltura_id,
+                      play_from: (res.data.post_type === 'clip') ? res.data.play_from : null,
+                      play_to: (res.data.post_type === 'clip') ? res.data.play_to : null,
+                      post_type: res.data.post_type,
                   },
               });
+              _this.activeSlide.movie_meta = res.data;
+              _this.store.active_slide_movie_meta = res.data;
               _this.store.loading = false;
               _this.changeActiveSlide(_this.store.slides[0]);
           });
@@ -1832,7 +1838,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #51ACFD;
+  /*background: #51ACFD;*/
 }
 .aspect-ratio-box .slide-template-preview {
   height: 100%;
@@ -1959,6 +1965,10 @@ export default {
 .clip-settings .in-out-control-btn {
     cursor: pointer;
 }
+.aspect-ratio-box.default-cover {
+    background-image: url(/wp-content/themes/academe/assets/img/lesson-cover.jpg);
+    background-size: cover;
+}
 </style>
 
 <style>
@@ -1994,7 +2004,9 @@ export default {
   display: flex;
   flex: 1;
   margin: 3%;
-  background: rgba(196, 196, 196, 0.64);
+}
+.page-template-page-lesson-editor .flex-builder .col {
+    background: rgba(196, 196, 196, 0.64);
 }
 
 .flex-builder .col.m-s {

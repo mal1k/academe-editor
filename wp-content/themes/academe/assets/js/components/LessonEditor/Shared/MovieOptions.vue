@@ -29,7 +29,7 @@
                 class="movie-item__tag"
                 v-for="(tag, index) in movie_meta.tags.slice(0, 2)"
                 :key="index"
-                >#{{ tag.tag }}
+                >#{{ tag.name }}
               </a>
             </div>
             <div class="movie-item__footer">
