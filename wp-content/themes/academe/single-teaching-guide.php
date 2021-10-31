@@ -184,12 +184,12 @@
             </div>
             <div class="ui tab segment" data-tab="before_the_lesson">
                 <div class="text-content">
-                    Before the lesson
+                    <?php echo $custom_fields['before_the_lesson_text']; ?>
                 </div>
             </div>
             <div class="ui tab segment" data-tab="opening_activities">
                 <div class="text-content">
-                    Opening Activities
+                    <?php echo $custom_fields['opening_activities_text']; ?>
                 </div>
             </div>
             <div class="ui tab segment questions" data-tab="questions">
@@ -285,12 +285,12 @@
             </div>
             <div class="ui tab segment" data-tab="summation_activities">
                 <div class="text-content">
-                    Summation Activities
+                    <?php echo $custom_fields['summation_text']; ?>
                 </div>
             </div>
             <div class="ui tab segment" data-tab="assessment_activities">
                 <div class="text-center">
-                    Assessment Activities
+                    <?php echo $custom_fields['assessment_activities_text']; ?>
                 </div>
             </div>
             <?php if ($custom_fields['teacher_guide_type'] == 'topic') { ?>
