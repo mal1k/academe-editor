@@ -353,6 +353,25 @@ function popular_movies_list() {
 /* Popular movies list end */
 
 /* Recent teacher guides list start */
+function recent_courses_list($filter = true, $title = 'Courses') {
+    $courses = get_filtered_posts('sfwd-courses');
+    if($courses) {
+        get_template_part('templates/partials/slider-strip', 'null', [
+            'title' => __($title, 'academe-theme'),
+            'filter' => [
+                'active' => $filter,
+                'post_type' => 'sfwd-courses',
+                'taxonomy' => 'topic',
+                'term' => NULL,
+                'action' => 'async_filter_all_posts',
+            ],
+            'posts' => $courses
+        ]);
+    }
+}
+/* Recent teacher guides list end */
+
+/* Recent teacher guides list start */
 function recent_teacher_guides_list($filter = true, $title = 'New releases') {
     $teacher_guides = get_filtered_posts('teaching-guide');
     if($teacher_guides) {

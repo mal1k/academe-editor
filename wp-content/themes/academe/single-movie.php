@@ -174,9 +174,9 @@ $guideLink = get_permalink($teaching_guides[0]->ID);
     <?php get_template_part( 'templates/partials/modals/create-session', 'null', ['id' => $cs_modal_id]); ?>
 
 
+    <?php this_clips_list($post->ID); ?>
     <?php my_movie_courses_list($post->ID, 'grade'); ?> 
     <?php this_courses_list($post->ID); ?>
-    <?php this_clips_list($post->ID); ?>
 
 
     <?php 
