@@ -492,3 +492,11 @@ function jquery_for_age_block( $post, $meta ){
 
     <?php
 }
+
+function teacher_non_wp_admin() {
+    if (is_admin() && is_user_in_role('teacher') ) {
+        wp_redirect(home_url());
+        exit;
+    } 
+}
+add_action('init', 'teacher_non_wp_admin'); 
