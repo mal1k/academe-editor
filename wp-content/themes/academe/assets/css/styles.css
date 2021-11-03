@@ -814,6 +814,12 @@ header .create-lesson-btn span {
 .movie-block:hover .actions-more {
     opacity: 1;
 }
+
+.movie-block:hover .slide-info {
+    background: linear-gradient(
+0deg, rgba(0, 0, 0, 0.95) 60%, rgba(0, 0, 0, 0) 100%) center center / cover no-repeat;
+}
+
 .movie-block .plus-18 {
     bottom: 7px;
     right: 7px;
