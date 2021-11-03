@@ -107,24 +107,18 @@
                 </div>
 
             </div>
-            <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) { ?>
+            <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) {
+                    switch ( $post->post_status ) {
+                        case "draft":
+                            $link = "/lesson-editor?lesson_id=$post->ID";
+                            break;
+                        default:
+                            $link = get_permalink();
+                    } ?>
 
-
-                <?php if ($post->post_status === 'draft') { ?>
-                    <a href="/lesson-editor?lesson_id=<?php echo $post->ID; ?>" class="watch">
+                    <a href="<?php echo $link; ?>" class="watch">
                         <div class="start-watch"><?php icon('play-rounded'); ?></div>
                     </a>
-
-                    <?php }elseif ( $post->post_type == 'sfwd-courses') { ?>
-                    <a href="<?php echo get_permalink(); ?>" class="watch">
-                        <div class="start-watch"><?php icon('play-rounded'); ?></div>
-                    </a>    
-
-                <?php } else { ?>
-                    <a href="/sessions/<?php echo $wp_query->posts[0]->post_name; ?>" class="watch">
-                        <div class="start-watch"><?php icon('play-rounded'); ?></div>
-                    </a>
-                <?php } ?>
             <?php } else { ?>
             <a href="<?php the_permalink(); ?>" class="watch">
                 <div class="watch">
