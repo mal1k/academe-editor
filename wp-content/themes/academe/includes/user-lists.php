@@ -87,7 +87,8 @@ function continue_editing_lesson_list() {
 
 /* Continue editing course list start */
 function continue_editing_course_list() {
-    $courses = ld_course_list(['post_status' => ['draft'], 'author__in' => [get_current_user_id()], 'orderby'  => ['date'=>'DESC'], 'array' => true]); ?>
+    $courses = ld_course_list(['post_status' => ['draft'],'author__in' => [get_current_user_id()],'orderby'  => ['date'=>'DESC'],'array' => true]); 
+    if ($courses) { ?>
     <section class="slider-strip">
         <div class="strip-top">
             <h2 class="strip-heading"><?php _e('Continue editing', 'academe-theme'); ?></h2>
@@ -98,19 +99,19 @@ function continue_editing_course_list() {
                     <span class="plus-sign icon-wrap">+</span>
                     <span class="action-text"><?php _e('Create new', 'academe-theme'); ?></span>
                 </a>
-                <?php if ($courses) {
+                <?php
                     global $post;
                     foreach ($courses as $post) {
                         setup_postdata($post);
                         get_template_part('templates/partials/movie-block', 'null');
                     }
                     wp_reset_postdata(); ?>
-                <?php } ?>
             </div>
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
     </section>
+    <?php } ?>
     <?php
 }
 /* Continue editing lesson list end */
