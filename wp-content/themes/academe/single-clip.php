@@ -33,7 +33,7 @@ $movie_fields = get_fields($custom_fields['movie_id']->ID);
                 <?php } else { ?>
                     <?php $cs_modal_id = uniqid(); ?>
                     <!-- create-session-btn -->
-                    <div class="start-watch create-session-btn-schedule" data-modal-id="<?php echo $cs_modal_id; ?>">
+                    <div class="start-watch start-movie-preview" data-movie-id="<?php echo $custom_fields['movie_id']->ID;?>" data-modal-id="<?php echo $cs_modal_id; ?>">
                         <?php icon('play-rounded'); ?>
                         <span><?php _e('Present Now', 'academe-theme'); ?></span>
                     </div>
