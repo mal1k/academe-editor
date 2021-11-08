@@ -31,8 +31,8 @@ $guideLink = get_permalink($teaching_guides[0]->ID);
                     </div>
                 <?php } else { ?>
                     <?php $cs_modal_id = uniqid(); ?>
-                    <!-- create-session-btn -->
-                    <div class="start-watch create-session-btn-schedule" data-modal-id="<?php echo $cs_modal_id; ?>">
+                    <!-- create-session-btn --> <!-- create-session-btn-schedule -->
+                    <div class="start-watch start-movie-preview" data-movie-id="<?php echo $post->ID; ?>" data-mode="advanced">
                         <?php icon('play-rounded'); ?>
                         <span><?php _e('Present Now', 'academe-theme'); ?></span>
                     </div>
@@ -43,7 +43,7 @@ $guideLink = get_permalink($teaching_guides[0]->ID);
                 <span class="title"><?php _e('Movie', 'academe-theme'); ?></span>
             </div>
             <div class="movie-poster-actions">
-                <?php icon('share', 'icon icon-white icon-24'); ?>
+            <a class="create-session-btn-schedule" data-modal-id="<?php echo $cs_modal_id; ?>"><?php icon('share', 'icon icon-white icon-24'); ?></a>
                 <?php the_my_list_button($post->ID, 'icon'); ?>
                 <a href="/lesson-editor?movie_id=<?php echo $post->ID; ?>"><?php icon('heavy-plus', 'icon icon-white'); ?></a>
             </div>
