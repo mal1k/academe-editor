@@ -11,7 +11,7 @@
                 <h1 class="title"><?php the_title(); ?></h1>
             </div>
 
-            <h1>
+            <!-- <h1>
                 <?php echo $custom_fields['teacher_guide_type']; ?>
             </h1>
 
@@ -21,7 +21,7 @@
                 echo $tg_topics[0]->name;
                 echo ' ' . $tg_topics[1]->name;
             ?>
-            </div>
+            </div> -->
 
             <div class="meta" style="margin-top: 20px;">
                 <div>
