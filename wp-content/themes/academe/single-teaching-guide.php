@@ -4,6 +4,12 @@
 <?php $custom_fields = get_fields($post->ID);?>
 <?php $partner_id = get_field('partner_id', 'option'); ?>
 
+<style>
+* {
+    font-size: revert;
+}
+</style>
+
 <main class="main single-teaching-guide-page" data-movie-id="<?php echo $post->ID; ?>">
     <section id="guideInfo">
         <div class="guide-info">
