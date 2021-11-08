@@ -2770,3 +2770,7 @@ span.highlighted {
     font-size: 14px;
 }
 
+a.acf-tab-button {
+    color: #51ACFD;
+    text-decoration: underline;
+}

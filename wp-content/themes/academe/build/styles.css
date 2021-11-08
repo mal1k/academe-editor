@@ -6058,3 +6058,8 @@ cursor: pointer;
     background-color: transparent;
     border: 2px solid #fff;
 }
+
+a.acf-tab-button {
+    color: #51ACFD;
+    text-decoration: underline;
+}
