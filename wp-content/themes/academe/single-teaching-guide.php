@@ -85,11 +85,7 @@
                     <svg width="18" height="15" viewBox="0 0 18 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2.125 0.5C1.09684 0.5 0.25 1.34684 0.25 2.375V12.375C0.25 13.4032 1.09684 14.25 2.125 14.25H15.875C16.9032 14.25 17.75 13.4032 17.75 12.375V2.375C17.75 1.34684 16.9032 0.5 15.875 0.5H2.125ZM2.125 1.75H15.875C16.2268 1.75 16.5 2.02316 16.5 2.375V12.375C16.5 12.7268 16.2268 13 15.875 13H2.125C1.77316 13 1.5 12.7268 1.5 12.375V2.375C1.5 2.02316 1.77316 1.75 2.125 1.75ZM2.75 3V4.25H4V3H2.75ZM14 3V4.25H15.25V3H14ZM2.75 5.5V6.75H4V5.5H2.75ZM14 5.5V6.75H15.25V5.5H14ZM2.75 8V9.25H4V8H2.75ZM14 8V9.25H15.25V8H14ZM2.75 10.5V11.75H4V10.5H2.75ZM14 10.5V11.75H15.25V10.5H14Z" fill="white"/>
                     </svg>
-                    <?php $tg_topics_output = [];
-                        foreach ($tg_topics as $topic) {
-                            $tg_topics_output[] = $topic->name;
-                        }
-                        echo implode(', ', $tg_topics_output); ?>
+                    <?php echo $custom_fields['related_movie']->post_title; ?>
                 </div>
                 <?php } ?>
             <?php } ?>
