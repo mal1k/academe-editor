@@ -1,8 +1,11 @@
-<?php $custom_fields = get_fields($post->ID);  ?>
+<?php
+$custom_fields = get_fields($post->ID);
+
+?>
 
 <?php $sponsored =  (in_array($post->post_type, ['sfwd-lessons', 'sfwd-courses']) && $custom_fields['sponsored']) ? true : false ?>
 
-<?php if ($post->post_type != 'movie' || isset($custom_fields['kaltura_id'])) { ?>
+<?php if ($post->post_type != 'movie' || isset($custom_fields['kaltura_id']) || !empty(get_field('kaltura_id', $post->ID)) ) { ?>
     <div class="swiper-slide movie-block <?php echo $sponsored ? 'sponsored' : ''; ?>" data-movie-id="<?php echo $post->ID; ?>" style="background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 11.29%, rgba(0, 0, 0, 0) 100%) no-repeat center / cover; <?php if ( $args['jif'] ) echo 'border: 1px solid blue;'; ?>">
         <div class="slide-info">
             <div class="info-top">

@@ -1,0 +1,108 @@
+<?php
+/*
+Plugin Name: Kaltura categories
+Plugin URI: /
+Description: Kaltura categories System
+Version: 1.0
+Author: NetGateComUa
+Author URI: http://netgate.com.ua
+License: GPL2
+*/
+
+?>
+<?php
+if (!defined('WP_CONTENT_URL'))
+    define('WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+if (!defined('WP_CONTENT_DIR'))
+    define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
+if (!defined('WP_PLUGIN_URL'))
+    define('WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins');
+if (!defined('WP_PLUGIN_DIR'))
+    define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins');
+require_once ABSPATH . 'wp-admin/includes/file.php';
+
+
+?>
+<?php
+$root = realpath($_SERVER["DOCUMENT_ROOT"] . '/wp-includes/wp-db.php');
+//$root = realpath($_SERVER["DOCUMENT_ROOT"] . '/wp-content/plugins/forms-data/css/style.css');
+include_once($root);
+
+function formatMilliseconds($milliseconds)
+{
+    $seconds = floor($milliseconds / 1000);
+    $minutes = floor($seconds / 60);
+    $hours = floor($minutes / 60);
+    $milliseconds = $milliseconds % 1000;
+    $seconds = $seconds % 60;
+    $minutes = $minutes % 60;
+
+    $format = '%u:%02u:%02u';
+    $time = sprintf($format, $hours, $minutes, $seconds);
+    return rtrim($time, '0');
+}
+
+?>
+<?php /* register menu item */
+function msp_Kalturacategories_admin_menu_setup()
+{
+    add_submenu_page(
+        'options-general.php',
+        'Kaltura categories',
+        'Kaltura categories',
+        'manage_options',
+        'Kalturacategories',
+        'msp_Kalturacategories_admin_page_screen'
+    );
+}
+
+add_action('admin_menu', 'msp_Kalturacategories_admin_menu_setup');
+
+function msp_Kalturacategories_admin_page_screen()
+{
+    global $submenu;
+    require_once __DIR__ . '/PHPExcel/IOFactory.php';
+
+// Файл xlsx
+    $xls = PHPExcel_IOFactory::load(__DIR__ . '/textgenre.xlsx');
+
+// Первый лист
+    $xls->setActiveSheetIndex(0);
+    $sheet = $xls->getActiveSheet();
+    $i = 0;
+    $cat_id = 0;
+    global $wpdb;
+    foreach ($sheet->toArray() as $row) {
+        $cat = $row[0];
+        $slug = $row[1];
+        /* if ($row[2]=="1") {
+
+             $table = $wpdb->prefix . 'terms';
+             $data = array('name' => $cat, 'slug' =>sanitize_title($slug));
+
+             $wpdb->insert($table, $data, $format);
+             $my_id = $wpdb->insert_id;
+             $cat_id = $my_id;
+             $table = $wpdb->prefix . 'term_taxonomy';
+             $data = array('term_id' => $my_id, 'taxonomy' => 'genre', 'parent' => 0);
+
+             $wpdb->insert($table, $data, $format);
+         } else {*
+             $table = $wpdb->prefix . 'terms';
+             $data = array('name' => $cat, 'slug' => sanitize_title($slug));
+
+             $wpdb->insert($table, $data, $format);
+             $my_id = $wpdb->insert_id;
+
+             $table = $wpdb->prefix . 'term_taxonomy';
+             $data = array('term_id' => $my_id, 'taxonomy' => 'genre', 'parent' => $cat_id);
+
+             $wpdb->insert($table, $data, $format);
+        // }
+         $i++;
+     }*/
+    }
+
+    die();
+} ?>
+    
