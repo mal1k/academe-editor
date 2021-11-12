@@ -198,6 +198,107 @@ function async_filter_clips() {
     ]);
     wp_die();
 }
+add_action("wp_ajax_async_filter_recommended_lessons" , "async_filter_recommended_lessons");
+add_action('wp_ajax_nopriv_async_filter_recommended_lessons', 'async_filter_recommended_lessons');
+function async_filter_recommended_lessons() {
+    $slides = get_field('recommended_lessons', 'option');
+    $slides_ids = [];
+    foreach ($slides as $slide) {
+        $slides_ids[] = $slide->ID;
+    }
+
+    $args = ['post_type' => $_POST['post_type'], 'posts_per_page' => 30, 'post__in' => $slides_ids];
+    if ($_POST['taxonomy'] && $_POST['term']) {
+        $args['tax_query'] = [[
+            'taxonomy' => $_POST['taxonomy'],
+            'field'    => 'id',
+            'terms'    => $_POST['term'],
+            'operator' => 'IN',
+        ]];
+    }
+    $query = new WP_Query($args);
+    $query_posts = $query->posts;
+    get_template_part( 'templates/partials/slider-strip', 'null', [
+        'title' => $_POST['section_title'],
+        'filter' => [
+            'active' => true,
+            'post_type' => $_POST['post_type'],
+            'taxonomy' => $_POST['taxonomy'],
+            'term' => $_POST['term'],
+            'action' => $_POST['action'],
+        ],
+        'posts' => $query_posts
+    ]);
+    wp_die();
+}
+
+add_action("wp_ajax_async_filter_recommended_clips" , "async_filter_recommended_clips");
+add_action('wp_ajax_nopriv_async_filter_recommended_clips', 'async_filter_recommended_clips');
+function async_filter_recommended_clips() {
+    $slides = get_field('recommended_clips', 'option');
+    $slides_ids = [];
+    foreach ($slides as $slide) {
+        $slides_ids[] = $slide->ID;
+    }
+
+    $args = ['post_type' => $_POST['post_type'], 'posts_per_page' => 30, 'post__in' => $slides_ids];
+    if ($_POST['taxonomy'] && $_POST['term']) {
+        $args['tax_query'] = [[
+            'taxonomy' => $_POST['taxonomy'],
+            'field'    => 'id',
+            'terms'    => $_POST['term'],
+            'operator' => 'IN',
+        ]];
+    }
+    $query = new WP_Query($args);
+    $query_posts = $query->posts;
+    get_template_part( 'templates/partials/slider-strip', 'null', [
+        'title' => $_POST['section_title'],
+        'filter' => [
+            'active' => true,
+            'post_type' => $_POST['post_type'],
+            'taxonomy' => $_POST['taxonomy'],
+            'term' => $_POST['term'],
+            'action' => $_POST['action'],
+        ],
+        'posts' => $query_posts
+    ]);
+    wp_die();
+}
+
+add_action("wp_ajax_async_filter_recommended_teaching_guides" , "async_filter_recommended_teaching_guides");
+add_action('wp_ajax_nopriv_async_filter_recommended_teaching_guides', 'async_filter_recommended_teaching_guides');
+function async_filter_recommended_teaching_guides() {
+    $slides = get_field('recommended_teaching_guides', 'option');
+    $slides_ids = [];
+    foreach ($slides as $slide) {
+        $slides_ids[] = $slide->ID;
+    }
+
+    $args = ['post_type' => $_POST['post_type'], 'posts_per_page' => 30, 'post__in' => $slides_ids];
+    if ($_POST['taxonomy'] && $_POST['term']) {
+        $args['tax_query'] = [[
+            'taxonomy' => $_POST['taxonomy'],
+            'field'    => 'id',
+            'terms'    => $_POST['term'],
+            'operator' => 'IN',
+        ]];
+    }
+    $query = new WP_Query($args);
+    $query_posts = $query->posts;
+    get_template_part( 'templates/partials/slider-strip', 'null', [
+        'title' => $_POST['section_title'],
+        'filter' => [
+            'active' => true,
+            'post_type' => $_POST['post_type'],
+            'taxonomy' => $_POST['taxonomy'],
+            'term' => $_POST['term'],
+            'action' => $_POST['action'],
+        ],
+        'posts' => $query_posts
+    ]);
+    wp_die();
+}
 
 add_action("wp_ajax_async_filter_recommended_movies" , "async_filter_recommended_movies");
 add_action('wp_ajax_nopriv_async_filter_recommended_movies', 'async_filter_recommended_movies');

@@ -314,6 +314,24 @@ function this_clips_list($movie_id = 0, $filter = 'topic', $title = 'Clips') {
 }
 /* All Clips list end */
 
+/* Recommended lessons list start */
+function recommended_lessons_list($filter = true, $title = 'Recommended lessons') {
+    $slides = get_field('recommended_lessons', 'option');
+    if ($slides) {
+        get_template_part('templates/partials/slider-strip', 'null', [
+            'title' => __($title, 'academe-theme'),
+            'filter' => [
+                'active' => $filter,
+                'post_type' => 'sfwd-courses',
+                'taxonomy' => 'topic',
+                'term' => NULL,
+                'action' => 'async_filter_recommended_lessons',
+            ],
+            'posts' => $slides
+        ]);
+    }
+}
+/* Recommended lessons list end */
 /* Recommended movies list start */
 function recommended_movies_list($filter = true, $title = 'Recommended movies') {
     $slides = get_field('recommended_movies', 'option');
@@ -323,7 +341,7 @@ function recommended_movies_list($filter = true, $title = 'Recommended movies') 
             'filter' => [
                 'active' => $filter,
                 'post_type' => 'movie',
-                'taxonomy' => 'genre',
+                'taxonomy' => 'subject',
                 'term' => NULL,
                 'action' => 'async_filter_recommended_movies',
             ],
@@ -332,6 +350,42 @@ function recommended_movies_list($filter = true, $title = 'Recommended movies') 
     }
 }
 /* Recommended movies list end */
+/* Recommended clips list start */
+function recommended_clips_list($filter = true, $title = 'Recommended clips') {
+    $slides = get_field('all_recommended_clips', 'option');
+    if ($slides) {
+        get_template_part('templates/partials/slider-strip', 'null', [
+            'title' => __($title, 'academe-theme'),
+            'filter' => [
+                'active' => $filter,
+                'post_type' => 'clip',
+                'taxonomy' => 'subject',
+                'term' => NULL,
+                'action' => 'async_filter_recommended_clips',
+            ],
+            'posts' => $slides
+        ]);
+    }
+}
+/* Recommended clips list end */
+/* Recommended teaching guides list start */
+function recommended_teaching_guides_list($filter = true, $title = 'Recommended teaching guides') {
+    $slides = get_field('recommended_teaching_guides', 'option');
+    if ($slides) {
+        get_template_part('templates/partials/slider-strip', 'null', [
+            'title' => __($title, 'academe-theme'),
+            'filter' => [
+                'active' => $filter,
+                'post_type' => 'teaching-guide',
+                'taxonomy' => 'topic',
+                'term' => NULL,
+                'action' => 'async_filter_recommended_teaching_guides',
+            ],
+            'posts' => $slides
+        ]);
+    }
+}
+/* Recommended teaching guides list end */
 
 /* Popular movies list start */
 function popular_movies_list() {

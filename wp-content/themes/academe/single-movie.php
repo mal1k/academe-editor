@@ -43,7 +43,7 @@ $guideLink = get_permalink($teaching_guides[0]->ID);
                 <span class="title"><?php _e('Movie', 'academe-theme'); ?></span>
             </div>
             <div class="movie-poster-actions">
-            <a class="create-session-btn-schedule" data-modal-id="<?php echo $cs_modal_id; ?>"><?php icon('share', 'icon icon-white icon-24'); ?></a>
+                <a class="create-session-btn" data-modal-id="<?php echo $cs_modal_id; ?>"><?php icon('share', 'icon icon-white icon-24'); ?></a>
                 <?php the_my_list_button($post->ID, 'icon'); ?>
                 <a href="/lesson-editor?movie_id=<?php echo $post->ID; ?>"><?php icon('heavy-plus', 'icon icon-white'); ?></a>
             </div>
