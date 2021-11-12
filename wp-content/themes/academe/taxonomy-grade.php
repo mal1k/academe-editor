@@ -5,7 +5,7 @@ $_GET['grade'] = get_queried_object()->slug;
         <section id="bySubjectFilters" class="filters-section">
             <h1><?php echo get_queried_object()->name; ?></h1>
             <?php get_template_part('templates/partials/filter-button', 'null', [
-                'filters' => ['subject', 'topic', 'age']
+                'filters' => ['subject', 'topic']
             ]); ?>
 
             
@@ -14,7 +14,7 @@ $_GET['grade'] = get_queried_object()->slug;
             <?php // if (is_user_logged_in() && !is_user_in_role('student')) { ?>
                 <?php if ( isset($_GET['grade']) || isset($_GET['subject']) || isset($_GET['topic']) || isset($_GET['age'])) {
     
-                    $filter_by = ['grade', 'subject', 'topic', 'age'];
+                    $filter_by = ['grade', 'subject', 'topic'];
                     $tax_query = [
                         'relation' => 'AND',
                     ];
