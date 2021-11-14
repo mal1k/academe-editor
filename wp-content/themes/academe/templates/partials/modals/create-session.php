@@ -16,8 +16,8 @@
             <input type="hidden" name="parent_item" class="parent_item" value="<?php echo $post->ID; ?>" />
             <div class="sessionForm__top">
                 <h3 class="sessionForm__title"><?php the_title(); ?></h3>
-                <?php if ($post->post_type === 'sfwd-courses') { ?>
-                    <span class="sessionForm__subtitle"><?php _e( 'A Lesson by Jurneys in Film', 'academe' );?></span>
+                <?php if ($post->post_type === 'sfwd-courses') { $user = get_userdata( $post->post_author ); ?>
+                    <span class="sessionForm__subtitle">A lesson by <?php echo $user->display_name; ?></span>
                 <?php } ?>
             </div>
             <div class="sessionForm__code">
