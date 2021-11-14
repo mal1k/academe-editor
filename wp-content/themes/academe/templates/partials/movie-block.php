@@ -16,7 +16,9 @@ $custom_fields = get_fields($post->ID);
                     <div class="created_by" style="font-size: 12px; color: white;">
                         <?php 
                         $user = get_userdata( $post->post_author );
-                        echo 'Created By: ' . $user->display_name; ?></div>
+                        echo 'Created By: ' . $user->display_name; 
+                        ?>
+                    </div>
                 <?php endif; ?>    
 
                     <div class="tags">
