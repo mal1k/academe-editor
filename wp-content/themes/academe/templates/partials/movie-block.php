@@ -71,6 +71,9 @@ $custom_fields = get_fields($post->ID);
                 </div>
 
                 <div class="right-part">
+                    <a class="create-session-btn" data-modal-id="<?php echo $post->ID; ?>">
+                        <?php icon('share', 'icon icon-white icon-24'); ?>
+                    </a>
                     <?php if ($post->post_status == 'private') {
                         icon('hide', 'visibility icon-24');
                     } ?>
@@ -112,6 +115,8 @@ $custom_fields = get_fields($post->ID);
                 </div>
 
             </div>
+            <?php get_template_part( 'templates/partials/modals/create-session', 'null', ['id' => $post->ID]); ?>
+
             <?php if ($post->post_type ==  'sfwd-courses' && is_user_logged_in() && !is_user_in_role('student')) {
                     switch ( $post->post_status ) {
                         case "draft":
