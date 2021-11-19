@@ -500,3 +500,44 @@ function teacher_non_wp_admin() {
     } 
 }
 add_action('init', 'teacher_non_wp_admin'); 
+
+function javascript_variables(){ ?>
+    <script type="text/javascript">
+        var ajax_url = '<?php echo admin_url( "admin-ajax.php" ); ?>';
+        var ajax_nonce = '<?php echo wp_create_nonce( "secure_nonce_name" ); ?>';
+    </script><?php
+}
+add_action ( 'wp_head', 'javascript_variables' );
+
+// Here we register our "send_form" function to handle our AJAX request, do you remember the "superhypermega" hidden field? Yes, this is what it refers, the "send_form" action.
+add_action('wp_ajax_passwordModal_form', 'passwordModal_form'); // This is for authenticated users
+add_action('wp_ajax_nopriv_passwordModal_form', 'passwordModal_form'); // This is for unauthenticated users.
+ 
+/**
+ * In this function we will handle the form inputs and send our email.
+ *
+ * @return void
+ */
+ 
+function passwordModal_form(){
+ 
+    // This is a secure process to validate if this request comes from a valid source.
+    check_ajax_referer( 'secure_nonce_name', 'security' );
+ 
+    /**
+     * First we make some validations, 
+     * I think you are able to put better validations and sanitizations. =)
+     */
+     
+    if ( empty( $_POST["password"] ) )
+        $data = 301;
+    elseif ( $_POST['password'] != '0543064071' )
+        $data = 302;
+    else {
+        $_SESSION['logged_in'] = true;
+        $data = true;
+    }
+
+    echo $data;
+    wp_die();
+}
