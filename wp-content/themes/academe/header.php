@@ -2,6 +2,7 @@
 $unread = learndash_notifications_unread_count_by_user();
 ?>
 <!-- Site header markup goes here -->
+
 <div class="header-placeholder"></div>
 <header>
     <div class="left-part">
@@ -269,3 +270,109 @@ $unread = learndash_notifications_unread_count_by_user();
         });
     }
 </script>
+
+<?php if ( empty($_SESSION['logged_in']) ) : ?>
+<div id="container">
+    <div id="passwordModal" style="text-align: center;" class="reveal-modal">
+        <img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" style="margin-bottom: 10px;" class="h-6 logo-img" />
+
+        <p style="color: red; text-align: left; display: none;" id="errorPasswordModal"></p>
+        <form action="" method="post" name="passwordModal">
+            <input type="text" name="password" placeholder="Password" style="
+                width: 100%;
+                padding: 10px;
+                margin:top: 10px;
+            "><br>
+            <input type="hidden" name="action" value="passwordModal_form" style="display: none; visibility: hidden; opacity: 0;">
+            <button type="submit" style="
+                width: 100%;
+                border: 0;
+                background: #51ACFD;
+                padding: 10px;
+                margin-top: 10px;
+                cursor: pointer;"
+            >Log in</button>
+        </form>
+        
+        <div class="line"></div>
+
+        <a href="https://about.academe.plus" target="_blank"><button type="submit" style="
+                width: 100%;
+                border: 0;
+                background: #F98C40;
+                padding: 10px;
+                margin-top: 20px;
+                margin-bottom: -10px;
+                cursor: pointer;"
+        >Learn More about AcadeMe+</button></a>
+    </div>
+</div>
+
+<style>
+    body {
+        overflow: hidden !important;
+    }
+    #container {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        visibility: visible;
+        display: block;
+        background-color: rgba(22,22,22,0.5);
+        z-index: 9999;
+    }
+
+    .reveal-modal {
+        background: #e1e1e1;
+        margin: 0 auto;
+        width: max-content; 
+        position:relative; 
+        z-index:41;
+        top: 25%;
+        padding:30px; 
+        -webkit-box-shadow:0 0 10px rgba(0,0,0,0.4);
+        -moz-box-shadow:0 0 10px rgba(0,0,0,0.4); 
+        box-shadow:0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .line {
+        height: 0.5px;
+        width: 125%;
+        margin-left: -12.5%;
+        margin-top: 20px;
+        background-color: black;
+    }
+</style>
+
+<script>
+    jQuery( 'form[name="passwordModal"]' ).on( 'submit', function(event) {
+    event.preventDefault()
+    var form_data = jQuery( this ).serializeArray();
+    form_data.push( { "name" : "security", "value" : ajax_nonce } );
+ 
+    jQuery.ajax({
+        url : ajax_url,
+        type : 'post',
+        data : form_data,
+        success : function( response ) {
+        if ( response == 301 || response == 302 )
+            jQuery('#errorPasswordModal').css('display', 'block');
+        if ( response == 301 )
+            jQuery( "#errorPasswordModal" ).text('Insert password please');
+        else if ( response == 302 )
+            jQuery( "#errorPasswordModal" ).text('Incorrect password');
+        else {
+            jQuery('#container').hide();
+            jQuery('body').attr('style', 'overflow: auto !important');
+        }
+
+        }
+    });
+     
+    // This return prevents the submit event to refresh the page.
+    return false;
+});
+</script>
+<?php endif;?>
