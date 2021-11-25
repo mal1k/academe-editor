@@ -274,22 +274,26 @@ $unread = learndash_notifications_unread_count_by_user();
 <?php if ( empty($_SESSION['logged_in']) ) : ?>
 <div id="container">
     <div id="passwordModal" style="text-align: center;" class="reveal-modal">
-        <img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" style="margin-bottom: 10px;" class="h-6 logo-img" />
+        <img src="<?php echo get_template_directory_uri() . '/assets/img/logo.svg'; ?>" style="margin-bottom: 10px; margin-top: -15px;" class="h-6 logo-img" />
 
         <p style="color: red; text-align: left; display: none;" id="errorPasswordModal"></p>
         <form action="" method="post" name="passwordModal">
             <input type="text" name="password" placeholder="Password" style="
+                background: rgb(215, 215, 215);
+                border: 0;
+                border-radius: 4px;
                 width: 100%;
                 padding: 10px;
-                margin:top: 10px;
             "><br>
             <input type="hidden" name="action" value="passwordModal_form" style="display: none; visibility: hidden; opacity: 0;">
             <button type="submit" style="
+                border-radius: 4px;
+                color: white;
                 width: 100%;
                 border: 0;
                 background: #51ACFD;
                 padding: 10px;
-                margin-top: 10px;
+                margin-top: 20px;
                 cursor: pointer;"
             >Log in</button>
         </form>
@@ -297,6 +301,8 @@ $unread = learndash_notifications_unread_count_by_user();
         <div class="line"></div>
 
         <a href="https://about.academe.plus" target="_blank"><button type="submit" style="
+                border-radius: 4px;
+                color: white;
                 width: 100%;
                 border: 0;
                 background: #F98C40;
@@ -325,7 +331,9 @@ $unread = learndash_notifications_unread_count_by_user();
     }
 
     .reveal-modal {
-        background: #e1e1e1;
+        border-radius: 5px;
+        border: solid 2px grey;
+        background: #292929;
         margin: 0 auto;
         width: max-content; 
         position:relative; 
@@ -338,11 +346,11 @@ $unread = learndash_notifications_unread_count_by_user();
     }
 
     .line {
-        height: 0.5px;
+        height: 2px;
         width: 125%;
         margin-left: -12.5%;
         margin-top: 20px;
-        background-color: black;
+        background-color: grey;
     }
 </style>
 
