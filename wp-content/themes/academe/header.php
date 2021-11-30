@@ -319,6 +319,7 @@ $unread = learndash_notifications_unread_count_by_user();
         overflow: hidden !important;
     }
     #container {
+        top: 0;
         margin: 0;
         padding: 0;
         width: 100%;
